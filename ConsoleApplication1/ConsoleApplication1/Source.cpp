@@ -14,7 +14,7 @@ void main()
 		for (int j = i; j < size; j++)
 		{
 			for (int k = i; k < size; k++)
-			{h
+			{
 				if (j == i)
 				{
 					arr[j][k] = count;
