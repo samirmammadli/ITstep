@@ -17,7 +17,7 @@ void main()
 			{
 				if (j == i)
 				{
-					arr[j][k] = count;r
+					arr[j][k] = count;
 					count++;
 				}
 				else if (k == size - 1 && j < size - 1)
