@@ -11,7 +11,7 @@ void main()
 	const int size = 4;
 	int arr[size][size];
 	int key, zeroX = 0, zeroY = 0;
-	int difficulty, rand1, rand2, rand3, rand4, buffer, count  = 0;
+	int difficulty, rand1, rand2, rand3, rand4, buffer, count = 0;
 	cout << "Select difficulty: ";
 	cin >> difficulty;
 	for (int i = 0; i < size; i++)
@@ -22,7 +22,7 @@ void main()
 			count++;
 		}
 	}
-		//Change random position
+	//Change random position
 	for (int i = 0; i < difficulty; i++)
 	{
 		rand1 = rand() % size;
@@ -62,39 +62,39 @@ void main()
 			}
 			cout << "\n\n";
 		}
-		     // Moves
+		// Moves
+		key = _getch();
+		if (key == 224)
+		{
 			key = _getch();
-			if (key == 224)
+			//Left
+			if (key == 75 && zeroY > 0)
 			{
-				key = _getch();
-				//Left
-				if (key == 75 && zeroY > 0)
-				{
-					arr[zeroX][zeroY] = arr[zeroX][zeroY - 1];
-					zeroY--;
-					arr[zeroX][zeroY] = 0;
-				}
-				//Right
-				else if (key == 77 && zeroY < size - 1)
-				{
-					arr[zeroX][zeroY] = arr[zeroX][zeroY + 1];
-					zeroY++;
-					arr[zeroX][zeroY] = 0;
-				}
-				//Up
-				else if (key == 72 && zeroX > 0)
-				{
-					arr[zeroX][zeroY] = arr[zeroX - 1][zeroY];
-					zeroX--;
-					arr[zeroX][zeroY] = 0;
-				}
-				//Down
-				else if (key == 80 && zeroX < size - 1)
-				{
-					arr[zeroX][zeroY] = arr[zeroX + 1][zeroY];
-					zeroX++;
-					arr[zeroX][zeroY] = 0;
-				}
+				arr[zeroX][zeroY] = arr[zeroX][zeroY - 1];
+				zeroY--;
+				arr[zeroX][zeroY] = 0;
 			}
+			//Right
+			else if (key == 77 && zeroY < size - 1)
+			{
+				arr[zeroX][zeroY] = arr[zeroX][zeroY + 1];
+				zeroY++;
+				arr[zeroX][zeroY] = 0;
+			}
+			//Up
+			else if (key == 72 && zeroX > 0)
+			{
+				arr[zeroX][zeroY] = arr[zeroX - 1][zeroY];
+				zeroX--;
+				arr[zeroX][zeroY] = 0;
+			}
+			//Down
+			else if (key == 80 && zeroX < size - 1)
+			{
+				arr[zeroX][zeroY] = arr[zeroX + 1][zeroY];
+				zeroX++;
+				arr[zeroX][zeroY] = 0;
+			}
+		}
 	}
 }
