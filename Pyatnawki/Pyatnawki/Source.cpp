@@ -30,7 +30,6 @@ void main()
 		rand3 = rand() % size;
 		rand4 = rand() % size;
 
-
 		buffer = arr[rand1][rand2];
 		arr[rand1][rand2] = arr[rand3][rand4];
 		arr[rand3][rand4] = buffer;
@@ -97,6 +96,5 @@ void main()
 					arr[zeroX][zeroY] = 0;
 				}
 			}
-		//system("cls");
 	}
 }
