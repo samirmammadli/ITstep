@@ -1,7 +1,4 @@
 #include "Functions.h"
-#include <iostream>
-#include <time.h>
-#include <conio.h>
 
 
 
@@ -55,5 +52,10 @@ void main()
 	{
 		cout << "Vvedite simvoli/cifri: ";
 		lower_to_upper();
+	}
+	else if (oper == 6)
+	{
+		cout << "Perevod v morze:\n";
+		morze();
 	}
 }
