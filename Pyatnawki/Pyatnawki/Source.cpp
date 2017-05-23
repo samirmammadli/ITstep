@@ -46,8 +46,10 @@ void main()
 	{
 		//Draw
 		SetConsoleCursorPosition(h, { 0,0 });
+		cout << "\n\n\n\n\n\n";
 		for (int i = 0; i < size; i++)
 		{
+			cout << "\t\t\t";
 			for (int j = 0; j < size; j++)
 			{
 				if (arr[i][j] == 0)
