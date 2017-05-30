@@ -8,6 +8,7 @@ void main()
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 	srand(time(NULL));
+	int timer = time(0);
 	const int size = 4;
 	int arr[size][size];
 	int key, zeroX = 0, zeroY = 0;
@@ -47,23 +48,26 @@ void main()
 	{
 		//Draw
 		SetConsoleCursorPosition(h, { 0,0 });
+		cout << "\n\n\n\n\n\n";
+		cout << "\t\t\t" << "Timer: " <<time(0) - timer << "\n\n";
 		for (int i = 0; i < size; i++)
 		{
+			cout << "\t\t\t";
 			for (int j = 0; j < size; j++)
 			{
 				if (arr[i][j] == 0)
 				{
 					SetConsoleTextAttribute(h, 12);
 				}
-				else
-				{
-					SetConsoleTextAttribute(h, 7);
-				}
 				cout << arr[i][j] << "\t";
+				SetConsoleTextAttribute(h, 7);
+				
 			}
 			cout << "\n\n";
 		}
 		     // Moves
+		if (_kbhit())
+		{
 			key = _getch();
 			if (key == 224)
 			{
@@ -97,6 +101,6 @@ void main()
 					arr[zeroX][zeroY] = 0;
 				}
 			}
-		//system("cls");
+		}
 	}
 }
