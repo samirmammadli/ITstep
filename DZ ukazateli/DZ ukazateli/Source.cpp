@@ -10,6 +10,7 @@ void init(int *arr, int size);
 void print(int *arr, int size);
 void delete_arr(int *arr);
 int* insert_end(int *arr, int &size, int value);
+int* insert_arr(int *arr, int &size, int value, int index);
 
 void main()
 {
@@ -71,6 +72,24 @@ void main()
 		arr = insert_end(arr, size, value);
 		print(arr, size);
 	}
+	else if (oper == 5)
+	{
+		int size = 0, *arr, value = 0, index = 0;
+		cout << "Vvedite razmer massiva: ";
+		cin >> size;
+		arr = alloc(size);
+		init(arr, size);
+		print(arr, size);
+		cout << "Vvedite index vstavki, zatem znachenie:\n";
+		cin >> index >> value;
+		if (index < size && index >= 0)
+		{
+			arr = insert_arr(arr, size, value, index);
+			print(arr, size);
+		}
+		else
+			cout << "Vi vveli nekkorektniy index!\n";
+	}
 }
 
 void mult_sum(int *arr, int size, int &sum, int &mult)
@@ -125,7 +144,7 @@ void print(int *arr, int size)
 
 void delete_arr(int *arr)
 {
-	delete []arr;
+	delete[]arr;
 }
 
 int* insert_end(int *arr, int &size, int value)
@@ -136,6 +155,28 @@ int* insert_end(int *arr, int &size, int value)
 		temp[i] = arr[i];
 	}
 	temp[size] = value;
+	size++;
+	delete_arr(arr);
+	arr = temp;
+	return arr;
+}
+
+int* insert_arr(int *arr, int &size, int value, int index)
+{
+	int *temp = new int[size + 1];
+	int n = 0;
+	for (int i = 0; i < size; i++, n++)
+	{
+		if (n == index)
+		{
+			temp[n] = value;
+			i--;
+		}
+		else
+		{
+			temp[n] = arr[i];
+		}
+	}
 	size++;
 	delete_arr(arr);
 	arr = temp;

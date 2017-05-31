@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{75E40A7F-5D40-4F68-A33F-E267E3014F47}</ProjectGuid>
+    <ProjectGuid>{E3513D91-384F-4AD7-AB6D-4943A64072AE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DZukazateli</RootNamespace>
+    <RootNamespace>DZUkazateli</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
