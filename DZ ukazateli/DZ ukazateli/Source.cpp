@@ -11,6 +11,7 @@ void print(int *arr, int size);
 void delete_arr(int *arr);
 int* insert_end(int *arr, int &size, int value);
 int* insert_arr(int *arr, int &size, int value, int index);
+int* delete_index(int *arr, int &size, int value);
 
 void main()
 {
@@ -85,6 +86,24 @@ void main()
 		if (index < size && index >= 0)
 		{
 			arr = insert_arr(arr, size, value, index);
+			print(arr, size);
+		}
+		else
+			cout << "Vi vveli nekkorektniy index!\n";
+	}
+	else if (oper == 6)
+	{
+		int size = 0, *arr, index = 0;
+		cout << "Vvedite razmer massiva: ";
+		cin >> size;
+		arr = alloc(size);
+		init(arr, size);
+		print(arr, size);
+		cout << "Vvedite index kotoriy jelaete udalit: ";
+		cin >> index;
+		if (index < size && index >= 0)
+		{
+			arr = delete_index(arr, size, index);
 			print(arr, size);
 		}
 		else
@@ -178,6 +197,28 @@ int* insert_arr(int *arr, int &size, int value, int index)
 		}
 	}
 	size++;
+	delete_arr(arr);
+	arr = temp;
+	return arr;
+}
+
+int* delete_index(int *arr, int &size, int index)
+{
+	size--;
+	int *temp = new int[size];
+	int n = 0;
+	for (int i = 0; i < size; i++, n++)
+	{
+		if (i == index)
+		{
+			n++;
+			temp[i] = arr[n];
+		}
+		else
+		{
+			temp[i] = arr[n];
+		}
+	}
 	delete_arr(arr);
 	arr = temp;
 	return arr;
