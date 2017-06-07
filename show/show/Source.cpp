@@ -9,5 +9,8 @@ void main()
 	getline(cin, str);
 	cout << str.length() << endl;  // Показывает длину строки
 	cout << str.size() << endl;   // Показывает длину строки
-	cout << str << endl;
+	cout << str << endl;  // Выводит строку на экран.
+	str.empty();  //Правда, если строка пустая, ложь если строка не пустая.
+	const char *str2 = str.c_str();
+	cout << str.c_str() << endl;
 }
