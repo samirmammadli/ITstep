@@ -2,10 +2,12 @@
 #include <conio.h>
 using namespace std;
 
+int str_length(char *arr);
 void change_space(char *arr);
 void print(char *arr);
 void find_num(char *arr, int &letter, int &number, int &other);
 void words_count(char *arr, int &words);
+void is_palendrom(char *arr, bool &palendrom);
 
 void main()
 {
@@ -42,15 +44,34 @@ void main()
 		getchar();
 		cin.getline(arr, size);
 		words_count(arr, words);
-		cout << words << endl;
+		cout <<"Vsego slov: " << words << endl;
 	}
-	else if (oper == 4)
+	else if (oper == 6)
 	{
-
+		bool palendrom = true;
+		char arr[size] = {};
+		cout << "Vvedite stroku:\n";
+		getchar();
+		cin.getline(arr, size);
+		is_palendrom(arr, palendrom);
+		if (palendrom)
+			cout << "Stroka yavlaetsa palendromom!\n";
+		else
+			cout << "Stroka ne yavlaetsa palendromom!\n";
 	}
-
 }
 
+//Funcitons
+
+int str_length(char *arr)
+{
+	int count = 0;
+	for (int i = 0; arr[i] != '\0' ; i++)
+	{
+		count++;
+	}
+	return count;
+}
 void change_space(char *arr)
 {
 	for (int i = 0; arr[i] != '\0'; i++)
@@ -98,5 +119,15 @@ void words_count(char *arr, int &words) // 1 bukvu za slovo ne schitaet
 		}
 		count > 1 ? words++ : 0;
 		count = 0;
+	}
+}
+
+void is_palendrom(char *arr, bool &palendrom)
+{
+	int size = str_length(arr);
+	for (int i = 0; i < size; i++)
+	{
+		if (arr[i] != arr[size - 1 - i])
+			palendrom = false;
 	}
 }
