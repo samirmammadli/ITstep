@@ -73,10 +73,19 @@ void main()
 			cout << "Dlina stroki 1: " << mystrlen(arr1) << "\nDlina stroki 2: " << mystrlen(arr2) << endl;
 			break;
 		case 'b':
-			
-			break;
+			cout << mystrcpy(arr1, arr2) << endl;
+ 			break;
 		case 'c':
 			cout << mystrcat(arr1, arr2) << endl;
+			break;
+		case 'd':
+			char s;
+			cout << "Vvedite simvol, kotoriy jelaete nayte v stroke 1: ";
+			cin >> s;
+			cout << mystrchr(arr1, s) << endl;
+			break;
+		case 'e':
+
 			break;
 		default:
 			break;
