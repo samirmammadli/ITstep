@@ -2,15 +2,22 @@
 #include <Windows.h>
 using namespace std;
 
+#define eger if
+
 struct lesh
 {
-
+	int a = 20;
 };
 
 
 void main()
 {
-
+	if (15 > 0)
+	{
+		cout << "Salam\n";
+	}
+	lesh s;
+	cout << s.a << endl;
 	char *str = new char[200];
 	int size = 9;
 	char **arr2 = new char*[size];
