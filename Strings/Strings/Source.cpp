@@ -3,14 +3,11 @@
 #include "Functions.h"
 using namespace std;
 
-void change_space(char *arr);
-void print(char *arr);
-void find_num(char *arr, int &letter, int &number, int &other);
-void words_count(char *arr, int &words);
-void is_palendrom(char *arr, bool &palendrom);
+
 
 void main()
 {
+	char *pP;
 	const int size = 100;
 	int oper = 0;
 	cout << "Vvedite nomer zadaniya: ";
@@ -62,10 +59,11 @@ void main()
 	else if (oper == 7)
 	{
 		char arr1[size] = {"Hello"};
-		char arr2[size] = {"World!"};
+		char arr2[size] = {"World"};
+		char arr3[size] = { "Big World is Great!" };
 		char index;
 		cout << "Stroka1 - " << arr1 << "\nStroka2 - " << arr2 << endl;
-		cout << "Vvedite index podzadaniya: ";
+		cout << "Vvedite index podzadaniya(a,b,c,d,e,f,g): ";
 		cin >> index;
 		switch (index)
 		{
@@ -85,71 +83,30 @@ void main()
 			cout << mystrchr(arr1, s) << endl;
 			break;
 		case 'e':
-
+			pP = mystrstr(arr3, "is gr");
+			if (pP != 0)
+				cout << pP << endl;
+			break;
+		case 'f':
+			cout << "Stroki ravni:\t\t" << mystrcmp("Hello", "Hello") << endl;
+			cout << "Pervaya stroka bolwe:\t" << mystrcmp("Hello World", "Hello") << endl;
+			cout << "Vtoraya stroka bolwe:\t" << mystrcmp("Hello", "Hello World") << endl;
+			break;
+		case 'g':
+			cout << StringToNumber("123456") << endl;
+			break;
+		case 'h':
+			pP = NumberToString(12345);
+			cout << pP << endl;
+			break;
+		case 'i':
+			cout << Uppercase(arr3) << endl;
+			break;
+		case 'j':
+			cout << Lowercase(arr3) << endl;
 			break;
 		default:
 			break;
 		}
-	}
-}
-
-//Funcitons
-void change_space(char *arr)
-{
-	for (int i = 0; arr[i] != '\0'; i++)
-	{
-		if (arr[i] == 32)
-		{
-			arr[i] = '\t';
-		}
-	}
-}
-
-void print(char *arr)
-{
-	int i = 0;
-	while (arr[i] != '\0')
-	{
-		cout << arr[i];
-		i++;
-	}
-	cout << endl;
-}
-
-void find_num(char *arr, int &letter, int &number, int &other)
-{
-	for (int i = 0; arr[i] != '\0'; i++)
-	{
-		if (arr[i] >= 48 && arr[i] <= 57)
-			number++;
-		else if ((arr[i] >= 65 && arr[i] <= 90) || (arr[i] >= 97 && arr[i] <= 122))
-			letter++;
-		else
-			other++;
-	}
-}
-
-void words_count(char *arr, int &words) // 1 bukvu za slovo ne schitaet
-{
-	int count = 0;
-	for (int i = 0; arr[i] != '\0'; i++)
-	{
-		while (arr[i] == 45 || (arr[i] >= 65 && arr[i] <= 90) || (arr[i] >= 97 && arr[i] <= 122))
-		{
-			count++;
-			i++;
-		}
-		count > 1 ? words++ : 0;
-		count = 0;
-	}
-}
-
-void is_palendrom(char *arr, bool &palendrom)
-{
-	int size = mystrlen(arr);
-	for (int i = 0; i < size; i++)
-	{
-		if (arr[i] != arr[size - 1 - i])
-			palendrom = false;
 	}
 }
