@@ -127,31 +127,22 @@ char * mystrstr(char * str1, char * str2)
 
 int mystrcmp(const char * str1, const char * str2)
 {
-	int size1 = 0, size2 = 0;
-	bool match = true;
-	if (mystrlen(str1) == mystrlen(str2))
+	int size1 = mystrlen(str1);
+	int size2 = mystrlen(str2);
+	for (int i = 0; str1[i] != '\0' || str1[i] != '\0';  i++)
 	{
-		for (int i = 0; str1[i] != '\0' && match; i++)
-		{
-			if (str1[i] != str2[i])
-				match = false;
-		}
-		if (match)
-			return 0;
+		if (str1[i] > str2[i])
+			return 1;
+		else if (str1[i] < str2[i])
+			return -1;
 	}
-	for (int i = 0; str1[i] != '\0'; i++)
-	{
-		size1 += str1[i];
-	}
-	for (int i = 0; str2[i] != '\0'; i++)
-	{
-		size2 += str2[i];
-	}
-
 	if (size1 > size2)
 		return 1;
-	else
+	else if (size1 < size2)
 		return -1;
+	else
+		return 0;
+
 }
 
 int StringToNumber(char * str)
@@ -172,7 +163,7 @@ int StringToNumber(char * str)
 
 char * NumberToString(int number)
 {
-	
+
 	int temp_numb = 0;
 	int size = 0;
 	for (int i = 0; number > 0; i++)
@@ -185,7 +176,7 @@ char * NumberToString(int number)
 	char* str = new char[1000];
 	for (int i = 0; temp_numb > 0; i++)
 	{
-		str[i] = (temp_numb % 10) +48;
+		str[i] = (temp_numb % 10) + 48;
 		temp_numb /= 10;
 		if (temp_numb == 0)
 			str[size] = '\0';
@@ -215,4 +206,16 @@ char * Lowercase(char * str1)
 		}
 	}
 	return str1;
+}
+
+char * mystrrev(char * str)
+{
+	char * newstr = new char[100];
+	int size = mystrlen(str);
+	for (int i = size-1, j = 0; i >= 0; i--, j++)
+	{
+		newstr[j] = str[i];
+	}
+	newstr[size] = '\0';
+	return newstr;
 }

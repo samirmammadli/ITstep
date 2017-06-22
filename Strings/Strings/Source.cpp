@@ -1,14 +1,15 @@
 #include <iostream>
 #include <conio.h>
 #include "Functions.h"
+
 using namespace std;
 
 
 
 void main()
 {
-	char *pP;
 	const int size = 100;
+	char *pP;
 	int oper = 0;
 	cout << "Vvedite nomer zadaniya: ";
 	cin >> oper;
@@ -88,9 +89,9 @@ void main()
 				cout << pP << endl;
 			break;
 		case 'f':
-			cout << "Stroki ravni:\t\t" << mystrcmp("Hello", "Hello") << endl;
-			cout << "Pervaya stroka bolwe:\t" << mystrcmp("Hello World", "Hello") << endl;
-			cout << "Vtoraya stroka bolwe:\t" << mystrcmp("Hello", "Hello World") << endl;
+			cout << "Sravnenie \"Hello\" i \"Hello\":\t\t" << mystrcmp("Hello", "Hello") << endl;
+			cout << "Sravnenie \"Hello World\" i \"Hello\":\t" << mystrcmp("Hello World", "Hello") << endl;
+			cout << "Sravnenie \"Hello\" i \"Hello World\":\t" << mystrcmp("Hello", "Hello World") << endl;
 			break;
 		case 'g':
 			cout << StringToNumber("123456") << endl;
@@ -104,6 +105,9 @@ void main()
 			break;
 		case 'j':
 			cout << Lowercase(arr3) << endl;
+			break;
+		case 'k':
+			cout << mystrrev(arr3) << endl;
 			break;
 		default:
 			break;
