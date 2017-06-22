@@ -1,29 +1,23 @@
 #include <iostream>
 #include "Functions.h"
-#define SIZE 10
 #define STRING_SIZE 100
 using namespace std;
 
 
 void main()
 {
-	int cont_count = 0;
+	int SIZE = 4;
 	int operation;
 	char **list = new char*[SIZE];
 	for (int i = 0; i < SIZE; i++)
 	{
 		list[i] = new char[STRING_SIZE]{};
 	}
-	strcpy(list[0], "Samir Mammadli");
-	strcpy(list[1], "Kamal Jafarov");
-	strcpy(list[2], "Ibrahim Aliyev");
-	strcpy(list[3], "Rufat Gaibov");
+	strcpy(list[0], "Damir Mammadli");
+	strcpy(list[1], "Camal Jafarov");
+	strcpy(list[2], "Bbrahim Aliyev");
+	strcpy(list[3], "Aufat Gaibov");
 
-	for (int i = 0; i < SIZE; i++)
-	{
-		if (list[i][0] != '\0')
-			cont_count++;
-	}
 //
 	cout << "\t\t\t*****Contact Book.*****\n";
 	cout << "Select an action:\n\n";
@@ -38,9 +32,13 @@ void main()
 	cin >> operation;
 	disp_list(list, SIZE);
 
-	add_cont(list, SIZE, STRING_SIZE, cont_count);
+	add_cont(list, SIZE, STRING_SIZE);
 	cout << endl;
 	sort_cont(list, SIZE, STRING_SIZE);
 	disp_list(list, SIZE);
+	cout << endl;
+	delete_cont(list, SIZE, STRING_SIZE, 3);
+	disp_list(list, SIZE);
+	cout << endl;
 
 }

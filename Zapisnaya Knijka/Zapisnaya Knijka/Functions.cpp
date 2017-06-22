@@ -4,28 +4,33 @@ using namespace std;
 
 void disp_list(char **str, int w)
 {
-	for (int i = 0; i < w && str[i][0] != '\0'; i++)
+	for (int i = 0; i < w ; i++)
 	{
 		cout << i+1 << ". " << str[i] << endl;
 	}
 }
 
-void add_cont(char **str, int w, int h, int &count)
+void add_cont(char **&str, int &w, int h)
 {
-	bool empty_line = false;
-
-	for (int i = 0; i < w && !empty_line; i++)
+	char **temp = new char*[w+1];
+	for (int i = 0; i < w+1; i++)
 	{
-		if (str[i][0] == '\0')
-		{
-			cout << "Please, enter Contact Name:\n";
-			getchar();
-			cin.getline(str[i], h);
-			empty_line = true;
-			count++;
-		}
+		temp[i] = new char[h];
 	}
-	disp_list(str, w);
+	for (int i = 0; i < w; i++)
+	{
+		strcpy(temp[i], str[i]);
+	}
+	cout << "Please, input Name to new contact:\n";
+	getchar();
+	cin.getline(temp[w], h);
+	for (int i = 0; i < w; i++)
+	{
+		delete[]str[i];
+	}
+	delete[]str;
+	str = temp;
+	w++;
 }
 
 void sort_cont(char **str, int w, int h)
@@ -33,7 +38,7 @@ void sort_cont(char **str, int w, int h)
 	char *temp = new char[h];
 	for (int i = 0; i < w; i++)
 	{
-		for (int j = i+1; j < w-1; j++)
+		for (int j = i+1; j < w; j++)
 		{
 			if (str[i][0] > str[j][0])
 			{
@@ -44,5 +49,25 @@ void sort_cont(char **str, int w, int h)
 		}
 	}
 	delete[]temp;
-	disp_list(str, w);
+}
+
+void delete_cont(char **&str, int &w, int h, int contact_number)
+{
+	char **temp_str = new char*[w-1];
+	for (int i = 0; i < w-1; i++)
+	{
+		temp_str[i] = new char[h];
+	}
+	strcpy(str[contact_number-1], str[w-1]);
+	for (int i = 0; i < w-1; i++)
+	{
+		strcpy(temp_str[i], str[i]);
+	}
+	for (int i = 0; i < w; i++)
+	{
+		delete[]str[i];
+	}
+	delete[]str;
+	str = temp_str;
+	w--;
 }
