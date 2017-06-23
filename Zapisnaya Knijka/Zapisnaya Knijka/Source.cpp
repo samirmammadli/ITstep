@@ -1,47 +1,74 @@
 #include <iostream>
+#include <Windows.h>
 #include "Functions.h"
+#define COORDS(row, col) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
 #define String_Length 100
 using namespace std;
 
 
 void main()
 {
+	short def_col = 13;
+	hideCursor();
 	int SIZE = 4;
+	short index = 0;
 	int operation;
 	char **list = new char*[SIZE];
 	for (int i = 0; i < SIZE; i++)
 	{
-		list[i] = new char[String_Length]{};
+		list[i] = new char[String_Length] {};
 	}
 	strcpy(list[0], "Damir Mammadli");
 	strcpy(list[1], "Camal Jafarov");
 	strcpy(list[2], "Bbrahim Aliyev");
 	strcpy(list[3], "Aufat Gaibov");
 
-//
-	cout << "\t\t\t*****Contact Book.*****\n";
-	cout << "Select an action:\n\n";
-	cout << "1. Display All Contacts.\n";
-	cout << "2. Add new Contact.\n";
-	cout << "3. Delete Contact.\n";
-	cout << "4. Edit Contact.\n";
-	cout << "5. Sort Contacts by Name.\n";
-	cout << "6. Search Contact.\n";
-	cout << "7. Exit.\n";
+	//
+	while (true)
+	{
+		COORDS(60, 0);
+		cout << "*****Contact Book.*****\n\n\n";
+		COORDS(60, 2);
+		cout << "Select an action:\n\n";
+		COORDS(60, 3);
+		cout << "1. Display All Contacts.\n";
+		COORDS(60, 4);
+		cout << "2. Add new Contact.\n";
+		COORDS(60, 5);
+		cout << "3. Delete Contact.\n";
+		COORDS(60, 6);
+		cout << "4. Edit Contact.\n";
+		COORDS(60, 7);
+		cout << "5. Sort Contacts by Name.\n";
+		COORDS(60, 8);
+		cout << "6. Search Contact.\n";
+		COORDS(60, 9);
+		cout << "7. Exit.\n";
+		COORDS(0, def_col);
 
-	cin >> operation;
-	cin.ignore();
-	disp_list(list, SIZE);
+		cin >> operation;
+		cin.ignore();
 
-	add_cont(list, SIZE, String_Length);
-	cout << endl;
-	sort_cont(list, SIZE, String_Length);
-	disp_list(list, SIZE);
-	cout << endl;
-	delete_cont(list, SIZE, String_Length, 3);
-	sort_cont(list, SIZE, String_Length);
-	disp_list(list, SIZE);
-	cout << endl;
-	edit_cont(list, String_Length, 1);
-	disp_list(list, SIZE);
+		if (operation == 1)
+		{
+			disp_list(list, SIZE, def_col);
+		}
+		else if (operation == 2)
+		{
+			system("cls");
+			add_cont(list, SIZE, String_Length);
+		}
+		else if (operation == 3)
+		{
+			system("cls");
+			cout << "Input contact number:\n";
+			cin >> index;
+			delete_cont(list, SIZE, String_Length, index);
+		}
+		else if (operation == 5)
+		{
+			sort_cont(list, SIZE, String_Length);
+			disp_list(list, SIZE, def_col);
+		}
+	}
 }

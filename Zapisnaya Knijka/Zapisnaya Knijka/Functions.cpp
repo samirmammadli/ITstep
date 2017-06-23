@@ -1,13 +1,23 @@
 #include <iostream>
+#include <time.h>
 #include <conio.h>
+#include <windows.h>
+#define COORDS(row, col) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
 using namespace std;
 
-void disp_list(char **str, int w)
+
+void disp_list(char **str, int w, short &col)
 {
+	COORDS(0, 2);
+	cout << "Contacts:\n";
 	for (int i = 0; i < w ; i++)
 	{
-		cout << i+1 << ". " << str[i] << endl;
+		COORDS(0, i + 4);
+		cout << i+1 << ". " << str[i] << "\t\t\t" << endl;
+		if (i > 7)
+			col = i+6;
 	}
+	COORDS(0, col);
 }
 
 void add_cont(char **&str, int &w, int h)
@@ -32,6 +42,7 @@ void add_cont(char **&str, int &w, int h)
 	w++;
 	cout << "[+] New Contact Added!\n";
 	system("pause");
+	system("cls");
 }
 
 void sort_cont(char **str, int w, int h)
@@ -50,29 +61,36 @@ void sort_cont(char **str, int w, int h)
 		}
 	}
 	delete[]temp;
+	system("cls");
 }
 
 void delete_cont(char **&str, int &w, int h, int contact_number)
 {
-	char **temp_str = new char*[w-1];
-	for (int i = 0; i < w-1; i++)
+	if (contact_number < 1 || contact_number > w)
+		cout << "[-] Incorrect contact number inputed!\n";
+	else
 	{
-		temp_str[i] = new char[h];
+		char **temp_str = new char*[w - 1];
+		for (int i = 0; i < w - 1; i++)
+		{
+			temp_str[i] = new char[h];
+		}
+		strcpy(str[contact_number - 1], str[w - 1]);
+		for (int i = 0; i < w - 1; i++)
+		{
+			strcpy(temp_str[i], str[i]);
+		}
+		for (int i = 0; i < w; i++)
+		{
+			delete[]str[i];
+		}
+		delete[]str;
+		str = temp_str;
+		w--;
+		cout << "[+] Contact Deleted!\n";
 	}
-	strcpy(str[contact_number-1], str[w-1]);
-	for (int i = 0; i < w-1; i++)
-	{
-		strcpy(temp_str[i], str[i]);
-	}
-	for (int i = 0; i < w; i++)
-	{
-		delete[]str[i];
-	}
-	delete[]str;
-	str = temp_str;
-	w--;
-	cout << "[+] Contact Deleted!\n";
 	system("pause");
+	system("cls");
 }
 
 void edit_cont(char **str, int h, int contact_number)
@@ -82,4 +100,12 @@ void edit_cont(char **str, int h, int contact_number)
 	cin.getline(str[contact_number - 1], h);
 	cout << "[+] Contact changed!\n";
 	system("pause");
+}
+
+void hideCursor()
+{
+	CONSOLE_CURSOR_INFO info;
+	info.bVisible = false;
+	info.dwSize = 1;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
