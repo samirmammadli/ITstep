@@ -9,37 +9,50 @@ using namespace std;
 void disp_list(char **str, int w, short &col)
 {
 	COORDS(0, 2);
-	cout << "Contacts:\n";
-	for (int i = 0; i < w ; i++)
+	if (w == 1 && str[0][0] == '\0')
+		cout << "There is no contacts!\n";
+	else
 	{
-		COORDS(0, i + 4);
-		cout << i+1 << ". " << str[i] << "\t\t\t" << endl;
-		if (i > 7)
-			col = i+6;
+		cout << "Contacts:\n";
+		for (int i = 0; i < w; i++)
+		{
+			COORDS(0, i + 4);
+			cout << i + 1 << ". " << str[i] << "\t" << endl;
+			if (i > 7)
+				col = i + 6;
+		}
 	}
 	COORDS(0, col);
 }
 
 void add_cont(char **&str, int &w, int h)
 {
-	char **temp = new char*[w+1];
-	for (int i = 0; i < w+1; i++)
+	if (w == 1 && str[0][0] == '\0')
 	{
-		temp[i] = new char[h];
+		cout << "Please, input Name of new contact:\n";
+		cin.getline(str[0], h);
 	}
-	for (int i = 0; i < w; i++)
+	else
 	{
-		strcpy(temp[i], str[i]);
+		char **temp = new char*[w + 1];
+		for (int i = 0; i < w + 1; i++)
+		{
+			temp[i] = new char[h];
+		}
+		for (int i = 0; i < w; i++)
+		{
+			strcpy(temp[i], str[i]);
+		}
+		cout << "Please, input Name of new contact:\n";
+		cin.getline(temp[w], h);
+		for (int i = 0; i < w; i++)
+		{
+			delete[]str[i];
+		}
+		delete[]str;
+		str = temp;
+		w++;
 	}
-	cout << "Please, input Name to new contact:\n";
-	cin.getline(temp[w], h);
-	for (int i = 0; i < w; i++)
-	{
-		delete[]str[i];
-	}
-	delete[]str;
-	str = temp;
-	w++;
 	cout << "[+] New Contact Added!\n";
 	system("pause");
 	system("cls");
@@ -47,12 +60,14 @@ void add_cont(char **&str, int &w, int h)
 
 void sort_cont(char **str, int w, int h)
 {
+	short biggest_string = 0;
 	char *temp = new char[h];
 	for (int i = 0; i < w; i++)
 	{
 		for (int j = i+1; j < w; j++)
 		{
-			if (str[i][0] > str[j][0])
+			biggest_string = strcmp(str[i], str[j]);
+			if (biggest_string == 1)
 			{
 				strcpy(temp, str[i]);
 				strcpy(str[i], str[j]);
@@ -68,6 +83,11 @@ void delete_cont(char **&str, int &w, int h, int contact_number)
 {
 	if (contact_number < 1 || contact_number > w)
 		cout << "[-] Incorrect contact number inputed!\n";
+	else if (w == 1)
+	{
+		str[0][0] = '\0';
+		cout << "All Contacts are Deleted!\n";
+	}
 	else
 	{
 		char **temp_str = new char*[w - 1];
@@ -75,10 +95,10 @@ void delete_cont(char **&str, int &w, int h, int contact_number)
 		{
 			temp_str[i] = new char[h];
 		}
-		strcpy(str[contact_number - 1], str[w - 1]);
-		for (int i = 0; i < w - 1; i++)
+		for (int i = 0, j = 0; i < w ; i++, j++)
 		{
-			strcpy(temp_str[i], str[i]);
+			i == contact_number - 1 ? i++ : 0;
+			strcpy(temp_str[j], str[i]);
 		}
 		for (int i = 0; i < w; i++)
 		{
