@@ -22,7 +22,6 @@ void add_cont(char **&str, int &w, int h)
 		strcpy(temp[i], str[i]);
 	}
 	cout << "Please, input Name to new contact:\n";
-	getchar();
 	cin.getline(temp[w], h);
 	for (int i = 0; i < w; i++)
 	{
@@ -31,6 +30,8 @@ void add_cont(char **&str, int &w, int h)
 	delete[]str;
 	str = temp;
 	w++;
+	cout << "[+] New Contact Added!\n";
+	system("pause");
 }
 
 void sort_cont(char **str, int w, int h)
@@ -70,4 +71,15 @@ void delete_cont(char **&str, int &w, int h, int contact_number)
 	delete[]str;
 	str = temp_str;
 	w--;
+	cout << "[+] Contact Deleted!\n";
+	system("pause");
+}
+
+void edit_cont(char **str, int h, int contact_number)
+{
+	cout << contact_number << ". " << str[contact_number - 1] << endl;
+	cout << "Edit contact to: \n";
+	cin.getline(str[contact_number - 1], h);
+	cout << "[+] Contact changed!\n";
+	system("pause");
 }
