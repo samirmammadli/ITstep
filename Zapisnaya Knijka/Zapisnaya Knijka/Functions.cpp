@@ -113,13 +113,19 @@ void delete_cont(char **&str, int &w, int h, int contact_number)
 	system("cls");
 }
 
-void edit_cont(char **str, int h, int contact_number)
+void edit_cont(char **str,int w, int h, int contact_number)
 {
-	cout << contact_number << ". " << str[contact_number - 1] << endl;
-	cout << "Edit contact to: \n";
-	cin.getline(str[contact_number - 1], h);
-	cout << "[+] Contact changed!\n";
+	if (w == 1 && str[0][0] == '\0')
+		cout << "No contacts to edit!\n";
+	else
+	{
+		cout << contact_number << ". " << str[contact_number - 1] << endl;
+		cout << "Edit contact to: \n";
+		cin.getline(str[contact_number - 1], h);
+		cout << "[+] Contact changed!\n";
+	}
 	system("pause");
+	system("cls");
 }
 
 void hideCursor()

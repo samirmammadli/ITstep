@@ -65,10 +65,22 @@ void main()
 			cin >> index;
 			delete_cont(list, SIZE, String_Length, index);
 		}
+		else if (operation == 4)
+		{
+			system("cls");
+			cout << "Input contact number:\n";
+			cin >> index;
+			cin.ignore();
+			edit_cont(list, SIZE, String_Length, index);
+		}
 		else if (operation == 5)
 		{
 			sort_cont(list, SIZE, String_Length);
 			disp_list(list, SIZE, def_col);
+		}
+		else if (operation == 7)
+		{
+			exit(0);
 		}
 	}
 }
