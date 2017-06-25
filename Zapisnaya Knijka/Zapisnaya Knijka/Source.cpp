@@ -18,10 +18,10 @@ void main()
 	{
 		list[i] = new char[String_Length] {};
 	}
-	strcpy(list[0], "Damir Mammadli");
-	strcpy(list[1], "Camal Jafarov");
-	strcpy(list[2], "Bbrahim Aliyev");
-	strcpy(list[3], "Aufat Gaibov");
+	strcpy(list[0], "Samir Mammadli");
+	strcpy(list[1], "Kamal Jafarov");
+	strcpy(list[2], "Rufat Gulabli");
+	strcpy(list[3], "Vugar Yusubov");
 
 	//
 	while (true)
