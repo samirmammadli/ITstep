@@ -82,5 +82,9 @@ void main()
 		{
 			exit(0);
 		}
+		else if (operation == 6)
+		{
+			search_cont(list, SIZE, String_Length);
+		}
 	}
 }

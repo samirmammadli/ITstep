@@ -128,6 +128,28 @@ void edit_cont(char **str,int w, int h, int contact_number)
 	system("cls");
 }
 
+void search_cont(char **str, int w, int h)
+{
+	bool match = false;
+	system("cls");
+	char *str2 = new char[h] {};
+	cout << "Search for:\n";
+	cin.getline(str2, h);
+	for (int i = 0; i < w; i++)
+	{
+		if (strstr(str[i], str2) != NULL)
+		{
+			match = true;
+			COORDS(0, i + 4);
+			cout << i+1 << ". " << str[i] << endl;
+		}		
+	}
+	!match ? printf("No matching!\n") : 0;
+	delete[]str2;
+	system("pause");
+	system("cls");
+}
+
 void hideCursor()
 {
 	CONSOLE_CURSOR_INFO info;
