@@ -5,6 +5,13 @@
 #define COORDS(row, col) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
 using namespace std;
 
+void hideCursor(bool switch_cursor = false)
+{
+	CONSOLE_CURSOR_INFO info;
+	info.bVisible = switch_cursor;
+	info.dwSize = 1;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}
 
 void disp_list(char **str, int w, short &col)
 {
@@ -27,6 +34,7 @@ void disp_list(char **str, int w, short &col)
 
 void add_cont(char **&str, int &w, int h)
 {
+	hideCursor(true);
 	if (w == 1 && str[0][0] == '\0')
 	{
 		cout << "Please, input Name of new contact:\n";
@@ -54,6 +62,7 @@ void add_cont(char **&str, int &w, int h)
 		w++;
 	}
 	cout << "[+] New Contact Added!\n";
+	hideCursor();
 	system("pause");
 	system("cls");
 }
@@ -109,6 +118,7 @@ void delete_cont(char **&str, int &w, int h, int contact_number)
 		w--;
 		cout << "[+] Contact Deleted!\n";
 	}
+	hideCursor();
 	system("pause");
 	system("cls");
 }
@@ -124,12 +134,15 @@ void edit_cont(char **str,int w, int h, int contact_number)
 		cin.getline(str[contact_number - 1], h);
 		cout << "[+] Contact changed!\n";
 	}
+	hideCursor();
 	system("pause");
 	system("cls");
 }
 
 void search_cont(char **str, int w, int h)
 {
+	hideCursor(true);
+	short cursor = 2;
 	bool match = false;
 	system("cls");
 	char *str2 = new char[h] {};
@@ -140,20 +153,14 @@ void search_cont(char **str, int w, int h)
 		if (strstr(str[i], str2) != NULL)
 		{
 			match = true;
-			COORDS(0, i + 4);
+			COORDS(0, ++cursor);
 			cout << i+1 << ". " << str[i] << endl;
 		}		
 	}
 	!match ? printf("No matching!\n") : 0;
 	delete[]str2;
+	hideCursor();
 	system("pause");
 	system("cls");
 }
 
-void hideCursor()
-{
-	CONSOLE_CURSOR_INFO info;
-	info.bVisible = false;
-	info.dwSize = 1;
-	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-}

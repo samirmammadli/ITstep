@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Windows.h>
 #include "Functions.h"
+#include <conio.h>
 #define COORDS(row, col) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
 #define String_Length 100
 using namespace std;
@@ -12,7 +13,7 @@ void main()
 	hideCursor();
 	int SIZE = 4;
 	short index = 0;
-	int operation;
+	int operation = 0;
 	char **list = new char*[SIZE];
 	for (int i = 0; i < SIZE; i++)
 	{
@@ -46,8 +47,10 @@ void main()
 		cout << "7. Exit.\n";
 		COORDS(0, def_col);
 
-		cin >> operation;
-		cin.ignore();
+		//cin >> operation;
+		//cin.ignore();
+		operation = getch();
+		operation -= 48;
 
 		if (operation == 1)
 		{
@@ -61,6 +64,7 @@ void main()
 		else if (operation == 3)
 		{
 			system("cls");
+			hideCursor(true);
 			cout << "Input contact number:\n";
 			cin >> index;
 			delete_cont(list, SIZE, String_Length, index);
@@ -68,6 +72,7 @@ void main()
 		else if (operation == 4)
 		{
 			system("cls");
+			hideCursor(true);
 			cout << "Input contact number:\n";
 			cin >> index;
 			cin.ignore();
@@ -78,13 +83,13 @@ void main()
 			sort_cont(list, SIZE, String_Length);
 			disp_list(list, SIZE, def_col);
 		}
-		else if (operation == 7)
-		{
-			exit(0);
-		}
 		else if (operation == 6)
 		{
 			search_cont(list, SIZE, String_Length);
+		}
+		else if (operation == 7)
+		{
+			exit(0);
 		}
 	}
 }
