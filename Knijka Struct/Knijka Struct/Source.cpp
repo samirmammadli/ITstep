@@ -1,10 +1,27 @@
 #include <iostream>
 #include <Windows.h>
+#include "Functions.h"
 #define COORDS(row, col) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
 using namespace std;
 
+const short length = 100;
+
+struct Contact
+{
+	char name[length]{"Samir"};
+	char surname[length]{"Mammadli"};
+	short age = 0;
+	char place_of_birth[length]{"Baku"};
+};
+
+
 void main()
 {
+	int size = 2;
+	Contact **list = new Contact*[size];
+	list[0] = new Contact;
+	list[1] = list[0];
+
 	int operation = 0;
 	short def_col = 13;
 	while (true)
@@ -37,7 +54,8 @@ void main()
 		}
 		else if (operation == 2)
 		{
-			
+			cout << list[0]->age << endl << list[0]->name << endl << list[0]->surname << endl << list[0]->place_of_birth << endl;
+			cout << list[1]->age << endl << list[1]->name << endl << list[1]->surname << endl << list[1]->place_of_birth << endl;
 		}
 		else if (operation == 3)
 		{
