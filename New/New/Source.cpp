@@ -7,58 +7,29 @@ using namespace std;
 struct lesh
 {
 	int a = 20;
+	double u = 15;
+	char *Name = new char[100];
 };
 
 
 void main()
 {
-	if (15 > 0)
-	{
-		cout << "Salam\n";
-	}
-	lesh s;
-	cout << s.a << endl;
-	char *str = new char[200];
-	int size = 9;
-	char **arr2 = new char*[size];
-	for (int i = 0; i < size; i++)
-	{
-		arr2[i] = new char[200]{"Salam"};
-	}
 
-	printf("%p\n", arr2[0][0]);
-	arr2[0] = "Zahid";
-	printf("%p\n", arr2[0][0]);
-	arr2[1] = "Fatima";
-	arr2[2] = "Arif";
-	arr2[3] = "Maksim";
-	arr2[4] = "Tahir";
-	arr2[5] = "Vasif";
-	arr2[6] = "Ruslan";
-	arr2[7] = "Samir";
-	arr2[8] = "Babek";
-	
-	for (int i = 0; i < size; i++)
-	{
-		cout << arr2[i] << endl;
-	}
-	cout << arr2[2] << "\n\n\n";
+	cout << getenv("USERPROFILE") << endl;
+	//char lom[100] = "Gandila";
+	//double c = 134.1;
+	//double *cc = &c;
+	//lesh ** Contacts = new lesh*[100];
+	//for (int i = 0; i < 100; i++)
+	//{
+	//	Contacts[i] = new lesh;
+	//}
+	//Contacts[0]->a = 15;
+	//cout << Contacts[0]->a << endl;
+	//cout << Contacts[1]->a << endl;
+	//cout << Contacts[2]->a << endl;
 
-	for (int i = 0; i < size -1; i++)
-	{
-		for (int j = i+1; j < size; j++)
-		{
-			if (arr2[i][0] > arr2[j][0])
-			{
-				str = arr2[i];
-				arr2[i] = arr2[j];
-				arr2[j] = str;
-			}
-		}
-	}
-
-	for (int i = 0; i < size; i++)
-	{
-		cout << arr2[i] << endl;
-	}
+	//printf("%p\n", lom);
+	//scanf("%s", lom);
+	//cout << lom << endl;
 }

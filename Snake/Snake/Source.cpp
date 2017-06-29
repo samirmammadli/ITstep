@@ -3,7 +3,13 @@
 #include <time.h>
 #include <windows.h>
 using namespace std;
-
+void hideCursor(bool switch_cursor = false)
+{
+	CONSOLE_CURSOR_INFO info;
+	info.bVisible = switch_cursor;
+	info.dwSize = 1;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}
 // 0 - Empty
 // 1 - Wall
 // 2 - Food
@@ -11,6 +17,7 @@ using namespace std;
 void check_continue(int score);
 int main()
 {
+	hideCursor();
 	system("mode con cols=66 lines=27");
 	system("cls");
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
