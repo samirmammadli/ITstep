@@ -15,13 +15,14 @@ struct Contact
 	short age = 31;
 	char place_of_birth[length]{ "Baku" };
 };
-
+void hideCursor(bool switch_cursor);
 void addStudent(Contact **&list, int &size, const short length);
-void print(Contact **&list, int size, short &col);
+void print(Contact **list, int size, short &col, int index);
 void menu(short &operation, short def_coord);
 void delete_cont(Contact **&list, int &size);
 void sorting(Contact **&list, int size);
 void edit_cont(Contact **list, int size);
+void search_cont(Contact **list, int size,const short length);
 
 
 
@@ -47,13 +48,21 @@ enum Colors
 };
 
 
+void hideCursor(bool switch_cursor = false)
+{
+	CONSOLE_CURSOR_INFO info;
+	info.bVisible = switch_cursor;
+	info.dwSize = 1;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}
+
 void menu(short &operation, short def_coord)
 {
 	int key = 0;
 	while (key != 13)
 	{
 		COORDS(90, 0);
-		cout << "*****Contact Book.*****\n\n\n";
+		cout << "*****Contact Book*****\n\n\n";
 		COORDS(90, 2);
 		cout << "Select an action:\n\n";
 		COORDS(90, 3);
@@ -106,11 +115,22 @@ void menu(short &operation, short def_coord)
 }
 
 
-void print(Contact **&list, int size, short &col)
+void print(Contact **list, int size, short &col, int index = -1)
 {
 	COORDS(0, 2);
 	if (size < 1 )
 		cout << "There is no contacts!\n";
+	else if (index > -1)
+	{
+		COORDS(0, 3);
+		cout << "Name:   \t\tSurname:   \t\tAge:       Place of bitrh:\n";
+		COORDS(0, col);
+		printf("%d. %-21s", index + 1, list[index]->name);
+		printf("%-24s", list[index]->surname);
+		printf("%-11d", list[index]->age);
+		printf("%s\n", list[index]->place_of_birth);
+		col++;
+	}
 	else
 	{
 		cout << "Name:   \t\tSurname:   \t\tAge:       Place of bitrh:\n";
@@ -134,6 +154,7 @@ void print(Contact **&list, int size, short &col)
 
 void addStudent(Contact **&list, int &size, const short length)
 {
+	hideCursor(true);
 	system("cls");
 	Contact **temp = new Contact*[size + 1];
 	for (int i = 0; i < size; i++)
@@ -159,6 +180,7 @@ void addStudent(Contact **&list, int &size, const short length)
 
 void delete_cont(Contact **&list, int &size)
 {
+	hideCursor(true);
 	system("cls");
 	int number;
 	cout << "Enter contact number:\n";
@@ -287,6 +309,7 @@ void sorting(Contact **&list, int size)
 
 void edit_cont(Contact **list, int size)
 {
+	hideCursor(true);
 	system("cls");
 	int number = 0;
 	cout << "Enter Contact's number:\n";
@@ -308,6 +331,32 @@ void edit_cont(Contact **list, int size)
 		cin.getline(list[number]->place_of_birth, length);
 		cout << "Contact Edited!\n";
 	}
+	else
+		cout << "Wrong Contact Number!\n";
+	system("pause");
+	system("cls");
+}
+
+
+void search_cont(Contact **list, int size, const short length)
+{
+	hideCursor(true);
+	system("cls");
+	short col = 5;
+	bool found = false;
+	char *temp = new char[length];
+	cout << "Enter words to search:\n";
+	cin.getline(temp, length);
+	for (int i = 0; i < size; i++)
+	{
+		if (strstr(list[i]->name, temp) != 0  || strstr(list[i]->surname, temp) != 0)
+		{
+			print(list, size, col, i);
+			found = true;
+		}	
+	}
+	if (!found)
+		cout << "No contacts found!\n";
 	system("pause");
 	system("cls");
 }
