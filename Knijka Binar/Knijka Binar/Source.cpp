@@ -9,13 +9,10 @@ using namespace std;
 void main()
 {
 
-	FILE* CL = fopen("cont.bin", "rb+");
+	FILE* CL = fopen("cont.bin", "ab+");
 	fseek(CL, 0, SEEK_END);
-	cout << ftell(CL) << endl;
-	cout << sizeof(Contact) << endl;
 	int size = ftell(CL) / sizeof(Contact);
 	fseek(CL, 0, SEEK_SET);
-	cout << ftell(CL) << endl;
 	Contact **list = new Contact*[size];
 
 	for (int i = 0; i < size; i++)
@@ -61,7 +58,7 @@ void main()
 		{
 
 
-			CL = fopen("ujal.bin", "ab+");
+			CL = fopen("cont.bin", "wb");
 			for (int i = 0; i < size; i++)
 			{
 				fwrite(list[i], sizeof(Contact), 1, CL);

@@ -98,7 +98,7 @@ void menu(short &operation, short def_coord)
 		COORDS(90, 9);
 		if (operation == 7)
 			COLOR(DARKGREEN, BLACK);
-		cout << "7. Exit.\n";
+		cout << "7. Save and Exit.\n";
 		COLOR(DEFAULT, BLACK);
 		COORDS(0, def_coord);
 
@@ -133,14 +133,27 @@ void print(Contact **list, int size, short &col, int index = -1)
 	}
 	else
 	{
-		cout << "Name:   \t\tSurname:   \t\tAge:       Place of bitrh:\n";
+		COLOR(CYAN, BLACK);
+		cout << "Name:   ";
+		COLOR(BLUE, BLACK);
+		cout << "\t\tSurname:   ";
+		COLOR(YELLOW, BLACK);
+		cout << "\t\tAge:       ";
+		COLOR(MAGENTA, BLACK);
+		cout << "Place of bitrh : \n";
+		COLOR(DEFAULT, BLACK);
 		for (int i = 0; i < size; i++)
 		{
 			COORDS(0, i + 4);
+			COLOR(CYAN, BLACK);
 			printf("%d. %-21s", i + 1, list[i]->name);
+			COLOR(BLUE, BLACK);
 			printf("%-24s", list[i]->surname);
+			COLOR(YELLOW, BLACK);
 			printf("%-11d", list[i]->age);
+			COLOR(MAGENTA, BLACK);
 			printf("%s\n", list[i]->place_of_birth);
+			COLOR(DEFAULT, BLACK);
 			if (i > 7)
 				col = i + 6;
 		}
