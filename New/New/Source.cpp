@@ -1,41 +1,37 @@
+#include <windows.h>
 #include <iostream>
-#include <Windows.h>
+#include <conio.h>
 using namespace std;
 
-#define eger if
+//COORD crd = { 125, 54 };
+//HANDLE out_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+//SMALL_RECT src = { 0, 0, crd.X - 1, crd.Y - 1 };
+//SetConsoleWindowInfo(out_handle, true, &src);
+//SetConsoleScreenBufferSize(out_handle, crd);
 
-struct Contact
-{
-	int age = 20;
-	char name[100] = {"Salafan"};
-	char surname[100] = { "Gaflan" };
-};
+
 
 
 void main()
 {
-	Contact **firma = new Contact*[3];
-	firma[0] = new Contact{20, "Hebraloid Injenera Garina 123", "Chlenopes"};
-	FILE* f;
-	f = fopen("ujal.bin", "wb");
-	char eblo[1000] = { "Hebraloid Injenera Garina 123" };
-	char gandila[1000];
-	fwrite(firma[0], sizeof(Contact), 1, f);
-	fclose(f);
-
-
-	Contact ** xren = new Contact*[3];
-	FILE* a = fopen("ujal.bin", "rb");
-	xren[0] = new Contact;
-	fread(xren[0], sizeof(Contact), 1, a);
-	fclose(a);
 	
-	cout << xren[0]->age << endl;
-	cout << xren[0]->name << endl;
-	cout << xren[0]->surname << endl;
-	
-
-
-
-	//cout << getenv("USERPROFILE") << endl;
+	int count = 0;
+	POINT cp;
+	POINT cp2;
+	//ScreenToClient(,&cp);
+	while (true)
+	{
+		GetCursorPos(&cp);
+		cp2 = cp;
+		GetCursorPos(&cp);
+		
+		if (cp2.x != cp.x || cp2.y != cp.y)
+		{
+			system("cls");
+			cout <<"\t\t" << cp.x << " " << cp.y << "\t\t";
+		}	
+	}
+	/*Sleep(9000);
+	SetCursorPos(cp.x, cp.y);*/
+	//SetCursorPos(15, 125);
 }
