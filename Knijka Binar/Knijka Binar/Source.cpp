@@ -8,7 +8,7 @@ using namespace std;
 
 void main()
 {
-
+	
 	FILE* CL = fopen("cont.bin", "ab+");
 	fseek(CL, 0, SEEK_END);
 	int size = ftell(CL) / sizeof(Contact);
@@ -56,8 +56,6 @@ void main()
 		}
 		else if (operation == 7)
 		{
-
-
 			CL = fopen("cont.bin", "wb");
 			for (int i = 0; i < size; i++)
 			{

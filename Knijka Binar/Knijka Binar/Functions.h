@@ -7,6 +7,7 @@
 using namespace std;
 
 const short length = 40;
+int a;
 
 struct Contact
 {
@@ -15,7 +16,9 @@ struct Contact
 	short age = 31;
 	char place_of_birth[length]{ "Baku" };
 };
-void hideCursor(bool switch_cursor);
+
+
+void hideCursor(bool is_visible);
 void addStudent(Contact **&list, int &size, const short length);
 void print(Contact **list, int size, short &col, int index);
 void menu(short &operation, short def_coord);
@@ -48,10 +51,10 @@ enum Colors
 };
 
 
-void hideCursor(bool switch_cursor = false)
+void hideCursor(bool is_visible = false)
 {
 	CONSOLE_CURSOR_INFO info;
-	info.bVisible = switch_cursor;
+	info.bVisible = is_visible;
 	info.dwSize = 1;
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
