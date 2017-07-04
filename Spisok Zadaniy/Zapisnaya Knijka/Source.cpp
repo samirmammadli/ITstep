@@ -67,6 +67,7 @@ void main()
 			hideCursor(true);
 			cout << "Input contact number:\n";
 			cin >> index;
+			cin.ignore();
 			delete_cont(list, SIZE, String_Length, index);
 		}
 		else if (operation == 4)
