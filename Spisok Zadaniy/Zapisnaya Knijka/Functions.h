@@ -8,15 +8,16 @@ using namespace std;
 #define COORDS(row, col) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
 #define COLORS(fg, bg) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), bg *16 + fg )
 
-void disp_list(char **str, int w, short &col, int &pos);
-void add_cont(char **&str, int &w, int h);
-void sort_cont(char **str, int w, int h);
-void delete_cont(char **&str, int &w, int h, int contact_number);
-void edit_cont(char **str, int w, int h, int contact_number);
+
+void add_task(char **&str, int &w, int h);
 void hideCursor(bool switch_cursor);
+void delete_task(char **&str, int &w, int h, int &pos);
+void sort_tasks(char **str, int w, int h, bool side, int &pos);
 
 
-int key = 0;
+
+
+
 
 enum Colors
 {
@@ -51,159 +52,74 @@ void hideCursor(bool switch_cursor = false)
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
 
-void disp_list(char **str, int w, short &col, int &pos)
-{
-	COORDS(0, 2);
-	if (w == 1 && str[0][0] == '\0')
-	{
-		COLORS(CYAN, BLACK);
-		cout << "There is no tasks!\n";
-		COLORS(DEFAULT, BLACK);
-	}
-	else
-	{
-		COLORS(CYAN, BLACK);
-		cout << "Tasks:\n";
-		for (int i = 0; i < w; i++)
-		{
-			COORDS(0, i + 4);
-			if (i == pos)
-			{
-				COLORS(BLACK, CYAN);
-				cout << i + 1;
-				cout << ". " << str[i] << endl;
-				COLORS(DEFAULT, BLACK);
-			}
-			else
-			{
-				COLORS(CYAN, BLACK);
-				cout << i + 1;
-				COLORS(DEFAULT, BLACK);
-				cout << ". " << str[i] << endl;
-			}
-			if (i > 7)
-				col = i + 6;
-		}
-	}
-	key = getch();
-	if (key == 224)
-	{
-		key = getch();
-		{
-			if (key == 72)
-				pos > 0 ? pos-- : 0;
-			else if (key == 80)
-				pos < w - 1 ? pos++ : 0;
-		}
-	}
-	COORDS(0, col);
-}
 
-void add_cont(char **&str, int &w, int h)
+void add_task(char **&str, int &w, int h)
 {
 	hideCursor(true);
-	if (w == 1 && str[0][0] == '\0')
-	{
-		cout << "Please, input Name of new contact:\n";
-		cin.getline(str[0], h);
-	}
-	else
-	{
-		char **temp = new char*[w + 1];
-		for (int i = 0; i < w + 1; i++)
-		{
-			temp[i] = new char[h];
-		}
-		for (int i = 0; i < w; i++)
-		{
-			strcpy(temp[i], str[i]);
-		}
-		cout << "Please, input Name of new contact:\n";
-		cin.getline(temp[w], h);
-		for (int i = 0; i < w; i++)
-		{
-			delete[]str[i];
-		}
-		delete[]str;
-		str = temp;
-		w++;
-	}
-	cout << "[+] New Contact Added!\n";
-	hideCursor();
-	system("pause");
-	system("cls");
-}
-
-void sort_cont(char **str, int w, int h)
-{
-	short biggest_string = 0;
-	char *temp = new char[h];
+	char ** temp = new char*[w+1];
 	for (int i = 0; i < w; i++)
 	{
-		for (int j = i + 1; j < w; j++)
-		{
-			biggest_string = strcmp(str[i], str[j]);
-			if (biggest_string == 1)
-			{
-				strcpy(temp, str[i]);
-				strcpy(str[i], str[j]);
-				strcpy(str[j], temp);
-			}
-		}
+		temp[i] = new char[h];
+		strcpy(temp[i], str[i]);
 	}
-	delete[]temp;
+	temp[w] = new char[h];
 	system("cls");
+	cout << "Add new task:\n";
+	cin.getline(temp[w], h);
+	cout << "\n[+]Task Added!\n";
+	for (int i = 0; i < w; i++)
+	{
+		delete[]str[i];
+	}
+	w++;
+	str = temp;
+	system("pause");
+	system("cls");
+	hideCursor();
 }
 
-void delete_cont(char **&str, int &w, int h, int contact_number)
+void delete_task(char **&str, int &w, int h, int &pos)
 {
-	if (contact_number < 1 || contact_number > w)
-		cout << "[-] Incorrect contact number inputed!\n";
-	else if (w == 1)
+	if (w > 0)
 	{
-		str[0][0] = '\0';
-		cout << "All Contacts are Deleted!\n";
-	}
-	else
-	{
-		contact_number--;
-		char **temp_str = new char*[w - 1];
-		for (int i = 0; i < w - 1; i++)
-		{
-			temp_str[i] = new char[h];
-		}
+		char **list = new char*[w - 1];
 		for (int i = 0, j = 0; j < w - 1; i++, j++)
 		{
-			i == contact_number && contact_number != w - 1 ? i++ : 0;
-			strcpy(temp_str[j], str[i]);
+			list[j] = new char[h];
+			i == pos && pos != w - 1 ? i++ : 0;
+			strcpy(list[j], str[i]);
 		}
+		if (pos == w - 1)
+			pos--;
 		for (int i = 0; i < w; i++)
 		{
 			delete[]str[i];
 		}
-		delete[]str;
-		str = temp_str;
+
 		w--;
-		cout << "[+] Contact Deleted!\n";
+		str = list;
+		system("cls");
 	}
-	hideCursor();
-	system("pause");
-	system("cls");
+	
 }
 
-void edit_cont(char **str, int w, int h, int contact_number)
+void sort_tasks(char **str, int w, int h, bool side, int &pos)
 {
-	if (w == 1 && str[0][0] == '\0')
-		cout << "No contacts to edit!\n";
-	else
+	char *temp = new char[h];
+	if (side == 1 && pos < w-1)
 	{
-		cout << contact_number << ". " << str[contact_number - 1] << endl;
-		cout << "Edit contact to: \n";
-		cin.getline(str[contact_number - 1], h);
-		cout << "[+] Contact changed!\n";
+		strcpy(temp, str[pos]);
+		strcpy(str[pos], str[pos + 1]);
+		strcpy(str[pos + 1], temp);
+		pos++;
 	}
-	hideCursor();
-	system("pause");
+	else if (side == 0 && pos > 0)
+	{
+		strcpy(temp, str[pos]);
+		strcpy(str[pos], str[pos - 1]);
+		strcpy(str[pos - 1], temp);
+		pos--;
+	}
 	system("cls");
 }
 
