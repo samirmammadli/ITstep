@@ -105,7 +105,7 @@ void delete_cont(char **&str, int &w, int h, int contact_number)
 		{
 			temp_str[i] = new char[h];
 		}
-		for (int i = 0, j = 0; i < w-1 ; i++, j++)
+		for (int i = 0, j = 0; j < w-1 ; i++, j++)
 		{
 			i == contact_number && contact_number != w - 1? i++ : 0;
 			strcpy(temp_str[j], str[i]);
