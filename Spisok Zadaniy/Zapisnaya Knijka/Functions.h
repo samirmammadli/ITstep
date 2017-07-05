@@ -16,7 +16,7 @@ void edit_cont(char **str, int w, int h, int contact_number);
 void hideCursor(bool switch_cursor);
 
 
-
+int key = 0;
 
 enum Colors
 {
@@ -67,12 +67,33 @@ void disp_list(char **str, int w, short &col, int &pos)
 		for (int i = 0; i < w; i++)
 		{
 			COORDS(0, i + 4);
-			COLORS(CYAN, BLACK);
-			cout << i + 1;
-			COLORS(DEFAULT, BLACK);
-			cout << ". " << str[i] << "\t" << endl;
+			if (i == pos)
+			{
+				COLORS(BLACK, CYAN);
+				cout << i + 1;
+				cout << ". " << str[i] << endl;
+				COLORS(DEFAULT, BLACK);
+			}
+			else
+			{
+				COLORS(CYAN, BLACK);
+				cout << i + 1;
+				COLORS(DEFAULT, BLACK);
+				cout << ". " << str[i] << endl;
+			}
 			if (i > 7)
 				col = i + 6;
+		}
+	}
+	key = getch();
+	if (key == 224)
+	{
+		key = getch();
+		{
+			if (key == 72)
+				pos > 0 ? pos-- : 0;
+			else if (key == 80)
+				pos < w - 1 ? pos++ : 0;
 		}
 	}
 	COORDS(0, col);

@@ -7,6 +7,7 @@
 using namespace std;
 
 
+
 void main()
 {
 	short def_col = 13;
@@ -35,8 +36,8 @@ void main()
 		COLORS(DEFAULT, BLACK);
 		COORDS(80, 3);
 		cout << "1. Press ";
-		COLORS(CYAN, BLACK);
-		cout << "ENTER ";
+		COLORS(RED, BLACK);
+		cout << "DELETE ";
 		COLORS(DEFAULT, BLACK);
 		cout << "to remove the task.\n\n";
 		COORDS(80, 5);
@@ -51,7 +52,7 @@ void main()
 		cout << "\" to move the task up or down.\n";
 		COORDS(80, 7);
 		cout << "3. Press ";
-		COLORS(RED, BLACK);
+		COLORS(CYAN, BLACK);
 		cout << "ESCAPE";
 		COLORS(DEFAULT, BLACK);
 		cout << " to save and exit.\n";
@@ -59,7 +60,6 @@ void main()
 
 		disp_list(list, SIZE, def_col, pos);
 
-		operation = getch();
 
 		 if (operation == 2)
 		{
