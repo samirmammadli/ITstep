@@ -9,6 +9,8 @@ HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
 #define COORDS(row, col) SetConsoleCursorPosition(H, { (short)row, (short)col})
 #define COLORS(fg, bg) SetConsoleTextAttribute(H, {bg *16 + fg} )
 
+bool check_empty(FILE* f);
+
 
 void menu(char **list, short def_col);
 void save(char **str, int w, const char *patch);
@@ -43,7 +45,13 @@ enum Colors
 };
 
 
-
+bool check_empty(FILE* f)
+{
+	fseek(f, 0, SEEK_END);
+	int size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	return size;
+}
 
 
 void hideCursor(bool switch_cursor = false)
@@ -115,21 +123,14 @@ void menu(char **list, short def_col)
 
 void save(char **str, int w, const char *patch)
 {
-	
-	if (w == 0)
-		remove(patch);
-	else
+	f = fopen(patch, "w");
+	for (int i = 0; i < w; i++)
 	{
-		f = fopen(patch, "w");
-		for (int i = 0; i < w; i++)
-		{
 
-			fputs(str[i], f);
-			i < w - 1 ? fputc('\n', f) : fputc('\0', f);
-		}
-		fclose(f);
+		fputs(str[i], f);
+		i < w - 1 ? fputc('\n', f) : fputc('\0', f);
 	}
-	
+	fclose(f);
 }
 
 void init(char **&str, int &w, int h)

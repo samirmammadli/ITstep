@@ -17,7 +17,7 @@ void main()
 	char temp[String_Length];
 	sprintf(patch, "%s%s", getenv("USERPROFILE"), "\\Desktop\\tasks.txt");
 	f = fopen(patch, "r");
-	if (f != NULL)
+	if (f != NULL && check_empty(f))
 	{
 		char a;
 		for (int i = 0; !feof(f); i++)
@@ -66,9 +66,7 @@ void main()
 				if (i == pos)
 				{
 					COLORS(BLACK, CYAN);
-					cout << i + 1 << ".";
-					COLORS(DEFAULT, BLACK);
-					cout << " ";
+					cout << i + 1 << ". ";
 					COLORS(BLACK, CYAN);
 					cout << list[i] << endl;
 					COLORS(DEFAULT, BLACK);
