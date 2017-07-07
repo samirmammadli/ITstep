@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <Windows.h>
+#include <time.h>
+#include <conio.h>
 using namespace std;
 
 
@@ -33,7 +35,7 @@ enum Colors
 
 struct matrix
 {
-	char symbol = ' ';
-	short bgg = 1;
-	short fgg = 2;
+	unsigned char symbol = ' ';
+	short bg = DEFAULT;
+	short fg = BLACK;
 };
