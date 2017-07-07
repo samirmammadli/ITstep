@@ -9,6 +9,9 @@ HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
 #define COORDS(row, col) SetConsoleCursorPosition(H, { (short)row, (short)col})
 #define COLORS(fg, bg) SetConsoleTextAttribute(H, {bg *16 + fg} )
 
+
+
+
 bool check_empty(FILE* f);
 
 
@@ -47,6 +50,7 @@ enum Colors
 
 bool check_empty(FILE* f)
 {
+	COORDS(15, 18);
 	fseek(f, 0, SEEK_END);
 	int size = ftell(f);
 	fseek(f, 0, SEEK_SET);
