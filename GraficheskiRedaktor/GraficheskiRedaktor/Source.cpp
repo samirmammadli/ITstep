@@ -88,10 +88,39 @@ void main()
 					index--;
 				}
 			}
+			else if (key == 83)
+			{
+				field[index]->symbol = ' ';
+			}
 		}
-		else
+		else if (key == 8)
+		{
+			
+			if (bx > b)
+			{
+				bx--;
+				index--;
+				field[index]->symbol = ' ';
+			}
+
+		}
+		/*else if (key == 13)
+		{
+			if (ax < row + a - 1)
+			{
+				ax++;
+				index = ;
+				bx = top_left;
+			}
+		}*/
+		else 
 		{
 			field[index]->symbol = key;
+			if (bx < col + b - 1)
+			{
+				bx++;
+				index++;
+			}
 		}
 	}
 
