@@ -30,8 +30,8 @@ void main()
 
 	int key, index = 0;
 	
-	int a = top_up, ax = a;
-	int b = top_left, bx = b;
+	int a = 0, ax = top_up;
+	int b = 0, bx = top_left;
 	while (true)
 	{
 		hideCursor();
@@ -40,16 +40,16 @@ void main()
 			if (i % col == 0 && i !=0)
 			{
 				a++;
-				b = top_left;
+				b = 0;
 			}
-			COORDS(a, b);
+			COORDS(short(a + top_up), short(b + top_left));
 			COLORS(field[i]->fg, field[i]->bg);
 			cout << field[i]->symbol;
 			
 		}
 		COLORS(DEFAULT, BLACK);
 		cout << endl;
-		a = top_up, b = top_left;
+		a = 0, b = 0;
 		COORDS(ax, bx);
 		hideCursor(true);
 		key = getch();
@@ -66,7 +66,7 @@ void main()
 			}
 			else if (key == 80)
 			{
-				if (ax < row + a - 1)
+				if (ax < row + top_up - 1)
 				{
 					ax++;
 					index += col;
@@ -74,7 +74,7 @@ void main()
 			}
 			else if (key == 77)
 			{
-				if (bx < col + b - 1)
+				if (bx < col + top_left - 1)
 				{
 					bx++;
 					index++;
@@ -82,7 +82,7 @@ void main()
 			}
 			else if (key == 75)
 			{
-				if (bx > b)
+				if (bx > top_left)
 				{
 					bx--;
 					index--;
@@ -96,7 +96,7 @@ void main()
 		else if (key == 8)
 		{
 			
-			if (bx > b)
+			if (bx > top_left)
 			{
 				bx--;
 				index--;
@@ -106,17 +106,17 @@ void main()
 		}
 		/*else if (key == 13)
 		{
-			if (ax < row + a - 1)
+			if (ax < row + top_up - 1)
 			{
 				ax++;
-				index = ;
+				index = bx - bx % col;
 				bx = top_left;
 			}
 		}*/
 		else 
 		{
 			field[index]->symbol = key;
-			if (bx < col + b - 1)
+			if (bx < col + top_left - 1)
 			{
 				bx++;
 				index++;
