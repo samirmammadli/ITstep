@@ -12,6 +12,9 @@ void hideCursor(bool switch_cursor = false)
 
 void main()
 {
+
+
+
 	srand(time(NULL));
 	int top_up = 5;
 	int top_left = 15;
@@ -94,7 +97,4 @@ void main()
 			field[index]->symbol = key;
 		}
 	}
-
-
-
 }
