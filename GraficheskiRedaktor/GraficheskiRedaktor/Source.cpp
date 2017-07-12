@@ -15,7 +15,7 @@ void main()
 	srand(time(NULL));
 	short top_up = 5;
 	short top_left = 15;
-	int row = 15, col = 20;
+	int row = 15, col = 45;
 	int size = row * col;
 	COLORS(DEFAULT, BLACK);
 
@@ -23,6 +23,8 @@ void main()
 	for (int i = 0; i < size; i++)
 	{
 		field[i] = new matrix;
+		field[i]->bg = WHITE;
+		field[i]->fg = BLACK;
 		/*field[i]->bg = rand() % 11 + 5;
 		field[i]->fg = rand() % 11 + 5;
 		field[i]->symbol = rand() % 200 + 30;*/
@@ -43,7 +45,7 @@ void main()
 				b = 0;
 			}
 			COORDS(a+top_up, b+top_left);
-			COLORS(field[i]->fg, field[i]->bg);
+			a == ax && b == bx ? COLORS(field[i]->fg, DARKGREY) : COLORS(field[i]->fg, field[i]->bg);
 			cout << field[i]->symbol;
 			
 		}
@@ -51,7 +53,6 @@ void main()
 		cout << endl;
 		a = 0, b = 0;
 		COORDS(ax+top_up, bx+top_left);
-		hideCursor(true);
 		//cout << ax << endl;
 		key = getch();
 		if (key == 224)
@@ -124,7 +125,4 @@ void main()
 			}
 		}
 	}
-
-
-
 }
