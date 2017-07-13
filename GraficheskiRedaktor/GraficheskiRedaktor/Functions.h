@@ -5,11 +5,8 @@
 #include <conio.h>
 using namespace std;
 
-
-HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
-
-#define COORDS(col, row) SetConsoleCursorPosition(H, {(short)row, (short)col})
-#define COLORS(fg, bg) SetConsoleTextAttribute(H, bg * 16 + fg)
+#define COORDS(col, row) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {(short)row, (short)col})
+#define COLORS(fg, bg) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), bg * 16 + fg)
 
 enum Colors
 {
@@ -36,6 +33,12 @@ enum Colors
 struct matrix
 {
 	unsigned char symbol = ' ';
-	short bg = DEFAULT;
+	short bg = WHITE;
 	short fg = BLACK;
 };
+
+
+
+
+void print_menu(char menu[][50] , short , short , int );
+void vipe_matrix(matrix **, int);

@@ -10,21 +10,33 @@ void hideCursor(bool switch_cursor = false)
 }
 
 
+
 void main()
 {
+	
 	srand(time(NULL));
-	short top_up = 5;
-	short top_left = 15;
-	int row = 15, col = 45;
+	short top_up = 2;
+	short top_left = 5;
+	int row = 25, col = 75;
 	int size = row * col;
-	COLORS(DEFAULT, BLACK);
+	char menu[8][50] = {
+		"1. Press DEL to Erase All",
+		"2. Something",
+		"3. Something",
+		"4. Something",
+		"5. Something",
+		"6. Something",
+		"7. Something",
+		"8. Something",
+	};
+	
+	print_menu(menu, top_up, top_left, col);
+
 
 	matrix **field = new matrix*[size];
 	for (int i = 0; i < size; i++)
 	{
 		field[i] = new matrix;
-		field[i]->bg = WHITE;
-		field[i]->fg = BLACK;
 		/*field[i]->bg = rand() % 11 + 5;
 		field[i]->fg = rand() % 11 + 5;
 		field[i]->symbol = rand() % 200 + 30;*/
@@ -49,7 +61,6 @@ void main()
 			cout << field[i]->symbol;
 			
 		}
-		COLORS(DEFAULT, BLACK);
 		cout << endl;
 		a = 0, b = 0;
 		COORDS(ax+top_up, bx+top_left);
@@ -92,7 +103,8 @@ void main()
 			}
 			else if (key == 83)
 			{
-				field[index]->symbol = ' ';
+				vipe_matrix(field, size);
+				ax = 0, bx = 0, index = 0;
 			}
 		}
 		else if (key == 8)
@@ -124,5 +136,6 @@ void main()
 				index++;
 			}
 		}
+		COLORS(DEFAULT, BLACK);
 	}
 }
