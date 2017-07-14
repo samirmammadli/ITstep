@@ -1,23 +1,17 @@
 #include "Functions.h"
 
 
-void hideCursor(bool switch_cursor = false)
-{
-	CONSOLE_CURSOR_INFO info;
-	info.bVisible = switch_cursor;
-	info.dwSize = 1;
-	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-}
+
 
 
 
 void main()
 {
-	
+	system("color 17");
 	srand(time(NULL));
 	short top_up = 2;
 	short top_left = 5;
-	int row = 25, col = 75;
+	int row = 20, col = 55;
 	int size = row * col;
 	char menu[8][50] = {
 		"1. Press DEL to Erase All",
@@ -48,7 +42,7 @@ void main()
 	int b = 0, bx = b;
 	while (true)
 	{
-		hideCursor();
+		hideCursor(false);
 		for (int i = 0; i < size; i++, b++)
 		{
 			if (i % col == 0 && i !=0)

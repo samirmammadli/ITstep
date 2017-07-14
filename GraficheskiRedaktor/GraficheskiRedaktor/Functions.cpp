@@ -30,3 +30,11 @@ void vipe_matrix(matrix **field, int size)
 		field[i] = new matrix;
 	}
 }
+
+void hideCursor(bool switch_cursor)
+{
+	CONSOLE_CURSOR_INFO info;
+	info.bVisible = switch_cursor;
+	info.dwSize = 1;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}

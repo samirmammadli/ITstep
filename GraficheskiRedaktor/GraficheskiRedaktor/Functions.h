@@ -39,6 +39,6 @@ struct matrix
 
 
 
-
+void hideCursor(bool);
 void print_menu(char menu[][50] , short , short , int );
 void vipe_matrix(matrix **, int);
