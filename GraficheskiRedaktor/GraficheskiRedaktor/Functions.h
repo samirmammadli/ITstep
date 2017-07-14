@@ -8,6 +8,9 @@ using namespace std;
 #define COORDS(col, row) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {(short)row, (short)col})
 #define COLORS(fg, bg) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), bg * 16 + fg)
 
+
+
+
 enum Colors
 {
 	BLACK,
@@ -38,7 +41,19 @@ struct matrix
 };
 
 
-
+//void load(matrix **&, int, FILE*&);
+//bool isempty(FILE *);
 void hideCursor(bool);
 void print_menu(char menu[][50] , short , short , int );
 void vipe_matrix(matrix **, int);
+
+//bool isempty(FILE * f)
+//{
+//	bool notempty;
+//	fseek(f, 0, SEEK_END);
+//	notempty = ftell(f);
+//	fseek(f, 0, SEEK_SET);
+//	return notempty;
+//}
+
+

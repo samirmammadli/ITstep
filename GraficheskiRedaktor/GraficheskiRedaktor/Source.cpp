@@ -1,12 +1,35 @@
 #include "Functions.h"
 
+FILE *f;
 
+void load_matrix(matrix **&field, int size, FILE* f)
+{
+	f = fopen("file.bin", "rb");
+	if (f != NULL)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			fread(field[i], sizeof(matrix), 1, f);
+		}
+		fclose(f);
+	}
+}
 
+void write_matrix(matrix **field, int size, FILE *f)
+{
+	f = fopen("file.bin", "wb");
+	for (int i = 0; i < size; i++)
+	{
+		fwrite(field[i], sizeof(matrix), 1, f);
+	}
+	fclose(f);
+}
 
 
 
 void main()
 {
+	
 	system("color 17");
 	srand(time(NULL));
 	short top_up = 2;
@@ -31,11 +54,10 @@ void main()
 	for (int i = 0; i < size; i++)
 	{
 		field[i] = new matrix;
-		/*field[i]->bg = rand() % 11 + 5;
-		field[i]->fg = rand() % 11 + 5;
-		field[i]->symbol = rand() % 200 + 30;*/
 	}
 
+	load_matrix(field, size, f);
+	
 	int key, index = 0;
 	
 	int a = 0, ax = a;
@@ -120,6 +142,11 @@ void main()
 				index = ax*col;
 				bx = 0;
 			}
+		}
+		else if (key == 27)
+		{
+			write_matrix(field, size, f);
+			exit(0);
 		}
 		else 
 		{

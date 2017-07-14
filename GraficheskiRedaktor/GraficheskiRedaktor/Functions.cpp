@@ -38,3 +38,4 @@ void hideCursor(bool switch_cursor)
 	info.dwSize = 1;
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
+
