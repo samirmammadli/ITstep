@@ -6,12 +6,12 @@ void print_menu(char menu[][50], short top_up, short top_left, int col)
 	COORDS(top_up -2, top_left);
 	cout << "************************************";
 	COORDS(top_up - 1, top_left);
-	cout << "*************** Menu ***************";
+	cout << "************* Symbols **************";
 
 	for (short i = 0; i < 8; i++)
 	{
 		COORDS(top_up + i, top_left);
-		printf("** %-31s", menu[i]);
+		printf("**      %-26s", menu[i]);
 		cout << "**";
 		if (i == 7)
 		{

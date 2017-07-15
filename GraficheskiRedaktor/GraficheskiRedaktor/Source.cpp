@@ -36,15 +36,16 @@ void main()
 	short top_left = 5;
 	int row = 20, col = 55;
 	int size = row * col;
+	char curr_symb = '.' ;
 	char menu[8][50] = {
-		"1. Press DEL to Erase All",
-		"2. Something",
-		"3. Something",
-		"4. Something",
-		"5. Something",
-		"6. Something",
-		"7. Something",
-		"8. Something",
+		"Press F1 to '.'",
+		"Press F2 to '+'",
+		"Press F3 to '*'",
+		"Press F4 to '-'",
+		"Press F5 to '_'",
+		"Press F6 to '@'",
+		"Press ESCAPE to Save",
+		"Press DEL to Erase All"
 	};
 	
 	print_menu(menu, top_up, top_left, col);
@@ -80,7 +81,6 @@ void main()
 		cout << endl;
 		a = 0, b = 0;
 		COORDS(ax+top_up, bx+top_left);
-		//cout << ax << endl;
 		key = getch();
 		if (key == 224)
 		{
@@ -123,39 +123,55 @@ void main()
 				ax = 0, bx = 0, index = 0;
 			}
 		}
+		else if (key == 0)
+		{
+			key = getch();
+			if (key == 59)
+			{
+				curr_symb = '.';
+			}
+			else if (key == 60)
+			{
+				curr_symb = '+';
+			}
+			else if (key == 61)
+			{
+				curr_symb = '*';
+			}
+			else if (key == 62)
+			{
+				curr_symb = '-';
+			}
+			else if (key == 63)
+			{
+				curr_symb = '_';
+			}
+			else if (key == 64)
+			{
+				curr_symb = '@';
+			}
+		}
 		else if (key == 8)
 		{
 			
 			if (bx > b)
 			{
-				bx--;
-				index--;
 				field[index]->symbol = ' ';
+				bx--;
+				index--;	
 			}
+			else 
+				field[index]->symbol = ' ';
 
 		}
 		else if (key == 13)
 		{
-			if (ax < row + a - 1)
-			{
-				ax++;
-				index = ax*col;
-				bx = 0;
-			}
+			field[index]->symbol = curr_symb;
 		}
 		else if (key == 27)
 		{
 			write_matrix(field, size, f);
 			exit(0);
-		}
-		else 
-		{
-			field[index]->symbol = key;
-			if (bx < col + b - 1)
-			{
-				bx++;
-				index++;
-			}
 		}
 		COLORS(DEFAULT, BLACK);
 	}
