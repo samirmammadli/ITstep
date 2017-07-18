@@ -46,6 +46,8 @@ struct matrix
 void hideCursor(bool);
 void print_menu(char menu[][50] , short , short , int );
 void vipe_matrix(matrix **, int);
+void write_matrix(matrix **field, int size, FILE *f);
+void control(matrix **&field, int &ax, int &bx, int &index, int row, int col, int size, char &curr_symb, FILE* f);
 
 //bool isempty(FILE * f)
 //{
