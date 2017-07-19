@@ -50,8 +50,9 @@ void main()
 		{
 			for (int j = 0; j < col; j++)
 			{
-				/*field[i][j].fg = rand() % 2 + 4;
-				field[i][j].bg = rand() % 2 + 4;*/
+				/*field[i][j].fg = rand() % 17;
+				field[i][j].bg = rand() % 17;
+				field[i][j].symbol = rand() % 94 + 32;*/
 				COORDS(i + top_up, j + top_left);
 				i == ax && j == bx ? COLORS(field[i][j].fg, DARKGREY) : COLORS(field[i][j].fg, field[i][j].bg);
 				cout << field[i][j].symbol;
