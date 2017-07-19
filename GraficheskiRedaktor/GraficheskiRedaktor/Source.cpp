@@ -2,23 +2,6 @@
 
 FILE *f;
 
-void load_matrix(matrix **&field, int size, FILE* f)
-{
-	f = fopen("file.bin", "rb");
-	if (f != NULL)
-	{
-		for (int i = 0; i < size; i++)
-		{
-			fread(field[i], sizeof(matrix), 1, f);
-		}
-		fclose(f);
-	}
-}
-
-
-
-
-
 void main()
 {
 	
@@ -27,21 +10,21 @@ void main()
 	short top_up = 2;
 	short top_left = 5;
 	int row = 20, col = 55;
-	int size = row * col;
 	char curr_symb = '.' ;
 	char menu[][50] = {
 		"Press F1 to '.'",
 		"Press F2 to '+'",
 		"Press F3 to '*'",
-		"Press F4 to '-'",
+		"Press F4 to '@'",
 		"Press F5 to '_'",
-		"Press F6 to '@'",
-		"Press ESCAPE to Save",
+		"Press F6 to '-'",
+		"Press BACKSPACE to delete symbol",
 		"Press DEL to Erase All",
-		"Red",
+		"Press ESCAPE to Save",
+		"White",
 		"Green",
 		"Yellow",
-		"White",
+		"Red",
 		"Black",
 		"Blue"
 	};
@@ -49,39 +32,32 @@ void main()
 	print_menu(menu, top_up, top_left, col);
 
 
-	matrix **field = new matrix*[size];
-	for (int i = 0; i < size; i++)
+	matrix **field = new matrix*[row];
+	for (int i = 0; i < row; i++)
 	{
-		field[i] = new matrix;
+		field[i] = new matrix[col];
 	}
 
-	load_matrix(field, size, f);
+	load_matrix(field, row, col, f);
 	
-	int index = 0;
 	
-	int a = 0, ax = a;
-	int b = 0, bx = b;
+	int ax = 0;
+	int bx = 0;
 	while (true)
 	{
 		hideCursor(false);
-		for (int i = 0; i < size; i++, b++)
+		for (int i = 0; i < row; i++)
 		{
-			if (i % col == 0 && i !=0)
+			for (int j = 0; j < col; j++)
 			{
-				a++;
-				b = 0;
+				/*field[i][j].fg = rand() % 2 + 4;
+				field[i][j].bg = rand() % 2 + 4;*/
+				COORDS(i + top_up, j + top_left);
+				i == ax && j == bx ? COLORS(field[i][j].fg, DARKGREY) : COLORS(field[i][j].fg, field[i][j].bg);
+				cout << field[i][j].symbol;
 			}
-			COORDS(a+top_up, b+top_left);
-			a == ax && b == bx ? COLORS(field[i]->fg, DARKGREY) : COLORS(field[i]->fg, field[i]->bg);
-			cout << field[i]->symbol;
-			
 		}
-		cout << endl;
-		a = 0, b = 0;
-		COORDS(ax+top_up, bx+top_left);
-		
-		control(field, ax, bx, index, row, col, size, curr_symb, f);
-
-		COLORS(DEFAULT, BLACK);
+		COLORS(DEFAULT, DARKBLUE);
+		control(field, ax, bx, row, col, curr_symb, f);
 	}
 }
