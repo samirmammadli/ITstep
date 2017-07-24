@@ -14,16 +14,24 @@ enum Direction {
 	UP, DOWN, LEFT, RIGHT
 };
 
-void fillField(Cell field[70][50])
+
+const int row = 50;
+const int col = 50;
+
+
+
+
+void fillField(Cell field[row][col], int foodx, int foody)
 {
-	for (int i = 0; i < 70; i++)
+
+	for (int i = 0; i < row; i++)
 	{
-		for (int j = 0; j < 50; j++)
+		for (int j = 0; j < col; j++)
 		{
-			if (i == 0 || j == 0 || i == 69 || j == 49)
+			if (i == 0 || j == 0 || i == row - 1 || j == col - 1)
 				field[i][j] = WALL;
-			else
-				field[i][j] = Cell(rand() % 2);
+			else if (i == foodx && j == foody)
+				field[i][j] = FOOD;
 		}
 	}
 }
@@ -47,9 +55,13 @@ struct Player
 	int y;
 };
 
+
 void main()
 {
 	srand(time(0));
+
+	int foodx = rand() % (row -3) + 1;
+	int foody = rand() % (col - 3) + 1;
 
 	//Data section
 	ALLEGRO_DISPLAY* display = nullptr;
@@ -60,8 +72,8 @@ void main()
 	ALLEGRO_BITMAP* background = nullptr;
 	ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
 	ALLEGRO_EVENT event;
-	Cell field[70][50] = {};
-	Player ghost = { 25, 25 };
+	Cell field[row][col] = {};
+	Player ghost = { row / 2, col/2 };
 	Direction ghost_direction = UP;
 
 	//Init section
@@ -70,32 +82,33 @@ void main()
 	al_install_keyboard();
 
 	//Settings
-	display = al_create_display(700, 500);
+	display = al_create_display(500, 500);
 	empty = al_load_bitmap("empty.jpg");
 	wall = al_load_bitmap("wall.jpg");
 	food = al_load_bitmap("food.png");
 	player = al_load_bitmap("player.png");
 	background = al_load_bitmap("background.jpg");
 	
-	fillField(field);
+	fillField(field, foodx, foody);
 	event_queue = al_create_event_queue();
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
+
+	
 
 
 	//Game loop
 	while (true)
 	{
+		al_rest(0.05);
 		al_flip_display();
-
-
 		//Drawing
 
-		al_clear_to_color(al_map_rgb(0, 0, 0));
+		//al_clear_to_color(al_map_rgb(0, 0, 0));
 		al_draw_bitmap(background, 0, 0, 0);
 
-		for (int i = 0; i < 70; i++)
+		for (int i = 0; i < row; i++)
 		{
-			for (int j = 0; j < 50; j++)
+			for (int j = 0; j < col; j++)
 			{
 				/*if (field[i][j] == EMPTY)
 					al_draw_bitmap(empty, i * 10, j * 10, 0);*/
@@ -104,7 +117,7 @@ void main()
 				else if (field[i][j] == FOOD)
 				{
 					//al_draw_bitmap(empty, i * 10, j * 10, 0);
-					al_draw_scaled_rotated_bitmap(food, 0, 0, i * 10, j * 10, 0.5, 0.5, 0, 0);
+					al_draw_scaled_rotated_bitmap(food, 0, 0, i * 10, j * 10, 1, 1, 0, 0);
 				}
 
 			}
@@ -119,7 +132,7 @@ void main()
 		ghost_direction == LEFT && field[ghost.x - 1][ghost.y] != WALL ? ghost.x-- : 0;
 		ghost_direction == RIGHT && field[ghost.x + 1][ghost.y] != WALL ? ghost.x++ : 0;
 		//al_wait_for_event(event_queue, &event);
-		al_wait_for_event_timed(event_queue, &event, 0);
+		al_wait_for_event_timed(event_queue, &event,0);
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
 			if (event.keyboard.keycode == ALLEGRO_KEY_UP)
@@ -136,8 +149,12 @@ void main()
 
 		//Game logic
 		if (field[ghost.x][ghost.y] == FOOD)
+		{
 			field[ghost.x][ghost.y] = EMPTY;
+			field[rand() % (row - 3) + 1][rand() % (col - 3) + 1] = FOOD;
+		}
+			
+		 
 		//Sleep(0.1);
-		al_rest(0.01);
 	}
 }
