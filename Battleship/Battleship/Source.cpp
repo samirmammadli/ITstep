@@ -43,7 +43,7 @@ void main()
 	al_draw_bitmap(background, 0, 0, 0);
 	//al_clear_to_color(al_map_rgb(0, 204, 102));
 	al_flip_display();
-	al_draw_bitmap(player, 81, 81, 0);
+	al_draw_bitmap(player, 41, 121, 0);
 	al_flip_display();
 
 	al_wait_for_event(event_queue, &event);
