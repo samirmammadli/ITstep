@@ -141,7 +141,7 @@ void main()
 		ghost_direction == RIGHT && field[ghost.x + 1][ghost.y] != WALL ? ghost.x++ : 0;
 		//al_wait_for_event(event_queue, &event);
 		al_wait_for_event_timed(event_queue, &event, 0.0);
-		al_rest(0.1);
+		al_rest(0.05);
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
 			if (event.keyboard.keycode == ALLEGRO_KEY_UP)
