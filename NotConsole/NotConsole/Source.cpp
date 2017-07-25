@@ -15,8 +15,8 @@ enum Direction {
 };
 
 
-const int row = 500;
-const int col = 500;
+const int row = 25;
+const int col = 25;
 
 
 
@@ -63,7 +63,7 @@ void main()
 	int foodx = rand() % (row -3) + 1;
 	int foody = rand() % (col - 3) + 1;
 	char key = 0;
-	float angle = 0;
+	short angle = 0;
 
 	//Data section
 	ALLEGRO_DISPLAY* display = nullptr;
@@ -84,11 +84,14 @@ void main()
 	al_install_keyboard();
 
 	//Settings
-	display = al_create_display(500, 500);
+	display = al_create_display(510, 510);
 	empty = al_load_bitmap("empty.jpg");
 	wall = al_load_bitmap("wall.jpg");
 	food = al_load_bitmap("food.png");
 	player = al_load_bitmap("snake.jpg");
+	/*ALLEGRO_BITMAP* playerDown = al_load_bitmap("snake.jpg");
+	ALLEGRO_BITMAP* playerRight = al_load_bitmap("snake.jpg");
+	ALLEGRO_BITMAP* playerLeft = al_load_bitmap("snake.jpg");*/
 	background = al_load_bitmap("background.jpg");
 	
 	fillField(field, foodx, foody);
@@ -117,28 +120,28 @@ void main()
 				/*if (field[i][j] == EMPTY)
 					al_draw_bitmap(empty, i * 10, j * 10, 0);*/
 				if (field[i][j] == WALL)
-					al_draw_bitmap(wall, i , j , 0);
+					al_draw_bitmap(wall, i *20, j * 20 , 0);
 				else if (field[i][j] == FOOD)
 				{
 					//al_draw_bitmap(empty, i * 10, j * 10, 0);
-					al_draw_scaled_rotated_bitmap(food, 0, 0, i , j , 1, 1, 0, 0);
+					al_draw_bitmap(food, i * 20, j * 20, 0);
 				}
 
 			}
 		}
-		//al_draw_bitmap(player, ghost.x * 10, ghost.y * 10, 0);
-		al_draw_rotated_bitmap(player, 10, 10, ghost.x , ghost.y , angle, 0);
+		al_draw_bitmap(player, ghost.x *20, ghost.y * 20, angle);
+		//al_draw_rotated_bitmap(player, 10, 10, ghost.x * 20, ghost.y * 20, angle, 0);
 
 		//drawField(field);
 
 		//User input
-		ghost_direction == UP && field[ghost.x][ghost.y - 1] != WALL ? ghost.y--, angle = 0  : 0;
-		ghost_direction == DOWN && field[ghost.x][ghost.y + 1] != WALL ? ghost.y++, angle = 3.2 : 0;
-		ghost_direction == LEFT && field[ghost.x - 1][ghost.y] != WALL ? ghost.x--, angle = -1.6 : 0;
-		ghost_direction == RIGHT && field[ghost.x + 1][ghost.y] != WALL ? ghost.x++, angle = 1.6 : 0;
+		ghost_direction == UP && field[ghost.x][ghost.y - 1] != WALL ? ghost.y--, angle = 0 : 0;
+		ghost_direction == DOWN && field[ghost.x][ghost.y + 1] != WALL ? ghost.y++, angle = 2 : 0;
+		ghost_direction == LEFT && field[ghost.x - 1][ghost.y] != WALL ? ghost.x-- : 0;
+		ghost_direction == RIGHT && field[ghost.x + 1][ghost.y] != WALL ? ghost.x++ : 0;
 		//al_wait_for_event(event_queue, &event);
 		al_wait_for_event_timed(event_queue, &event, 0.0);
-		al_rest(0.0005);
+		al_rest(0.1);
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
 			if (event.keyboard.keycode == ALLEGRO_KEY_UP)
@@ -162,6 +165,5 @@ void main()
 		}
 			
 		 
-		//Sleep(0.1);
 	}
 }
