@@ -82,6 +82,7 @@ void main()
 	al_init();
 	al_init_image_addon();
 	al_install_keyboard();
+	al_install_mouse();
 
 	//Settings
 	display = al_create_display(510, 510);
@@ -140,8 +141,8 @@ void main()
 		ghost_direction == LEFT && field[ghost.x - 1][ghost.y] != WALL ? ghost.x-- : 0;
 		ghost_direction == RIGHT && field[ghost.x + 1][ghost.y] != WALL ? ghost.x++ : 0;
 		//al_wait_for_event(event_queue, &event);
-		al_wait_for_event_timed(event_queue, &event, 0.0);
-		al_rest(0.05);
+		al_wait_for_event_timed(event_queue, &event, 0.05);
+		//al_rest(0.05);
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
 			if (event.keyboard.keycode == ALLEGRO_KEY_UP)
