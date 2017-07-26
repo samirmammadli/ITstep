@@ -135,13 +135,14 @@ void main()
 
 		//drawField(field);
 
+
 		//User input
 		ghost_direction == UP && field[ghost.x][ghost.y - 1] != WALL ? ghost.y--, angle = 0 : 0;
 		ghost_direction == DOWN && field[ghost.x][ghost.y + 1] != WALL ? ghost.y++, angle = 2 : 0;
 		ghost_direction == LEFT && field[ghost.x - 1][ghost.y] != WALL ? ghost.x-- : 0;
 		ghost_direction == RIGHT && field[ghost.x + 1][ghost.y] != WALL ? ghost.x++ : 0;
-		//al_wait_for_event(event_queue, &event);
-		al_wait_for_event_timed(event_queue, &event, 0.05);
+		al_wait_for_event(event_queue, &event);
+		//al_wait_for_event_timed(event_queue, &event, 0.05);
 		//al_rest(0.05);
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
