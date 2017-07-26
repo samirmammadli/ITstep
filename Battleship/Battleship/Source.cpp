@@ -17,17 +17,26 @@ int y;
 int bit_count = 0;
 int image = 0;
 
-//ALLEGRO_BITMAP* back = al_load_bitmap("back.jpg");
-//ALLEGRO_BITMAP* middle1 = al_load_bitmap("2.jpg");
-//ALLEGRO_BITMAP* middle2 = al_load_bitmap("3.jpg");
-//ALLEGRO_BITMAP* front = al_load_bitmap("front.jpg");
 
+
+
+//Data section
+ALLEGRO_DISPLAY* display = nullptr;
+ALLEGRO_BITMAP* player = nullptr;
+ALLEGRO_BITMAP* background = nullptr;
+ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
+ALLEGRO_BITMAP* back = nullptr;
+ALLEGRO_BITMAP* middle1 = nullptr;
+ALLEGRO_BITMAP* middle2 = nullptr;
+ALLEGRO_BITMAP* front = nullptr;
+ALLEGRO_EVENT event;
 
 struct MyStruct
 {
 	int x1 = -20;
 	int y1 = -20;
 	int image = 0;
+	ALLEGRO_BITMAP* image2 = nullptr;
 };
 
 MyStruct field[400];
@@ -37,16 +46,7 @@ void main()
 {
 	srand(time(0));
 
-	//Data section
-	ALLEGRO_DISPLAY* display = nullptr;
-	ALLEGRO_BITMAP* player = nullptr;
-	ALLEGRO_BITMAP* background = nullptr;
-	ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
-	ALLEGRO_BITMAP* back = nullptr;
-	ALLEGRO_BITMAP* middle1 = nullptr;
-	ALLEGRO_BITMAP* middle2 = nullptr;
-	ALLEGRO_BITMAP* front = nullptr;
-	ALLEGRO_EVENT event;
+	
 	////////////
 	
 
@@ -64,6 +64,8 @@ void main()
 	middle1 = al_load_bitmap("2.jpg");
 	middle2 = al_load_bitmap("3.jpg");
 	front = al_load_bitmap("front.jpg");
+
+	field[0].image2 = front;
 	
 
 
@@ -136,7 +138,7 @@ void main()
 		}
 		
 
-		if (image == 0)
+		/*if (image == 0)
 		{
 			al_draw_bitmap(back, x, y, 0);
 		}
@@ -150,10 +152,10 @@ void main()
 		}
 		else if (image == 3)
 		{
-			al_draw_bitmap(front, x, y, 0);
-		}
+			al_draw_bitmap(front, x, y, 0);s
+		}*/
 
-		
+		al_draw_bitmap(field[0].image2, x, y, 0);
 	}
 
 
