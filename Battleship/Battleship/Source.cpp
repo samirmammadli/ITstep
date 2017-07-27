@@ -36,6 +36,8 @@ ALLEGRO_BITMAP* single = nullptr;
 ALLEGRO_BITMAP* red_a = nullptr;
 ALLEGRO_EVENT event;
 
+
+
 struct MyStruct
 {
 	int ship_x = -20;
@@ -284,7 +286,8 @@ void main()
 		al_draw_bitmap(background, 0, 0, 0);
 
 		//Drawing 
-		DrawCursor(x, y);
 		DrawShips();
+		DrawCursor(x, y);
+		
 	}
 }
