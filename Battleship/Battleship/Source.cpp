@@ -49,6 +49,8 @@ struct MyStruct
 	image_position	ship_pos = HORIZONTAL;
 };
 
+
+
 MyStruct field[10];
 
 int bat_field[10][10] = { -1 };
@@ -59,7 +61,7 @@ void DrawShips(int x = -1, int y = -1)
 
 	for (int i = 0; i < ship_number; i++)
 	{
-		 x = field[i].ship_x, y = field[i].ship_y;
+		x = field[i].ship_x, y = field[i].ship_y;
 		if (i == 0)
 		{
 			if (field[i].ship_pos == VERTICAL)
@@ -132,6 +134,7 @@ void DrawCursor(int x, int y)
 			}
 			else
 			{
+				
 				al_draw_bitmap(field[i].ship_back, x, y, 0);
 				al_draw_bitmap(field[i].ship_middle1, x + 40, y, 0);
 				al_draw_bitmap(field[i].ship_middle2, x + 80, y, 0);
