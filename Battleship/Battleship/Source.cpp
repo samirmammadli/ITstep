@@ -16,6 +16,7 @@ enum image_position {
 image_position position = HORIZONTAL;
 
 const int field_size = 10;
+const int ships_count = 10;
 
 
 int ship_number = 0;
@@ -23,7 +24,6 @@ int curr_ship = -1;
 int image = 0;
 int field1_x_indent = 40;
 int field1_y_indent = 40;
-bool is_place_empty = true;
 
 //Data section
 ALLEGRO_DISPLAY* display = nullptr;
@@ -58,14 +58,96 @@ Ships field[10];
 
 int bat_field[field_size][field_size] = { -1 };
 
+void check_position(int bat_field[field_size][field_size], Ships field[ships_count], int x, int y, image_position position)
+{
+	int temp_x = (x - field1_x_indent - (x % 40)) / 40;
+	int temp_y = (y - field1_x_indent - (y % 40)) / 40;
+	bool is_place_empty = true;
+
+	field[ship_number].ship_pos = position;
+	
+	int count = field[ship_number].points_to_death;
+	if (position == VERTICAL)
+	{
+		if (temp_y > 0)
+		{
+			bat_field[temp_y - 1][temp_x] != -1 ? is_place_empty = false : 0;
+			if (temp_x > 0)
+				bat_field[temp_y - 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
+			if (temp_x < field_size - 1)
+				bat_field[temp_y - 1][temp_x + 1] != -1 ? is_place_empty = false : 0;
+
+		}
+		if (temp_y + count < field_size)
+		{
+			bat_field[temp_y + count][temp_x] != -1 ? is_place_empty = false : 0;
+			if (temp_x > 0)
+				bat_field[temp_y + count][temp_x - 1] != -1 ? is_place_empty = false : 0;
+			if (temp_x < field_size - 1)
+				bat_field[temp_y + count][temp_x + 1] != -1 ? is_place_empty = false : 0;
+		}
+
+		for (int i = 0; i < count && is_place_empty; i++)
+		{
+			if (temp_y + i >= 0 && temp_y + i < field_size && temp_x >= 0 && temp_x < field_size && bat_field[temp_y + i][temp_x] == -1)
+			{
+				if (temp_x > 0)
+					bat_field[temp_y + i][temp_x - 1] != -1 ? is_place_empty = false : 0;
+				if (temp_x < field_size - 1)
+					bat_field[temp_y + i][temp_x + 1] != -1 ? is_place_empty = false : 0;
+			}
+			else
+				is_place_empty = false;
+		}
+		for (int i = 0; i < field[ship_number].points_to_death && is_place_empty; i++)
+		{
+			bat_field[temp_y + i][temp_x] = ship_number;
+		}
+		is_place_empty ? ship_number++ : 0;
+	}
+	else if (position == HORIZONTAL)
+	{
+		if (temp_x > 0)
+		{
+			bat_field[temp_y][temp_x - 1] != -1 ? is_place_empty = false : 0;
+			if (temp_y > 0)
+				bat_field[temp_y - 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
+			if (temp_y < field_size - 1)
+				bat_field[temp_y + 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
+
+		}
+		if (temp_x + count < field_size)
+		{
+			bat_field[temp_y][temp_x + count] != -1 ? is_place_empty = false : 0;
+			if (temp_y > 0)
+				bat_field[temp_y - 1][temp_x + count] != -1 ? is_place_empty = false : 0;
+			if (temp_y < field_size - 1)
+				bat_field[temp_y + 1][temp_x + count] != -1 ? is_place_empty = false : 0;
+		}
+
+		for (int i = 0; i < count; i++)
+		{
+			if (temp_y >= 0 && temp_y < field_size && temp_x + i >= 0 && temp_x + i < field_size && bat_field[temp_y][temp_x + i] == -1)
+			{
+				if (temp_y > 0)
+					bat_field[temp_y - 1][temp_x + i] != -1 ? is_place_empty = false : 0;
+				if (temp_y < field_size - 1)
+					bat_field[temp_y + 1][temp_x + i] != -1 ? is_place_empty = false : 0;
+			}
+			else
+				is_place_empty = false;
+		}
+		for (int i = 0; i < count && is_place_empty; i++)
+		{
+			bat_field[temp_y][temp_x + i] = ship_number;
+		}
+		is_place_empty ? ship_number++ : 0;
+	}
+}
 
 
 void DrawCursor(int x, int y)
 {
-
-
-
-
 
 	for (int i = ship_number; i < ship_number + 1; i++)
 	{
@@ -127,6 +209,7 @@ void DrawCursor(int x, int y)
 void main()
 {
 
+
 	srand(time(0));
 	for (int i = 0; i < field_size; i++)
 	{
@@ -150,9 +233,11 @@ void main()
 	al_init_image_addon();
 	al_install_keyboard();
 	al_install_mouse();
+	
 
 	//Settings
-	display = al_create_display(1200, 600);
+	display = al_create_display(1200, 700);
+	al_set_window_title(display, "Sea Battle");
 	background = al_load_bitmap("background1.jpg");
 	player = al_load_bitmap("1.png");
 	back = al_load_bitmap("back.jpg");
@@ -229,49 +314,7 @@ void main()
 		}
 		else if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
 		{
-			if (event.mouse.button == 1 && ship_number < 10)
-			{
-				// Convertaion mouse x and y positions to field cell
-				temp_x = (x - field1_x_indent - (x % 40)) / 40;
-				temp_y = (y - field1_x_indent - (y % 40)) / 40;
-
-				field[ship_number].ship_pos = position;
-				is_place_empty = true;
-				int count = field[ship_number].points_to_death;
-				if (position == VERTICAL)
-				{
-					for (int i = 0; i < count; i++)
-					{
-						if (temp_y + i >= 0 && temp_y + i < field_size && temp_x >= 0 && temp_x < field_size && bat_field[temp_y + i][temp_x] == -1)
-						{
-							if (temp_y > 0 && bat_field[temp_y - 1][temp_x] == -1 && temp_y + count < field_size && bat_field[temp_y + count][temp_x] == -1)
-								0;
-						}
-						else
-							is_place_empty = false;
-					}
-					for (int i = 0; i < field[ship_number].points_to_death && is_place_empty; i++)
-					{
-						bat_field[temp_y + i][temp_x] = ship_number;
-					}
-					is_place_empty ? ship_number++ : 0;
-				}
-				else if (position == HORIZONTAL)
-				{
-					for (int i = 0; i < field[ship_number].points_to_death; i++)
-					{
-						if (temp_y >= 0 && temp_y < field_size && temp_x + i >= 0 && temp_x + i < field_size && bat_field[temp_y][temp_x + i] == -1)
-							0;
-						else
-							is_place_empty = false;
-					}
-					for (int i = 0; i < field[ship_number].points_to_death && is_place_empty; i++)
-					{
-						bat_field[temp_y][temp_x + i] = ship_number;
-					}
-					is_place_empty ? ship_number++ : 0;
-				}
-			}
+			check_position(bat_field, field, x, y, position);
 		}
 
 		//Drawing 
