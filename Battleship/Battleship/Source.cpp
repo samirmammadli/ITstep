@@ -13,17 +13,23 @@ enum image_position {
 	VERTICAL
 };
 
-image_position position = HORIZONTAL;
+enum arrangement {
+	MANUAL,
+	RANDOM,
+	CHECK
+};
+
+
 
 const int field_size = 10;
 const int ships_count = 10;
+const int field1_x_indent = 50;
+const int field1_y_indent = 70;
+const int field2_x_indent = 700;
+const int field2_y_indent = 80;
 
 
-int ship_number = 0;
-int curr_ship = -1;
-int image = 0;
-int field1_x_indent = 40;
-int field1_y_indent = 40;
+
 
 //Data section
 ALLEGRO_DISPLAY* display = nullptr;
@@ -39,9 +45,6 @@ ALLEGRO_BITMAP* red_a = nullptr;
 ALLEGRO_EVENT event;
 
 
-
-
-
 struct Ships
 {
 	int points_to_death = 0;
@@ -51,164 +54,21 @@ struct Ships
 };
 
 
+bool check_position(Ships field[ships_count], int x, int y, int &ship_number, image_position position, arrangement, int bat_field[field_size][field_size]);
+void DrawSelectedShip(Ships field[ships_count], int x, int y, int ship_number, image_position position, int bat_field[field_size][field_size]);
 
-
-
-Ships field[10];
-
-int bat_field[field_size][field_size] = { -1 };
-
-void check_position(int bat_field[field_size][field_size], Ships field[ships_count], int x, int y, image_position position)
-{
-	int temp_x = (x - field1_x_indent - (x % 40)) / 40;
-	int temp_y = (y - field1_x_indent - (y % 40)) / 40;
-	bool is_place_empty = true;
-
-	field[ship_number].ship_pos = position;
-	
-	int count = field[ship_number].points_to_death;
-	if (position == VERTICAL)
-	{
-		if (temp_y > 0)
-		{
-			bat_field[temp_y - 1][temp_x] != -1 ? is_place_empty = false : 0;
-			if (temp_x > 0)
-				bat_field[temp_y - 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
-			if (temp_x < field_size - 1)
-				bat_field[temp_y - 1][temp_x + 1] != -1 ? is_place_empty = false : 0;
-
-		}
-		if (temp_y + count < field_size)
-		{
-			bat_field[temp_y + count][temp_x] != -1 ? is_place_empty = false : 0;
-			if (temp_x > 0)
-				bat_field[temp_y + count][temp_x - 1] != -1 ? is_place_empty = false : 0;
-			if (temp_x < field_size - 1)
-				bat_field[temp_y + count][temp_x + 1] != -1 ? is_place_empty = false : 0;
-		}
-
-		for (int i = 0; i < count && is_place_empty; i++)
-		{
-			if (temp_y + i >= 0 && temp_y + i < field_size && temp_x >= 0 && temp_x < field_size && bat_field[temp_y + i][temp_x] == -1)
-			{
-				if (temp_x > 0)
-					bat_field[temp_y + i][temp_x - 1] != -1 ? is_place_empty = false : 0;
-				if (temp_x < field_size - 1)
-					bat_field[temp_y + i][temp_x + 1] != -1 ? is_place_empty = false : 0;
-			}
-			else
-				is_place_empty = false;
-		}
-		for (int i = 0; i < field[ship_number].points_to_death && is_place_empty; i++)
-		{
-			bat_field[temp_y + i][temp_x] = ship_number;
-		}
-		is_place_empty ? ship_number++ : 0;
-	}
-	else if (position == HORIZONTAL)
-	{
-		if (temp_x > 0)
-		{
-			bat_field[temp_y][temp_x - 1] != -1 ? is_place_empty = false : 0;
-			if (temp_y > 0)
-				bat_field[temp_y - 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
-			if (temp_y < field_size - 1)
-				bat_field[temp_y + 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
-
-		}
-		if (temp_x + count < field_size)
-		{
-			bat_field[temp_y][temp_x + count] != -1 ? is_place_empty = false : 0;
-			if (temp_y > 0)
-				bat_field[temp_y - 1][temp_x + count] != -1 ? is_place_empty = false : 0;
-			if (temp_y < field_size - 1)
-				bat_field[temp_y + 1][temp_x + count] != -1 ? is_place_empty = false : 0;
-		}
-
-		for (int i = 0; i < count; i++)
-		{
-			if (temp_y >= 0 && temp_y < field_size && temp_x + i >= 0 && temp_x + i < field_size && bat_field[temp_y][temp_x + i] == -1)
-			{
-				if (temp_y > 0)
-					bat_field[temp_y - 1][temp_x + i] != -1 ? is_place_empty = false : 0;
-				if (temp_y < field_size - 1)
-					bat_field[temp_y + 1][temp_x + i] != -1 ? is_place_empty = false : 0;
-			}
-			else
-				is_place_empty = false;
-		}
-		for (int i = 0; i < count && is_place_empty; i++)
-		{
-			bat_field[temp_y][temp_x + i] = ship_number;
-		}
-		is_place_empty ? ship_number++ : 0;
-	}
-}
-
-
-void DrawCursor(int x, int y)
-{
-
-	for (int i = ship_number; i < ship_number + 1; i++)
-	{
-		if (i == 0)
-		{
-			if (position == VERTICAL)
-			{
-				al_draw_rotated_bitmap(field[i].ship_image[0], 0, 0, x + 40, y, 1.566, 0);
-				al_draw_rotated_bitmap(field[i].ship_image[1], 0, 0, x + 40, y + 40, 1.566, 0);
-				al_draw_rotated_bitmap(field[i].ship_image[2], 0, 0, x + 40, y + 80, 1.566, 0);
-				al_draw_rotated_bitmap(field[i].ship_image[3], 0, 0, x + 40, y + 120, 1.566, 0);
-			}
-			else
-			{
-
-				al_draw_bitmap(field[i].ship_image[0], x, y, 0);
-				al_draw_bitmap(field[i].ship_image[1], x + 40, y, 0);
-				al_draw_bitmap(field[i].ship_image[2], x + 80, y, 0);
-				al_draw_bitmap(field[i].ship_image[3], x + 120, y, 0);
-			}
-		}
-		else if (i == 1 || i == 2)
-		{
-			if (position == VERTICAL)
-			{
-				al_draw_rotated_bitmap(field[i].ship_image[0], 0, 0, x + 40, y, 1.566, 0);
-				al_draw_rotated_bitmap(field[i].ship_image[1], 0, 0, x + 40, y + 40, 1.566, 0);
-				al_draw_rotated_bitmap(field[i].ship_image[2], 0, 0, x + 40, y + 80, 1.566, 0);
-			}
-			else
-			{
-				al_draw_bitmap(field[i].ship_image[0], x, y, 0);
-				al_draw_bitmap(field[i].ship_image[1], x + 40, y, 0);
-				al_draw_bitmap(field[i].ship_image[2], x + 80, y, 0);
-			}
-		}
-		else if (i > 2 && i < 6)
-		{
-			if (position == VERTICAL)
-			{
-
-				al_draw_rotated_bitmap(field[i].ship_image[0], 0, 0, x + 40, y, 1.566, 0);
-				al_draw_rotated_bitmap(field[i].ship_image[1], 0, 0, x + 40, y + 40, 1.566, 0);
-			}
-			else
-			{
-
-				al_draw_bitmap(field[i].ship_image[0], x, y, 0);
-				al_draw_bitmap(field[i].ship_image[1], x + 40, y, 0);
-			}
-		}
-		else if (i < 10)
-		{
-			al_draw_bitmap(field[i].ship_image[0], x, y, 0);
-		}
-	}
-}
 
 void main()
 {
+	int ship_number = 0;
+	int curr_ship = -1;
+	int image = 0;
+	image_position position = HORIZONTAL;
 
+
+	Ships ships_arr[10];
+
+	int bat_field[field_size][field_size] = { -1 };
 
 	srand(time(0));
 	for (int i = 0; i < field_size; i++)
@@ -251,33 +111,33 @@ void main()
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			field[i].ship_image[j] = nullptr;
+			ships_arr[i].ship_image[j] = nullptr;
 		}
 		if (i == 0)
 		{
-			field[i].ship_image[0] = back;
-			field[i].ship_image[1] = middle1;
-			field[i].ship_image[2] = middle2;
-			field[i].ship_image[3] = front;
-			field[i].points_to_death = 4;
+			ships_arr[i].ship_image[0] = back;
+			ships_arr[i].ship_image[1] = middle1;
+			ships_arr[i].ship_image[2] = middle2;
+			ships_arr[i].ship_image[3] = front;
+			ships_arr[i].points_to_death = 4;
 		}
 		else if (i == 1 || i == 2)
 		{
-			field[i].ship_image[0] = back;
-			field[i].ship_image[1] = middle2;
-			field[i].ship_image[2] = front;
-			field[i].points_to_death = 3;
+			ships_arr[i].ship_image[0] = back;
+			ships_arr[i].ship_image[1] = middle2;
+			ships_arr[i].ship_image[2] = front;
+			ships_arr[i].points_to_death = 3;
 		}
 		else if (i > 2 && i < 6)
 		{
-			field[i].ship_image[0] = back;
-			field[i].ship_image[1] = front;
-			field[i].points_to_death = 2;
+			ships_arr[i].ship_image[0] = back;
+			ships_arr[i].ship_image[1] = front;
+			ships_arr[i].points_to_death = 2;
 		}
 		else
 		{
-			field[i].ship_image[0] = single;
-			field[i].points_to_death = 1;
+			ships_arr[i].ship_image[0] = single;
+			ships_arr[i].points_to_death = 1;
 		}
 	}
 
@@ -285,13 +145,15 @@ void main()
 	event_queue = al_create_event_queue();
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_register_event_source(event_queue, al_get_mouse_event_source());
+	al_register_event_source(event_queue, al_get_display_event_source(display));
 
 
 	while (true)
 	{
 		al_flip_display();
 		al_clear_to_color(al_map_rgb(0, 0, 0));
-		al_draw_bitmap(background, 40, 40, 0);
+		al_draw_bitmap(background, field1_x_indent, field1_y_indent, 0);
+		al_draw_bitmap(background, field2_x_indent, field2_y_indent, 0);
 		al_wait_for_event(event_queue, &event);
 
 		if (event.type == ALLEGRO_EVENT_MOUSE_AXES)
@@ -299,7 +161,10 @@ void main()
 			x = event.mouse.x;
 			y = event.mouse.y;
 		}
-
+		else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+		{
+			exit(0);
+		}
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
 
@@ -311,14 +176,17 @@ void main()
 			{
 				position == HORIZONTAL ? position = VERTICAL : position = HORIZONTAL;
 			}
+			else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE)
+			{
+				check_position(ships_arr, x, y, ship_number, position, RANDOM, bat_field);
+			}
 		}
 		else if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
 		{
-			check_position(bat_field, field, x, y, position);
+			check_position(ships_arr, x, y,ship_number, position, MANUAL, bat_field);
 		}
 
 		//Drawing 
-		//DrawShips();
 		for (int i = 0; i < 10; i++)
 		{
 			for (int j = 0; j < 10; j++)
@@ -326,22 +194,164 @@ void main()
 				curr_ship = bat_field[i][j];
 				if (curr_ship >= 0)
 				{
-					if (field[curr_ship].ship_pos == HORIZONTAL)
+					if (ships_arr[curr_ship].ship_pos == HORIZONTAL)
 					{
-						al_draw_bitmap(field[curr_ship].ship_image[field[curr_ship].img_number], j * 40 + field1_x_indent, i * 40 + field1_x_indent, 0);
+						al_draw_bitmap(ships_arr[curr_ship].ship_image[ships_arr[curr_ship].img_number], j * 40 + field1_x_indent, i * 40 + field1_y_indent, 0);
 					}
 					else
 					{
-						al_draw_rotated_bitmap(field[curr_ship].ship_image[field[curr_ship].img_number], 0, 0, j * 40 + field1_x_indent + 40, i * 40 + field1_x_indent, 1.566, 0);
+						al_draw_rotated_bitmap(ships_arr[curr_ship].ship_image[ships_arr[curr_ship].img_number], 0, 0, j * 40 + field1_x_indent + 40, i * 40 + field1_y_indent, 1.566, 0);
 					}
-					field[curr_ship].img_number++;
+					ships_arr[curr_ship].img_number++;
 				}
 			}
 		}
 		for (int i = 0; i < 10; i++)
 		{
-			field[i].img_number = 0;
+			ships_arr[i].img_number = 0;
 		}
-		DrawCursor(x, y);
+		DrawSelectedShip(ships_arr, x, y, ship_number, position, bat_field);
+
+		
+	}
+}
+/*******************************************************************************************************************************************/
+
+
+bool check_position(Ships ships_arr[ships_count], int x, int y, int &ship_number, image_position position, arrangement Case, int bat_field[field_size][field_size])
+{
+	static int urka = 0;
+
+
+	bool is_place_empty = true;
+	int steps = 1;
+	int count = ships_arr[ship_number].points_to_death;
+	int temp_x = (x - field1_x_indent ) / 40;
+	int temp_y = (y - field1_y_indent ) / 40;
+	ships_arr[ship_number].ship_pos = position;
+	cout << temp_x << "          " << temp_y  << "           " << x << "     " << y<< endl;
+
+	if (Case == RANDOM)
+	{
+		steps = 5000;
+		ship_number = 0;
+		for (int i = 0; i < field_size; i++)
+		{
+			for (int j = 0; j < field_size; j++)
+			{
+				bat_field[i][j] = -1;
+			}
+		}
+	}
+	
+	for (int i = 0; ship_number < ships_count && i < steps; i++)
+	{
+		if (Case == RANDOM)
+		{
+			is_place_empty = true;
+			count = ships_arr[ship_number].points_to_death;
+			temp_x = rand() % 10;
+			temp_y = rand() % 10;
+			ships_arr[ship_number].ship_pos = image_position(rand() % 2);
+		}
+		if (ships_arr[ship_number].ship_pos == VERTICAL)
+		{
+			if (temp_y > 0)
+			{
+				bat_field[temp_y - 1][temp_x] != -1 ? is_place_empty = false : 0;
+				if (temp_x > 0)
+					bat_field[temp_y - 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
+				if (temp_x < field_size - 1)
+					bat_field[temp_y - 1][temp_x + 1] != -1 ? is_place_empty = false : 0;
+
+			}
+			if (temp_y + count < field_size)
+			{
+				bat_field[temp_y + count][temp_x] != -1 ? is_place_empty = false : 0;
+				if (temp_x > 0)
+					bat_field[temp_y + count][temp_x - 1] != -1 ? is_place_empty = false : 0;
+				if (temp_x < field_size - 1)
+					bat_field[temp_y + count][temp_x + 1] != -1 ? is_place_empty = false : 0;
+			}
+
+			for (int i = 0; i < count && is_place_empty; i++)
+			{
+				if (temp_y + i >= 0 && temp_y + i < field_size && temp_x >= 0 && temp_x < field_size && bat_field[temp_y + i][temp_x] == -1)
+				{
+					if (temp_x > 0)
+						bat_field[temp_y + i][temp_x - 1] != -1 ? is_place_empty = false : 0;
+					if (temp_x < field_size - 1)
+						bat_field[temp_y + i][temp_x + 1] != -1 ? is_place_empty = false : 0;
+				}
+				else
+					is_place_empty = false;
+			}
+			for (int i = 0; i < ships_arr[ship_number].points_to_death && is_place_empty && Case != CHECK; i++)
+			{
+				bat_field[temp_y + i][temp_x] = ship_number;
+			}
+			is_place_empty && Case != CHECK ? ship_number++ : 0;
+		}
+		else if (ships_arr[ship_number].ship_pos == HORIZONTAL)
+		{
+			if (temp_x > 0)
+			{
+				bat_field[temp_y][temp_x - 1] != -1 ? is_place_empty = false : 0;
+				if (temp_y > 0)
+					bat_field[temp_y - 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
+				if (temp_y < field_size - 1)
+					bat_field[temp_y + 1][temp_x - 1] != -1 ? is_place_empty = false : 0;
+
+			}
+			if (temp_x + count < field_size)
+			{
+				bat_field[temp_y][temp_x + count] != -1 ? is_place_empty = false : 0;
+				if (temp_y > 0)
+					bat_field[temp_y - 1][temp_x + count] != -1 ? is_place_empty = false : 0;
+				if (temp_y < field_size - 1)
+					bat_field[temp_y + 1][temp_x + count] != -1 ? is_place_empty = false : 0;
+			}
+
+			for (int i = 0; i < count; i++)
+			{
+				if (temp_y >= 0 && temp_y < field_size && temp_x + i >= 0 && temp_x + i < field_size && bat_field[temp_y][temp_x + i] == -1)
+				{
+					if (temp_y > 0)
+						bat_field[temp_y - 1][temp_x + i] != -1 ? is_place_empty = false : 0;
+					if (temp_y < field_size - 1)
+						bat_field[temp_y + 1][temp_x + i] != -1 ? is_place_empty = false : 0;
+				}
+				else
+					is_place_empty = false;
+			}
+			for (int i = 0; i < count && is_place_empty && Case != CHECK; i++)
+			{
+				bat_field[temp_y][temp_x + i] = ship_number;
+			}
+			is_place_empty && Case != CHECK ? ship_number++ : 0;
+		}
+	}
+
+	if (Case == CHECK)
+		return is_place_empty;
+}
+/*******************************************************************************************************************************************/
+
+void DrawSelectedShip(Ships ships_arr[ships_count], int x, int y, int ship_number, image_position position, int bat_field[field_size][field_size])
+{
+	bool correct_position = check_position(ships_arr, x, y, ship_number, position, CHECK, bat_field);
+	for (int i = 0; i < ships_arr[ship_number].points_to_death; i++)
+	{
+		if (position == VERTICAL)
+		{
+			al_draw_rotated_bitmap(ships_arr[ship_number].ship_image[i], 0, 0, x + 40, y + i * 40, 1.566, 0);
+			correct_position ? al_draw_bitmap(player, x, y + i * 40, 0) : al_draw_bitmap(red_a, x, y + i * 40, 0);
+		}
+			
+		else
+		{
+			al_draw_bitmap(ships_arr[ship_number].ship_image[i], x + i * 40, y, 0);
+			correct_position ? al_draw_bitmap(player, x + i * 40, y, 0) : al_draw_bitmap(red_a, x + i * 40, y, 0);
+		}
 	}
 }
