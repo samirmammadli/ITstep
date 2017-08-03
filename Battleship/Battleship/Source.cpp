@@ -24,7 +24,7 @@ enum arrangement {
 const int field_size = 10;
 const int ships_count = 10;
 const int field1_x_indent = 50;
-const int field1_y_indent = 70;
+const int field1_y_indent = 80;
 const int field2_x_indent = 700;
 const int field2_y_indent = 80;
 
@@ -53,31 +53,31 @@ struct Ships
 	image_position	ship_pos = HORIZONTAL;
 };
 
+void init_field(int bat_field[field_size][field_size]);
+void init_ships_params(Ships ships_arr[ships_count], ALLEGRO_BITMAP* back, ALLEGRO_BITMAP* middle1, ALLEGRO_BITMAP* middle2, ALLEGRO_BITMAP* front);
+bool sort_ships(Ships field[ships_count], int x, int y, int &ship_number, arrangement, int bat_field[field_size][field_size], bool which_field = true);
+void DrawSelectedShip(Ships field[ships_count], int x, int y, int ship_number, int bat_field[field_size][field_size]);
+void Draw_ships_on_field(int bat_field[field_size][field_size], Ships ships_arr[ships_count], bool which_field = true);
 
-bool check_position(Ships field[ships_count], int x, int y, int &ship_number, image_position position, arrangement, int bat_field[field_size][field_size]);
-void DrawSelectedShip(Ships field[ships_count], int x, int y, int ship_number, image_position position, int bat_field[field_size][field_size]);
+
 
 
 void main()
 {
 	int ship_number = 0;
-	int curr_ship = -1;
 	int image = 0;
-	image_position position = HORIZONTAL;
 
 
-	Ships ships_arr[10];
+	Ships ships_arr_user[ships_count];
+	Ships ships_arr_enemy[ships_count];
 
-	int bat_field[field_size][field_size] = { -1 };
+	int bat_field_user[field_size][field_size];
+	int bat_field_enemy[field_size][field_size];
+	init_field(bat_field_user);
+	init_field(bat_field_enemy);
 
 	srand(time(0));
-	for (int i = 0; i < field_size; i++)
-	{
-		for (int j = 0; j < field_size; j++)
-		{
-			bat_field[i][j] = -1;
-		}
-	}
+
 
 
 	// Current Mouse x and y positions
@@ -93,10 +93,10 @@ void main()
 	al_init_image_addon();
 	al_install_keyboard();
 	al_install_mouse();
-	
+
 
 	//Settings
-	display = al_create_display(1200, 700);
+	display = al_create_display(1150, 700);
 	al_set_window_title(display, "Sea Battle");
 	background = al_load_bitmap("background1.jpg");
 	player = al_load_bitmap("1.png");
@@ -107,39 +107,9 @@ void main()
 	single = al_load_bitmap("one.jpg");
 	red_a = al_load_bitmap("2.png");
 
-	for (int i = 0; i < 10; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			ships_arr[i].ship_image[j] = nullptr;
-		}
-		if (i == 0)
-		{
-			ships_arr[i].ship_image[0] = back;
-			ships_arr[i].ship_image[1] = middle1;
-			ships_arr[i].ship_image[2] = middle2;
-			ships_arr[i].ship_image[3] = front;
-			ships_arr[i].points_to_death = 4;
-		}
-		else if (i == 1 || i == 2)
-		{
-			ships_arr[i].ship_image[0] = back;
-			ships_arr[i].ship_image[1] = middle2;
-			ships_arr[i].ship_image[2] = front;
-			ships_arr[i].points_to_death = 3;
-		}
-		else if (i > 2 && i < 6)
-		{
-			ships_arr[i].ship_image[0] = back;
-			ships_arr[i].ship_image[1] = front;
-			ships_arr[i].points_to_death = 2;
-		}
-		else
-		{
-			ships_arr[i].ship_image[0] = single;
-			ships_arr[i].points_to_death = 1;
-		}
-	}
+
+	init_ships_params(ships_arr_user, back, middle1, middle2, front);
+	init_ships_params(ships_arr_enemy, back, middle1, middle2, front);
 
 
 	event_queue = al_create_event_queue();
@@ -147,7 +117,8 @@ void main()
 	al_register_event_source(event_queue, al_get_mouse_event_source());
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 
-
+	sort_ships(ships_arr_enemy, x, y, ship_number, RANDOM, bat_field_enemy, false);
+	ship_number = 0;
 	while (true)
 	{
 		al_flip_display();
@@ -162,74 +133,75 @@ void main()
 			y = event.mouse.y;
 		}
 		else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
-		{
 			exit(0);
-		}
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
-
 			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-			{
 				exit(0);
-			}
-			else if (event.keyboard.keycode == ALLEGRO_KEY_W)
-			{
-				position == HORIZONTAL ? position = VERTICAL : position = HORIZONTAL;
-			}
 			else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE)
-			{
-				check_position(ships_arr, x, y, ship_number, position, RANDOM, bat_field);
-			}
+				sort_ships(ships_arr_user, x, y, ship_number, RANDOM, bat_field_user);
 		}
 		else if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
 		{
-			check_position(ships_arr, x, y,ship_number, position, MANUAL, bat_field);
+			if (event.mouse.button == 1)
+				sort_ships(ships_arr_user, x, y, ship_number, MANUAL, bat_field_user);
+			else if (event.mouse.button == 2)
+				ships_arr_user[ship_number].ship_pos == HORIZONTAL ? ships_arr_user[ship_number].ship_pos = VERTICAL : ships_arr_user[ship_number].ship_pos = HORIZONTAL;
 		}
 
 		//Drawing 
-		for (int i = 0; i < 10; i++)
-		{
-			for (int j = 0; j < 10; j++)
-			{
-				curr_ship = bat_field[i][j];
-				if (curr_ship >= 0)
-				{
-					if (ships_arr[curr_ship].ship_pos == HORIZONTAL)
-					{
-						al_draw_bitmap(ships_arr[curr_ship].ship_image[ships_arr[curr_ship].img_number], j * 40 + field1_x_indent, i * 40 + field1_y_indent, 0);
-					}
-					else
-					{
-						al_draw_rotated_bitmap(ships_arr[curr_ship].ship_image[ships_arr[curr_ship].img_number], 0, 0, j * 40 + field1_x_indent + 40, i * 40 + field1_y_indent, 1.566, 0);
-					}
-					ships_arr[curr_ship].img_number++;
-				}
-			}
-		}
-		for (int i = 0; i < 10; i++)
-		{
-			ships_arr[i].img_number = 0;
-		}
-		DrawSelectedShip(ships_arr, x, y, ship_number, position, bat_field);
-
+		Draw_ships_on_field(bat_field_enemy, ships_arr_enemy, false);
+		Draw_ships_on_field(bat_field_user, ships_arr_user);
 		
+		DrawSelectedShip(ships_arr_user, x, y, ship_number, bat_field_user);
+
+
+
 	}
 }
 /*******************************************************************************************************************************************/
 
+							//Initializing user and enemy fields
 
-bool check_position(Ships ships_arr[ships_count], int x, int y, int &ship_number, image_position position, arrangement Case, int bat_field[field_size][field_size])
+/*******************************************************************************************************************************************/
+void init_field(int bat_field[field_size][field_size])
 {
-	static int urka = 0;
+	for (int i = 0; i < field_size; i++)
+	{
+		for (int j = 0; j < field_size; j++)
+		{
+			bat_field[i][j] = -1;
+		}
+	}
+}
+/*******************************************************************************************************************************************/
 
+									//Put ships on the field, and shows is selected ship position on the field right or wrong 
 
+/*******************************************************************************************************************************************/
+bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, arrangement Case, int bat_field[field_size][field_size], bool which_field)
+{
 	bool is_place_empty = true;
 	int steps = 1;
+	int indent_x, indent_y;
 	int count = ships_arr[ship_number].points_to_death;
-	int temp_x = (x - field1_x_indent ) / 40;
-	int temp_y = (y - field1_y_indent ) / 40;
-	ships_arr[ship_number].ship_pos = position;
-	cout << temp_x << "          " << temp_y  << "           " << x << "     " << y<< endl;
+	int temp_x;
+	int temp_y;
+
+	//Write enemy's or user's field indent
+	which_field ? (indent_x = field1_x_indent, indent_y = field1_y_indent) : (indent_x = field2_x_indent, indent_y = field2_y_indent);
+	//Convert mouse coordinates to field cell coordinates
+	if (x >= indent_x && y >= indent_y)
+	{
+		temp_x = (x - indent_x) / 40;
+		temp_y = (y - indent_y) / 40;
+	}
+	else
+	{
+		temp_x = -1;
+		temp_y = -1;
+	}
+	cout << temp_x << "          " << temp_y << "           " << x << "     " << y << endl; ////////
 
 	if (Case == RANDOM)
 	{
@@ -243,7 +215,7 @@ bool check_position(Ships ships_arr[ships_count], int x, int y, int &ship_number
 			}
 		}
 	}
-	
+
 	for (int i = 0; ship_number < ships_count && i < steps; i++)
 	{
 		if (Case == RANDOM)
@@ -337,17 +309,20 @@ bool check_position(Ships ships_arr[ships_count], int x, int y, int &ship_number
 }
 /*******************************************************************************************************************************************/
 
-void DrawSelectedShip(Ships ships_arr[ships_count], int x, int y, int ship_number, image_position position, int bat_field[field_size][field_size])
+										// Drawing and check Current Selected Ship for correct position of field 
+
+/*******************************************************************************************************************************************/
+void DrawSelectedShip(Ships ships_arr[ships_count], int x, int y, int ship_number, int bat_field[field_size][field_size])
 {
-	bool correct_position = check_position(ships_arr, x, y, ship_number, position, CHECK, bat_field);
+	bool correct_position = sort_ships(ships_arr, x, y, ship_number, CHECK, bat_field);
 	for (int i = 0; i < ships_arr[ship_number].points_to_death; i++)
 	{
-		if (position == VERTICAL)
+		if (ships_arr[ship_number].ship_pos == VERTICAL)
 		{
 			al_draw_rotated_bitmap(ships_arr[ship_number].ship_image[i], 0, 0, x + 40, y + i * 40, 1.566, 0);
 			correct_position ? al_draw_bitmap(player, x, y + i * 40, 0) : al_draw_bitmap(red_a, x, y + i * 40, 0);
 		}
-			
+
 		else
 		{
 			al_draw_bitmap(ships_arr[ship_number].ship_image[i], x + i * 40, y, 0);
@@ -355,3 +330,81 @@ void DrawSelectedShip(Ships ships_arr[ships_count], int x, int y, int ship_numbe
 		}
 	}
 }
+/*******************************************************************************************************************************************/
+
+												//Draw Ships on field						
+
+/*******************************************************************************************************************************************/
+void Draw_ships_on_field(int bat_field[field_size][field_size], Ships ships_arr[ships_count], bool which_field)
+{
+	int curr_ship;
+	int indent_x, indent_y;
+	//Write enemy's or user's field indent
+	which_field ? (indent_x = field1_x_indent, indent_y = field1_y_indent) : (indent_x = field2_x_indent, indent_y = field2_y_indent);
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			curr_ship = bat_field[i][j];
+			if (curr_ship >= 0)
+			{
+				int u = ships_arr[curr_ship].img_number;
+				if (ships_arr[curr_ship].ship_pos == HORIZONTAL)
+				{
+					al_draw_bitmap(ships_arr[curr_ship].ship_image[u], j * 40 + indent_x, i * 40 + indent_y, 0);
+				}
+				else
+				{
+					al_draw_rotated_bitmap(ships_arr[curr_ship].ship_image[u], 0, 0, j * 40 + indent_x + 40, i * 40 + indent_y, 1.566, 0);
+				}
+				ships_arr[curr_ship].img_number++;
+			}
+		}
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		ships_arr[i].img_number = 0;
+	}
+}
+/*******************************************************************************************************************************************/
+
+											//Initializing User and Enemy Ships parameters	
+
+/*******************************************************************************************************************************************/
+void init_ships_params(Ships ships_arr[ships_count], ALLEGRO_BITMAP* back, ALLEGRO_BITMAP* middle1, ALLEGRO_BITMAP* middle2, ALLEGRO_BITMAP* front)
+{
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			ships_arr[i].ship_image[j] = nullptr;
+		}
+		if (i == 0)
+		{
+			ships_arr[i].ship_image[0] = back;
+			ships_arr[i].ship_image[1] = middle1;
+			ships_arr[i].ship_image[2] = middle2;
+			ships_arr[i].ship_image[3] = front;
+			ships_arr[i].points_to_death = 4;
+		}
+		else if (i == 1 || i == 2)
+		{
+			ships_arr[i].ship_image[0] = back;
+			ships_arr[i].ship_image[1] = middle2;
+			ships_arr[i].ship_image[2] = front;
+			ships_arr[i].points_to_death = 3;
+		}
+		else if (i > 2 && i < 6)
+		{
+			ships_arr[i].ship_image[0] = back;
+			ships_arr[i].ship_image[1] = front;
+			ships_arr[i].points_to_death = 2;
+		}
+		else
+		{
+			ships_arr[i].ship_image[0] = single;
+			ships_arr[i].points_to_death = 1;
+		}
+	}
+}
+/*******************************************************************************************************************************************/
