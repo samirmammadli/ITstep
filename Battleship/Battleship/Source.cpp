@@ -180,7 +180,7 @@ void main()
 		al_draw_bitmap(background2, subfield2_x_indent, subfield2_y_indent , 0);
 		al_draw_bitmap(background2, subfield1_x_indent, subfield1_y_indent, 0);
 		Ships_of_subfield(ships_arr_user, USER);
-		Ships_of_subfield(ships_arr_user, ENEMY);
+		Ships_of_subfield(ships_arr_enemy, ENEMY);
 	
 		DrawSelectedShip(ships_arr_user, x, y, ship_number, bat_field_user);
 		cout << ship_number;
@@ -278,7 +278,10 @@ bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, ar
 				bat_field[temp_y + i][temp_x].ship = ship_number;
 			}
 			if (is_place_empty && Case == RANDOM)
-				ship_number++;
+			{
+				ships_arr[ship_number].is_drawed = ON_SUBFIELD;
+				ship_number++;	
+			}
 			else if (is_place_empty && Case == MANUAL)
 			{
 				ships_arr[ship_number].is_drawed = DRAWED;
@@ -322,7 +325,10 @@ bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, ar
 				bat_field[temp_y][temp_x + i].ship = ship_number;
 			}
 			if (is_place_empty && Case == RANDOM)
+			{
+				ships_arr[ship_number].is_drawed = ON_SUBFIELD;
 				ship_number++;
+			}
 			else if (is_place_empty && Case == MANUAL)
 			{
 				ships_arr[ship_number].is_drawed = DRAWED;
@@ -478,24 +484,61 @@ void Ships_of_subfield(Ships ships_arr[field_size], which_field player)
 }
 /*******************************************************************************************************************************************/
 
+													//Select Ship on Subfield
 
 /*******************************************************************************************************************************************/
 
 
 void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number)
 {
-	if (x >= subfield1_x_indent && x <= subfield1_x_indent + img_pix_size * 4 && y >= subfield1_y_indent && y <= subfield1_y_indent + img_pix_size)
+	bool is_selected = false;
+
+	if (ship_number != -1 && ships_arr[ship_number].is_drawed == SELECTED && x >= subfield1_x_indent && x <= subfield1_x_indent + (field_size * img_pix_size) && y >= subfield1_y_indent && y <= subfield1_y_indent + (field_size * img_pix_size))
 	{
-		if (ships_arr[field_size].is_drawed == SELECTED)
+		ships_arr[ship_number].is_drawed = ON_SUBFIELD;
+		ship_number = -1;
+	}
+	else
+	{
+		for (int i = 0; i < 2 && !is_selected; i++)
 		{
-			ships_arr[field_size].is_drawed == ON_SUBFIELD;
+			if (x >= subfield1_x_indent + i * (5 * img_pix_size) && x <= subfield1_x_indent + img_pix_size * 4 + i * (4 * img_pix_size) && y >= subfield1_y_indent && y <= subfield1_y_indent + img_pix_size)
+			{
+				if (ships_arr[i].is_drawed == ON_SUBFIELD)
+				{
+					ships_arr[i].is_drawed = SELECTED;
+					ship_number = i;
+					is_selected = true;
+				}
+			}
+		}
+		for (int i = 0; i < 3 && !is_selected; i++)
+		{
+			if (x >= subfield1_x_indent + i * (4 * img_pix_size) && x <= subfield1_x_indent + img_pix_size * 3 + i * (3 * img_pix_size) && y >= subfield1_y_indent + (img_pix_size * 2) && y <= subfield1_y_indent + (img_pix_size * 3))
+			{
+				if (ships_arr[i+2].is_drawed == ON_SUBFIELD)
+				{
+					ships_arr[i+2].is_drawed = SELECTED;
+					ship_number = i + 2;
+					is_selected = true;
+				}
+			}
+		}
+	}
+	
+	
+	/*
+	else if (x >= subfield1_x_indent && x <= subfield1_x_indent + img_pix_size * 4 && y >= subfield1_y_indent && y <= subfield1_y_indent + img_pix_size)
+	{
+		if (ships_arr[0].is_drawed == SELECTED)
+		{
+			ships_arr[0].is_drawed = ON_SUBFIELD;
 			ship_number = -1;
-		}	
-		else if (ships_arr[field_size].is_drawed == ON_SUBFIELD)
+		}
+		else if (ships_arr[0].is_drawed == ON_SUBFIELD)
 		{
-			ships_arr[field_size].is_drawed == SELECTED;
+			ships_arr[0].is_drawed = SELECTED;
 			ship_number = 0;
 		}
-			
-	}
+	}*/
 }
