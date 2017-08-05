@@ -22,6 +22,12 @@ enum which_field {
 	ENEMY
 };
 
+enum Ship_State {
+	ON_SUBFIELD,
+	SELECTED,
+	DRAWED
+};
+
 const int field_size = 10;
 const int ships_count = 10;
 const int img_pix_size = 40;
@@ -60,8 +66,8 @@ struct Ships
 {
 	int points_to_death = 0;
 	int img_number = 0;
-	bool is_selected = false;
 	ALLEGRO_BITMAP** ship_image = new ALLEGRO_BITMAP*[4]{nullptr};
+	Ship_State is_drawed = ON_SUBFIELD;
 	image_position	ship_pos = HORIZONTAL;
 };
 
@@ -71,7 +77,7 @@ bool sort_ships(Ships field[ships_count], int x, int y, int &ship_number, arrang
 void DrawSelectedShip(Ships field[ships_count], int x, int y, int ship_number, Fields bat_field[field_size][field_size]);
 void Draw_ships_on_field(Fields bat_field[field_size][field_size], Ships ships_arr[ships_count], which_field player);
 void Ships_of_subfield(Ships ships_arr[field_size], which_field player);
-
+void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number);
 
 
 
@@ -83,12 +89,11 @@ void main()
 	int image = 0;
 	
 
-	Ships ships_arr_user[ships_count];
-	Ships ships_arr_enemy[ships_count];
+	Ships *ships_arr_user = new Ships[ships_count];
+	Ships *ships_arr_enemy = new Ships[ships_count];
 
 	Fields bat_field_user[field_size][field_size];
 	Fields bat_field_enemy[field_size][field_size];
-
 	srand(time(0));
 
 
@@ -133,7 +138,7 @@ void main()
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 
 	sort_ships(ships_arr_enemy, x, y, ship_number, RANDOM, bat_field_enemy, ENEMY);
-	ship_number = 0;
+	ship_number = -1;
 	while (true)
 	{
 		al_flip_display();
@@ -160,7 +165,11 @@ void main()
 		else if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
 		{
 			if (event.mouse.button == 1)
-				sort_ships(ships_arr_user, x, y, ship_number, MANUAL, bat_field_user, USER);
+			{
+				Selected_Ship(ships_arr_user, x, y, ship_number);
+				ship_number > -1 ? sort_ships(ships_arr_user, x, y, ship_number, MANUAL, bat_field_user, USER) : 0;
+			}
+				
 			else if (event.mouse.button == 2 && ship_number >= 0 && ship_number < 10)
 				ships_arr_user[ship_number].ship_pos == HORIZONTAL ? ships_arr_user[ship_number].ship_pos = VERTICAL : ships_arr_user[ship_number].ship_pos = HORIZONTAL;
 		}
@@ -185,7 +194,7 @@ void main()
 /*******************************************************************************************************************************************/
 bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, arrangement Case, Fields bat_field[field_size][field_size], which_field player)
 {
-	if (ship_number < 0 || ship_number > 9)
+	if ((ship_number < 0 || ship_number > 9) && Case != RANDOM)
 		return 0;
 	bool is_place_empty = true;
 	int steps = 1;
@@ -268,7 +277,13 @@ bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, ar
 			{
 				bat_field[temp_y + i][temp_x].ship = ship_number;
 			}
-			is_place_empty && Case != CHECK ? ship_number++ : 0;
+			if (is_place_empty && Case == RANDOM)
+				ship_number++;
+			else if (is_place_empty && Case == MANUAL)
+			{
+				ships_arr[ship_number].is_drawed = DRAWED;
+				ship_number = -1;
+			}
 		}
 		else if (ships_arr[ship_number].ship_pos == HORIZONTAL)
 		{
@@ -306,7 +321,13 @@ bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, ar
 			{
 				bat_field[temp_y][temp_x + i].ship = ship_number;
 			}
-			is_place_empty && Case != CHECK ? ship_number++ : 0;
+			if (is_place_empty && Case == RANDOM)
+				ship_number++;
+			else if (is_place_empty && Case == MANUAL)
+			{
+				ships_arr[ship_number].is_drawed = DRAWED;
+				ship_number = -1;
+			}
 		}
 	}
 
@@ -413,9 +434,9 @@ void init_ships_params(Ships ships_arr[ships_count], ALLEGRO_BITMAP* back, ALLEG
 }
 /*******************************************************************************************************************************************/
 
+											//Draw Ships on Subfield
 
-
-
+/*******************************************************************************************************************************************/
 void Ships_of_subfield(Ships ships_arr[field_size], which_field player)
 {
 	int indentX;
@@ -437,13 +458,44 @@ void Ships_of_subfield(Ships ships_arr[field_size], which_field player)
 	{
 		for (int j = 0; j < ships_arr[i].points_to_death; j++)
 		{
-			!ships_arr[i].is_selected ? al_draw_bitmap(ships_arr[i].ship_image[j], indentX + j * 40, indentY, 0) : 0;
+			ships_arr[i].is_drawed == ON_SUBFIELD ? al_draw_bitmap(ships_arr[i].ship_image[j], indentX + j * 40, indentY, 0) : 0;
 		}
 		if (i == 1)
-			(indentY += img_pix_size*2, player == USER ? indentX = subfield1_x_indent : indentX = subfield2_x_indent);
+		{
+			indentY += img_pix_size * 2;
+			player == USER ? indentX = subfield1_x_indent : indentX = subfield2_x_indent;
+		}
+			
 		else if (i == 4)
-			(indentY += img_pix_size*2, player == USER ? indentX = subfield1_x_indent : indentX = subfield2_x_indent);
+		{
+			indentY += img_pix_size * 2;
+			player == USER ? indentX = subfield1_x_indent : indentX = subfield2_x_indent;
+		}
+			
 		else
 			indentX += img_pix_size * ships_arr[i].points_to_death + 40;
+	}
+}
+/*******************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************/
+
+
+void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number)
+{
+	if (x >= subfield1_x_indent && x <= subfield1_x_indent + img_pix_size * 4 && y >= subfield1_y_indent && y <= subfield1_y_indent + img_pix_size)
+	{
+		if (ships_arr[field_size].is_drawed == SELECTED)
+		{
+			ships_arr[field_size].is_drawed == ON_SUBFIELD;
+			ship_number = -1;
+		}	
+		else if (ships_arr[field_size].is_drawed == ON_SUBFIELD)
+		{
+			ships_arr[field_size].is_drawed == SELECTED;
+			ship_number = 0;
+		}
+			
 	}
 }
