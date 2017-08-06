@@ -83,7 +83,7 @@ void init_ships_params(Ships ships_arr[ships_count], ALLEGRO_BITMAP* back, ALLEG
 bool sort_ships(Ships field[ships_count], int x, int y, int &ship_number, arrangement, Fields bat_field[field_size][field_size], which_field player);
 void DrawSelectedShip(Ships field[ships_count], int x, int y, int ship_number, Fields bat_field[field_size][field_size]);
 void Draw_ships_on_field(Fields bat_field[field_size][field_size], Ships ships_arr[ships_count], which_field player);
-void Ships_of_subfield(Ships ships_arr[field_size], which_field player, subfield SubfieldShips[ships_count][4]);
+void Ships_of_subfield(Ships ships_arr[field_size], which_field player, subfield SubfieldShips[ships_count][4], bool init = false);
 void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number, subfield SubfieldShips[ships_count][4]);
 
 
@@ -94,7 +94,6 @@ void main()
 	
 	int ship_number = 0;
 	int image = 0;
-	
 
 	Ships *ships_arr_user = new Ships[ships_count];
 	Ships *ships_arr_enemy = new Ships[ships_count];
@@ -147,6 +146,7 @@ void main()
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 
 	sort_ships(ships_arr_enemy, x, y, ship_number, RANDOM, bat_field_enemy, ENEMY);
+	Ships_of_subfield(ships_arr_user, USER, SubfieldShips, true);
 	ship_number = -1;
 	while (true)
 	{
@@ -189,10 +189,9 @@ void main()
 		al_draw_bitmap(background2, subfield2_x_indent, subfield2_y_indent , 0);
 		al_draw_bitmap(background2, subfield1_x_indent, subfield1_y_indent, 0);
 		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
-		//Ships_of_subfield(ships_arr_enemy, ENEMY, SubfieldShips);
+		Ships_of_subfield(ships_arr_enemy, ENEMY, SubfieldShips);
 	
 		DrawSelectedShip(ships_arr_user, x, y, ship_number, bat_field_user);
-		//cout << ship_number;
 	}
 }
 
@@ -225,7 +224,6 @@ bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, ar
 		temp_x = -1;
 		temp_y = -1;
 	}
-	//cout << temp_x << "          " << temp_y << "           " << x << "     " << y << endl; ////////
 
 	if (Case == RANDOM)
 	{
@@ -452,7 +450,7 @@ void init_ships_params(Ships ships_arr[ships_count], ALLEGRO_BITMAP* back, ALLEG
 											//Draw Ships on Subfield
 
 /*******************************************************************************************************************************************/
-void Ships_of_subfield(Ships ships_arr[field_size], which_field player, subfield SubfieldShips[ships_count][4])
+void Ships_of_subfield(Ships ships_arr[field_size], which_field player, subfield SubfieldShips[ships_count][4], bool init)
 {
 	int indentX;
 	int indentY;
@@ -474,8 +472,7 @@ void Ships_of_subfield(Ships ships_arr[field_size], which_field player, subfield
 		for (int j = 0; j < ships_arr[i].points_to_death; j++)
 		{
 			ships_arr[i].is_drawed == ON_SUBFIELD ? al_draw_bitmap(ships_arr[i].ship_image[j], indentX + j * img_pix_size, indentY, 0) : 0;
-			SubfieldShips[i][j].x = indentX + j * img_pix_size;
-			SubfieldShips[i][j].y = indentY;
+			init ? (SubfieldShips[i][j].x = indentX + j * img_pix_size , SubfieldShips[i][j].y = indentY) : 0;	
 		}
 		if (i == 1)
 		{
@@ -511,20 +508,20 @@ void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number, 
 	}
 	else if (ship_number == -1)
 	{
-		
 		for (int i = 0; i < 10 && !is_selected; i++)
 		{
 			for (int j = 0; !is_selected && j < ships_arr[i].points_to_death; j++)
 			{
 				if (x >= SubfieldShips[i][j].x && x <= SubfieldShips[i][j].x + img_pix_size && y >= SubfieldShips[i][j].y && y <= SubfieldShips[i][j].y + img_pix_size)
 				{
-					ships_arr[i].is_drawed = SELECTED;
-					is_selected = true;
-					ship_number = i;
-					cout << x << "     " << y << endl;
+					if (ships_arr[i].is_drawed == ON_SUBFIELD)
+					{
+						ships_arr[i].is_drawed = SELECTED;
+						is_selected = true;
+						ship_number = i;
+					}
 				}
 			}
 		}
 	}
-	//cout << x << "     " << y << endl;
 }
