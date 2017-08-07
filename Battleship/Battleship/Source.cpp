@@ -28,6 +28,7 @@ enum Ship_State {
 	DRAWED
 };
 
+int drawed_ships = 0;
 const int field_size = 10;
 const int ships_count = 10;
 const int img_pix_size = 40;
@@ -51,7 +52,7 @@ ALLEGRO_BITMAP* front = nullptr;
 ALLEGRO_BITMAP* single = nullptr;
 ALLEGRO_BITMAP* player = nullptr;
 ALLEGRO_BITMAP* background = nullptr;
-ALLEGRO_BITMAP* background2 = nullptr;
+ALLEGRO_BITMAP* ships_field_image = nullptr;
 ALLEGRO_BITMAP* red_a = nullptr;
 ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
 ALLEGRO_EVENT event;
@@ -125,7 +126,7 @@ void main()
 	display = al_create_display(1150, 700);
 	al_set_window_title(display, "Sea Battle");
 	background = al_load_bitmap("fon.png");
-	background2 = al_load_bitmap("background2.png");
+	ships_field_image = al_load_bitmap("background2.png");
 	ocean = al_load_bitmap("ocean.jpg");
 	player = al_load_bitmap("1.png");
 	back = al_load_bitmap("back.jpg");
@@ -148,15 +149,20 @@ void main()
 	sort_ships(ships_arr_enemy, x, y, ship_number, RANDOM, bat_field_enemy, ENEMY);
 	Ships_of_subfield(ships_arr_user, USER, SubfieldShips, true);
 	ship_number = -1;
-	while (true)
+
+
+	while (drawed_ships != 10)
 	{
-		al_flip_display();
+		
 		al_clear_to_color(al_map_rgb(15, 74, 88));
 		al_draw_bitmap(ocean, 0, 0, 0);
 		al_draw_bitmap(background, field1_x_indent, field1_y_indent, 0);
-		al_draw_bitmap(background, field2_x_indent, field2_y_indent, 0);
+		al_draw_bitmap(ships_field_image, subfield1_x_indent, subfield1_y_indent, 0);
+		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
+		Draw_ships_on_field(bat_field_user, ships_arr_user, USER);
+		DrawSelectedShip(ships_arr_user, x, y, ship_number, bat_field_user);
+		al_flip_display();
 		al_wait_for_event(event_queue, &event);
-
 		if (event.type == ALLEGRO_EVENT_MOUSE_AXES)
 		{
 			x = event.mouse.x;
@@ -178,6 +184,49 @@ void main()
 				Selected_Ship(ships_arr_user, x, y, ship_number, SubfieldShips);
 				ship_number > -1 ? sort_ships(ships_arr_user, x, y, ship_number, MANUAL, bat_field_user, USER) : 0;
 			}
+
+			else if (event.mouse.button == 2 && ship_number >= 0 && ship_number < 10)
+				ships_arr_user[ship_number].ship_pos == HORIZONTAL ? ships_arr_user[ship_number].ship_pos = VERTICAL : ships_arr_user[ship_number].ship_pos = HORIZONTAL;
+		}
+		cout << drawed_ships << endl;
+	}
+
+	for (int i = 0; i < ships_count; i++)
+	{
+		ships_arr_user[i].is_drawed = ON_SUBFIELD;
+	}
+
+
+	while (true)
+	{
+		al_flip_display();
+		al_clear_to_color(al_map_rgb(15, 74, 88));
+		al_draw_bitmap(ocean, 0, 0, 0);
+		al_draw_bitmap(background, field1_x_indent, field1_y_indent, 0);
+		al_draw_bitmap(background, field2_x_indent, field2_y_indent, 0);
+		al_draw_bitmap(ships_field_image, subfield1_x_indent, subfield1_y_indent, 0);
+		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
+		
+		al_wait_for_event(event_queue, &event);
+
+		if (event.type == ALLEGRO_EVENT_MOUSE_AXES)
+		{
+			x = event.mouse.x;
+			y = event.mouse.y;
+		}
+		else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+			exit(0);
+		else if (event.type == ALLEGRO_EVENT_KEY_DOWN)
+		{
+			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+				exit(0);
+		}
+		else if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+		{
+			if (event.mouse.button == 1)
+			{
+				0;
+			}
 				
 			else if (event.mouse.button == 2 && ship_number >= 0 && ship_number < 10)
 				ships_arr_user[ship_number].ship_pos == HORIZONTAL ? ships_arr_user[ship_number].ship_pos = VERTICAL : ships_arr_user[ship_number].ship_pos = HORIZONTAL;
@@ -186,8 +235,6 @@ void main()
 		//Drawing 
 		Draw_ships_on_field(bat_field_user, ships_arr_user, USER);
 		Draw_ships_on_field(bat_field_enemy, ships_arr_enemy, ENEMY);
-		al_draw_bitmap(background2, subfield2_x_indent, subfield2_y_indent , 0);
-		al_draw_bitmap(background2, subfield1_x_indent, subfield1_y_indent, 0);
 		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
 		Ships_of_subfield(ships_arr_enemy, ENEMY, SubfieldShips);
 	
@@ -287,12 +334,14 @@ bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, ar
 			if (is_place_empty && Case == RANDOM)
 			{
 				ships_arr[ship_number].is_drawed = ON_SUBFIELD;
-				ship_number++;	
+				ship_number++;
+				player == USER ? drawed_ships = 10 : 0;
 			}
 			else if (is_place_empty && Case == MANUAL)
 			{
 				ships_arr[ship_number].is_drawed = DRAWED;
 				ship_number = -1;
+				drawed_ships++;
 			}
 		}
 		else if (ships_arr[ship_number].ship_pos == HORIZONTAL)
@@ -335,11 +384,13 @@ bool sort_ships(Ships ships_arr[ships_count], int x, int y, int &ship_number, ar
 			{
 				ships_arr[ship_number].is_drawed = ON_SUBFIELD;
 				ship_number++;
+				player == USER ? drawed_ships = 10 : 0;
 			}
 			else if (is_place_empty && Case == MANUAL)
 			{
 				ships_arr[ship_number].is_drawed = DRAWED;
 				ship_number = -1;
+				drawed_ships++;
 			}
 		}
 	}
