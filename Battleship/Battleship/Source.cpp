@@ -6,6 +6,15 @@
 #include <allegro5/allegro_image.h>
 using namespace std;
 
+bool damaged = false;
+
+enum enemy_shooting{
+	X_UP,
+	X_DOWN,
+	Y_UP,
+	Y_DOWN
+};
+
 enum image_position {
 	HORIZONTAL,
 	VERTICAL
@@ -59,6 +68,18 @@ ALLEGRO_BITMAP* red_a = nullptr;
 ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
 ALLEGRO_EVENT event;
 
+struct shoots
+{
+	int x;
+	int y;
+	enemy_shooting state;
+	int first_x;
+	int first_y;
+};
+
+shoots shooting[4];
+shoots if_damaged[10];
+
 
 struct subfield
 {
@@ -77,9 +98,10 @@ struct Ships
 	int points = 0;
 	int points_to_death = 0;
 	int img_number = 0;
-	ALLEGRO_BITMAP** ship_image = new ALLEGRO_BITMAP*[4]{ nullptr };
 	Ship_State is_drawed = ON_SUBFIELD;
 	image_position	ship_pos = HORIZONTAL;
+	ALLEGRO_BITMAP** ship_image = new ALLEGRO_BITMAP*[4]{ nullptr };
+	
 };
 
 
@@ -637,13 +659,18 @@ void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field
 		if (ship_number == -1)
 		{
 			bat_field[temp_y][temp_x].ship = 10;
+			field == USER ? damaged = true : 0;
 		}
-		else if (ship_number >= 0 && ship_number < ships_count)
+		else if (ship_number >= 0 && ship_number < ships_count && !bat_field[temp_y][temp_x].state)
 		{
 
-			(ships_arr[ship_number].points_to_death > 0 && !bat_field[temp_y][temp_x].state) ? ships_arr[ship_number].points_to_death-- : 0;
+			ships_arr[ship_number].points_to_death > 0  ? ships_arr[ship_number].points_to_death-- : 0;
 			bat_field[temp_y][temp_x].state = true;
+			field == USER ?damaged = true : 0;
+
 		}
+		else 
+			field == USER ? damaged = true : 0;
 		if (ships_arr[ship_number].points_to_death == 0 && ship_number >= 0 && ship_number < ships_count)
 		{
 			for (int i = 0; i < ships_count; i++)
@@ -680,16 +707,122 @@ void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field
 
 void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size])
 {
-	int shootX , shootY;
-	do
+	static bool shooted = false;
+	static int count = 0;
+	static int random = 0;
+	static int ship = -1;
+	int shootX = 0 , shootY = 0;
+	if (!shooted && !damaged)
 	{
-		shootX = rand() % ships_count;
-		shootY = rand() % ships_count;
-	} while ((bat_field[shootX][shootY].ship != 10 && bat_field[shootX][shootY].state) || bat_field[shootX][shootY].ship != -1);
+		do
+		{
+			shootX = rand() % ships_count;
+			shootY = rand() % ships_count;
+		} while (bat_field[shootX][shootY].ship != -1 && bat_field[shootX][shootY].ship == 10 || bat_field[shootX][shootY].state);
+		ship = bat_field[shootX][shootY].ship;
+		shooting[0].first_x = shootX;
+		shooting[0].first_y = shootY;
+	}
+	else if (ships_arr[ship].points_to_death > 0)
+	{
+		if (ship >= 0 && ships_arr[ship].points_to_death > 1 && !shooted)
+		{
+			
+			if (shootX > 0)
+			{
+				shooting[count] = { shootX - 1, shootY, X_DOWN };
+				count++;
+			}
+			if (shootX < field_size - 1)
+			{
+				shooting[count] = { shootX + 1, shootY, X_UP };
+				count++;
+			}
+			if (shootY > 0)
+			{
+				shooting[count] = { shootX, shootY - 1, Y_DOWN };
+				count++;
+			}
+			if (shootY < field_size - 1)
+			{
+				shooting[count] = { shootX, shootY + 1, Y_UP };
+				count++;
+			}
 
+			shoots temp;
+			for (int i = 0; i < 10 && count > 0; i++)
+			{
+				random = rand() % count;
+				temp = shooting[count - 1];
+				shooting[count - 1] = shooting[random];
+				shooting[random] = temp;
+			}
+			shooted = true;
+		}
+		if (ships_arr[ship].points - ships_arr[ship].points_to_death == 1)
+		{
+			shootX = shooting[--count].x;
+			shootY = shooting[--count].y;
+		}
+		else
+		{
+			if (shooting[count].state == X_UP && damaged)
+				shooting[count].x++;
+			else if (shooting[count].state == X_UP && !damaged)
+			{
+				shooting[count].state = X_DOWN;
+				shooting[count].x = shooting[0].first_x;
+				shooting[count].y = shooting[0].first_y;
+				shooting[count].x--;
+			}
+			if (shooting[count].state == X_DOWN && damaged)
+				shooting[count].x--;
+			else if (shooting[count].state == X_DOWN && !damaged)
+			{
+				shooting[count].state = X_UP;
+				shooting[count].x = shooting[0].first_x;
+				shooting[count].y = shooting[0].first_y;
+				shooting[count].x++;
+			}
+			if (shooting[count].state == Y_UP && damaged)
+				shooting[count].y++;
+			else if (shooting[count].state == Y_UP && !damaged)
+			{
+				shooting[count].state = Y_DOWN;
+				shooting[count].x = shooting[0].first_x;
+				shooting[count].y = shooting[0].first_y;
+				shooting[count].y--;
+			}
+			if (shooting[count].state == Y_DOWN && damaged)
+				shooting[count].y--;
+			else if (shooting[count].state == Y_DOWN && !damaged)
+			{
+				shooting[count].state = Y_UP;
+				shooting[count].x = shooting[0].first_x;
+				shooting[count].y = shooting[0].first_y;
+				shooting[count].y++;
+			}
+			shootX = shooting[count].x;
+			shootY = shooting[count].y;
+		}
+		ships_arr[ship].points_to_death == 0 ? shooted = false : 0;
+	}
+	DrawShoots(ships_arr, bat_field, shootY, shootX, USER);
+	/*int arr_count = ships_arr[ship].points_to_death - 1;
+
+	while (arr_count > 0)
+	{
+	int i = 0;
+	if (bat_field[shooting[i].x][shooting[i].y].ship >= 0 && bat_field[shooting[i].x][shooting[i].y].ship < 10 && !bat_field[shooting[i].x][shooting[i].y].state)
+	{
+
+	}
+	}*/
 	
+
+		
 	static int a = 0;
 	a++;
 	cout << a <<  "       " << bat_field[shootX][shootY].ship << endl;
-	DrawShoots(ships_arr, bat_field, shootX, shootY, USER);
+	
 }
