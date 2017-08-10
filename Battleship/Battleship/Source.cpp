@@ -659,7 +659,7 @@ void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field
 		if (ship_number == -1)
 		{
 			bat_field[temp_y][temp_x].ship = 10;
-			field == USER ? damaged = true : 0;
+			field == USER ? damaged = false : 0;
 		}
 		else if (ship_number >= 0 && ship_number < ships_count && !bat_field[temp_y][temp_x].state)
 		{
@@ -670,7 +670,7 @@ void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field
 
 		}
 		else 
-			field == USER ? damaged = true : 0;
+			field == USER ? damaged = false : 0;
 		if (ships_arr[ship_number].points_to_death == 0 && ship_number >= 0 && ship_number < ships_count)
 		{
 			for (int i = 0; i < ships_count; i++)
@@ -711,9 +711,10 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 	static int count = 0;
 	static int random = 0;
 	static int ship = -1;
-	int shootX = 0 , shootY = 0;
-	if (!shooted && !damaged)
+	int shootX =-2, shootY = -2;
+	if (!shooted && !damaged || ships_arr[ship].points_to_death == 0)
 	{
+		
 		do
 		{
 			shootX = rand() % ships_count;
@@ -723,32 +724,58 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 		shooting[0].first_x = shootX;
 		shooting[0].first_y = shootY;
 	}
-	else if (ships_arr[ship].points_to_death > 0)
+	else if (ships_arr[ship].points == 1)
 	{
-		if (ship >= 0 && ships_arr[ship].points_to_death > 1 && !shooted)
+		shooted = false;
+	}
+	else
+	{
+		if (ship >= 0 && !shooted)
 		{
-			
-			if (shootX > 0)
+			shootX = shooting[0].first_x;
+			shootY = shooting[0].first_y;
+			if (shootX > 0 && bat_field[shootX - 1][shootY].ship != 10)
 			{
-				shooting[count] = { shootX - 1, shootY, X_DOWN };
-				count++;
+				if (!bat_field[shootX - 1][shootY].state)
+				{
+					shooting[count].x = shootX - 1;
+					shooting[count].y = shootY;
+					shooting[count].state = X_DOWN;
+					count++;
+				}
 			}
-			if (shootX < field_size - 1)
+			if (shootX < field_size - 1 && bat_field[shootX + 1][shootY].ship != 10)
 			{
-				shooting[count] = { shootX + 1, shootY, X_UP };
-				count++;
+				if (!bat_field[shootX + 1][shootY].state)
+				{
+					shooting[count].x = shootX + 1;
+					shooting[count].y = shootY;
+					shooting[count].state = X_UP;
+					count++;
+				}
+				
 			}
-			if (shootY > 0)
+			if (shootY > 0 && bat_field[shootX][shootY - 1].ship != 10)
 			{
-				shooting[count] = { shootX, shootY - 1, Y_DOWN };
-				count++;
+				if (!bat_field[shootX][shootY - 1].state)
+				{
+					shooting[count].x = shootX;
+					shooting[count].y = shootY - 1;
+					shooting[count].state = Y_DOWN;
+					count++;
+				}
+				
 			}
-			if (shootY < field_size - 1)
+			if (shootY < field_size - 1 && bat_field[shootX][shootY + 1].ship != 10)
 			{
-				shooting[count] = { shootX, shootY + 1, Y_UP };
-				count++;
+				if (!bat_field[shootX][shootY + 1].state)
+				{
+					shooting[count].x = shootX;
+					shooting[count].y = shootY + 1;
+					shooting[count].state = Y_UP;
+					count++;
+				}
 			}
-
 			shoots temp;
 			for (int i = 0; i < 10 && count > 0; i++)
 			{
@@ -762,7 +789,7 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 		if (ships_arr[ship].points - ships_arr[ship].points_to_death == 1)
 		{
 			shootX = shooting[--count].x;
-			shootY = shooting[--count].y;
+			shootY = shooting[count].y;
 		}
 		else
 		{
@@ -775,7 +802,8 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 				shooting[count].y = shooting[0].first_y;
 				shooting[count].x--;
 			}
-			if (shooting[count].state == X_DOWN && damaged)
+
+			else if (shooting[count].state == X_DOWN && damaged)
 				shooting[count].x--;
 			else if (shooting[count].state == X_DOWN && !damaged)
 			{
@@ -784,7 +812,8 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 				shooting[count].y = shooting[0].first_y;
 				shooting[count].x++;
 			}
-			if (shooting[count].state == Y_UP && damaged)
+
+			else if (shooting[count].state == Y_UP && damaged)
 				shooting[count].y++;
 			else if (shooting[count].state == Y_UP && !damaged)
 			{
@@ -793,7 +822,8 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 				shooting[count].y = shooting[0].first_y;
 				shooting[count].y--;
 			}
-			if (shooting[count].state == Y_DOWN && damaged)
+
+			else if (shooting[count].state == Y_DOWN && damaged)
 				shooting[count].y--;
 			else if (shooting[count].state == Y_DOWN && !damaged)
 			{
@@ -802,27 +832,22 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 				shooting[count].y = shooting[0].first_y;
 				shooting[count].y++;
 			}
+
 			shootX = shooting[count].x;
 			shootY = shooting[count].y;
+			cout << shooting[0].first_x << "       " << shooting[0].first_y << endl;
 		}
-		ships_arr[ship].points_to_death == 0 ? shooted = false : 0;
 	}
-	DrawShoots(ships_arr, bat_field, shootY, shootX, USER);
-	/*int arr_count = ships_arr[ship].points_to_death - 1;
-
-	while (arr_count > 0)
+	ships_arr[ship].points_to_death == 0 ? (shooted = false, count = 0) : 0;
+	/*else
 	{
-	int i = 0;
-	if (bat_field[shooting[i].x][shooting[i].y].ship >= 0 && bat_field[shooting[i].x][shooting[i].y].ship < 10 && !bat_field[shooting[i].x][shooting[i].y].state)
-	{
-
-	}
+		shootX = shooting[0].first_x;
+		shootY = shooting[0].first_y;
+		shooted = false;
 	}*/
-	
 
-		
 	static int a = 0;
 	a++;
-	cout << a <<  "       " << bat_field[shootX][shootY].ship << endl;
-	
+	cout << a << "       " << shootX << "          " << shootY << endl;
+	DrawShoots(ships_arr, bat_field, shootY, shootX, USER);
 }
