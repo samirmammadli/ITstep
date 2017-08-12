@@ -7,7 +7,7 @@ using namespace std;
 void main()
 {
 
-	bool enemy_shoot = false;
+	
 	int ship_number = 0;
 	int image = 0;
 
@@ -149,7 +149,7 @@ void main()
 			if (event.mouse.button == 1)
 			{
 				DrawShoots(ships_arr_enemy, bat_field_enemy, x, y, ENEMY);
-				enemy_shoot = true;
+				//enemy_shoot = true;
 				
 			}
 			else if (event.mouse.button == 2 && ship_number >= 0 && ship_number < 10)
