@@ -57,6 +57,9 @@ const int subfield2_y_indent = field2_y_indent + field_size * img_pix_size + img
 ALLEGRO_DISPLAY* display = nullptr;
 ALLEGRO_BITMAP* ocean = nullptr;
 ALLEGRO_BITMAP* aim = nullptr;
+ALLEGRO_BITMAP* instructions = nullptr;
+ALLEGRO_BITMAP* Table = nullptr;
+ALLEGRO_BITMAP* Black = nullptr;
 ALLEGRO_BITMAP* back = nullptr;
 ALLEGRO_BITMAP* middle1 = nullptr;
 ALLEGRO_BITMAP* middle2 = nullptr;
@@ -84,8 +87,8 @@ struct enemy_shoot_settings
 
 struct shoots
 {
-	int x;
-	int y;
+	int x = -1;
+	int y = -1;
 	enemy_shooting state;
 };
 
@@ -120,8 +123,8 @@ void DrawSelectedShip(Ships field[ships_count], int x, int y, int ship_number, F
 void Draw_ships_on_field(Fields bat_field[field_size][field_size], Ships ships_arr[ships_count], which_field player);
 void Ships_of_subfield(Ships ships_arr[field_size], which_field player, subfield SubfieldShips[ships_count][4], bool init = false);
 void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number, subfield SubfieldShips[ships_count][4]);
-void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], int x, int y, which_field player);
-void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[5], enemy_shoot_settings &Settings);
+void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], int x, int y, which_field player, int destroyed[2]);
+void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[5], enemy_shoot_settings &Settings, int destroyed[2]);
 
 
 /*******************************************************************************************************************************************/
@@ -473,7 +476,7 @@ void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number, 
 
 /*******************************************************************************************************************************************/
 
-void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], int x, int y, which_field field)
+void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], int x, int y, which_field field, int destroyed[2])
 {
 	bool is_cursos_on_field = false;
 	int indent_x, indent_y;
@@ -521,8 +524,8 @@ void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field
 
 			ships_arr[ship_number].points_to_death > 0 ? ships_arr[ship_number].points_to_death-- : 0;
 			bat_field[temp_y][temp_x].state = true;
-			field == USER ? damaged = true : 0;
-			field == ENEMY ? enemy_shoot = true : 0;
+			field == USER ? (damaged = true, destroyed[0]++) : 0;
+			field == ENEMY ? (enemy_shoot = true, destroyed[1]++) : 0;
 
 		}
 		else
@@ -565,7 +568,7 @@ void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field
 
 /*******************************************************************************************************************************************/
 
-void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[5], enemy_shoot_settings &Settings)
+void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[5], enemy_shoot_settings &Settings, int destroyed[2])
 {
 	int shootX = -2, shootY = -2;
 	ships_arr[Settings.ship].points_to_death == 0 ? (Settings.shooted = false, Settings.count = 0) : 0;
@@ -703,7 +706,7 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 	}
 	shooting[4].x = shootX;
 	shooting[4].y = shootY;
-	DrawShoots(ships_arr, bat_field, shootY, shootX, USER);
+	DrawShoots(ships_arr, bat_field, shootY, shootX, USER, destroyed);
 }
 
 

@@ -9,6 +9,7 @@ void main()
 {
 	int ship_number = 0;
 	int image = 0;
+	int destroyed[2] = {};
 
 	Ships *ships_arr_user = new Ships[ships_count];
 	Ships *ships_arr_enemy = new Ships[ships_count];
@@ -54,7 +55,9 @@ void main()
 	single = al_load_bitmap("one.jpg");
 	red_a = al_load_bitmap("2.png");
 	aim = al_load_bitmap("aim.png");
-
+	instructions = al_load_bitmap("Text.png");
+	Black = al_load_bitmap("22222.png");
+	Table = al_load_bitmap("tablo.png");
 
 	init_ships_params(ships_arr_user, back, middle1, middle2, front);
 	init_ships_params(ships_arr_enemy, back, middle1, middle2, front);
@@ -80,6 +83,8 @@ void main()
 		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
 		Draw_ships_on_field(bat_field_user, ships_arr_user, USER);
 		DrawSelectedShip(ships_arr_user, x, y, ship_number, bat_field_user);
+		al_draw_bitmap(Black, field1_x_indent + (field_size * img_pix_size + 50), subfield1_y_indent, 0);
+		al_draw_bitmap(instructions, field1_x_indent + (field_size * img_pix_size + 50), subfield1_y_indent, 0);
 		al_flip_display();
 		al_wait_for_event(event_queue, &event);
 		if (event.type == ALLEGRO_EVENT_MOUSE_AXES)
@@ -117,8 +122,8 @@ void main()
 	int img_index = 0;
 	while (true)
 	{
-	
-		al_flip_display();
+		//Drawing 
+		
 		al_clear_to_color(al_map_rgb(15, 74, 88));
 		al_draw_bitmap(ocean, 0, 0, 0);
 		al_draw_bitmap(background, field1_x_indent, field1_y_indent, 0);
@@ -126,11 +131,19 @@ void main()
 		al_draw_bitmap(ships_field_image, subfield1_x_indent, subfield1_y_indent, 0);
 		al_draw_bitmap(ships_field_image, subfield2_x_indent, subfield2_y_indent, 0);
 		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
+		Draw_ships_on_field(bat_field_user, ships_arr_user, USER);
+		Draw_ships_on_field(bat_field_enemy, ships_arr_enemy, ENEMY);
+		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
+		Ships_of_subfield(ships_arr_enemy, ENEMY, SubfieldShips);
+		al_draw_bitmap(Table, field1_x_indent + (field_size * img_pix_size) + 10, field1_y_indent, 0);
+		al_draw_rotated_bitmap(aim, 20, 20, x, y, 0, 0);
+		shooting[4].x != -1  ? al_draw_bitmap(aim, shooting[4].y * img_pix_size + field1_x_indent, shooting[4].x * img_pix_size + field1_y_indent, 0): 0;
+		al_flip_display();
+		if (destroyed[0] == 20 || destroyed[1] == 20)
+		break;
+		
 		
 
-		
-
-		
 		event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN ? event.mouse.button = 0 : 0;
 		al_wait_for_event(event_queue, &event);
 		//al_wait_for_event_timed(event_queue, &event, 0.05);
@@ -151,22 +164,19 @@ void main()
 		{
 			if (event.mouse.button == 1)
 			{
-				DrawShoots(ships_arr_enemy, bat_field_enemy, x, y, ENEMY);
+				DrawShoots(ships_arr_enemy, bat_field_enemy, x, y, ENEMY, destroyed);
 			}
 			else if (event.mouse.button == 2 && ship_number >= 0 && ship_number < 10)
 				ships_arr_user[ship_number].ship_pos == HORIZONTAL ? ships_arr_user[ship_number].ship_pos = VERTICAL : ships_arr_user[ship_number].ship_pos = HORIZONTAL;
 		}
 
-		//Drawing 
-		Draw_ships_on_field(bat_field_user, ships_arr_user, USER);
-		Draw_ships_on_field(bat_field_enemy, ships_arr_enemy, ENEMY);
-		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
-		Ships_of_subfield(ships_arr_enemy, ENEMY, SubfieldShips);
-		al_draw_rotated_bitmap(aim, 20, 20, x, y, 0, 0);
-		//DrawSelectedShip(ships_arr_user, x, y, ship_number, bat_field_user);
-		enemy_shoot ? EnemyShoots(ships_arr_user, bat_field_user, shooting, Settings) : 0;
+		enemy_shoot ? EnemyShoots(ships_arr_user, bat_field_user, shooting, Settings, destroyed) : 0;
 		enemy_shoot = false;
-		al_draw_bitmap(aim, shooting[4].y * img_pix_size + field1_x_indent, shooting[4].x * img_pix_size + field1_y_indent, 0);
+		
+		cout << destroyed[0] << "          " << destroyed[1] << endl;
+
+		
 	}
+	system("pause");
 }
 
