@@ -1,14 +1,20 @@
 #pragma once
 #include <iostream>
 #include <windows.h>
-#include <conio.h>
-#include <time.h>
+// Allegro Library
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 
 
-bool damaged = false;
-bool enemy_shoot = false;
+
+//Enum Values
+enum GameMode {
+	EASY,
+	HARD
+};
 
 enum enemy_shooting {
 	X_UP,
@@ -39,7 +45,14 @@ enum Ship_State {
 	DRAWED
 };
 
+
+//Global Variables
+bool damaged = false;
+bool enemy_shoot = false;
 int drawed_ships = 0;
+
+
+//Constant Global Values
 const int field_size = 10;
 const int ships_count = 10;
 const int img_pix_size = 40;
@@ -65,17 +78,21 @@ ALLEGRO_BITMAP* middle1 = nullptr;
 ALLEGRO_BITMAP* middle2 = nullptr;
 ALLEGRO_BITMAP* front = nullptr;
 ALLEGRO_BITMAP* single = nullptr;
-ALLEGRO_BITMAP* player = nullptr;
+ALLEGRO_BITMAP* green_square = nullptr;
 ALLEGRO_BITMAP* x_img = nullptr;
 ALLEGRO_BITMAP* f_img = nullptr;
 ALLEGRO_BITMAP* background = nullptr;
 ALLEGRO_BITMAP* ships_field_image = nullptr;
-ALLEGRO_BITMAP* red_a = nullptr;
+ALLEGRO_BITMAP* red_square = nullptr;
+ALLEGRO_FONT* font = nullptr;
 ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
 ALLEGRO_EVENT event;
 
+
+//Game Structures
 struct enemy_shoot_settings
 {
+	GameMode mode = HARD;
 	bool shooted = false;
 	int count = 0;
 	int random = 0;
@@ -298,13 +315,13 @@ void DrawSelectedShip(Ships ships_arr[ships_count], int x, int y, int ship_numbe
 		if (ships_arr[ship_number].ship_pos == VERTICAL)
 		{
 			al_draw_rotated_bitmap(ships_arr[ship_number].ship_image[i], 0, 0, x + img_pix_size, y + i * img_pix_size, 1.566, 0);
-			correct_position ? al_draw_bitmap(player, x, y + i * img_pix_size, 0) : al_draw_bitmap(red_a, x, y + i * img_pix_size, 0);
+			correct_position ? al_draw_bitmap(green_square, x, y + i * img_pix_size, 0) : al_draw_bitmap(red_square, x, y + i * img_pix_size, 0);
 		}
 
 		else
 		{
 			al_draw_bitmap(ships_arr[ship_number].ship_image[i], x + i * img_pix_size, y, 0);
-			correct_position ? al_draw_bitmap(player, x + i * img_pix_size, y, 0) : al_draw_bitmap(red_a, x + i * img_pix_size, y, 0);
+			correct_position ? al_draw_bitmap(green_square, x + i * img_pix_size, y, 0) : al_draw_bitmap(red_square, x + i * img_pix_size, y, 0);
 		}
 	}
 }
@@ -572,7 +589,7 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 {
 	int shootX = -2, shootY = -2;
 	ships_arr[Settings.ship].points_to_death == 0 ? (Settings.shooted = false, Settings.count = 0) : 0;
-	if (!Settings.shooted && !damaged || ships_arr[Settings.ship].points_to_death == 0)
+	if (Settings.mode == EASY || !Settings.shooted && !damaged || ships_arr[Settings.ship].points_to_death == 0)
 	{
 
 		do
@@ -584,11 +601,11 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 		Settings.first_x = shootX;
 		Settings.first_y = shootY;
 	}
-	else if (ships_arr[Settings.ship].points == 1)
+	else if (Settings.mode == HARD && ships_arr[Settings.ship].points == 1)
 	{
 		Settings.shooted = false;
 	}
-	else
+	else if (Settings.mode == HARD)
 	{
 		if (Settings.ship >= 0 && !Settings.shooted)
 		{
