@@ -1,13 +1,12 @@
 
 #include "Functions.h"
+#pragma warning(disable : 4996)
 using namespace std;
 
 
 
 void main()
 {
-
-	
 	int ship_number = 0;
 	int image = 0;
 
@@ -18,7 +17,7 @@ void main()
 	Fields bat_field_enemy[field_size][field_size];
 
 	subfield SubfieldShips[ships_count][4];
-	shoots shooting[4];
+	shoots shooting[5];
 	enemy_shoot_settings Settings;
 	srand(time(0));
 
@@ -54,6 +53,7 @@ void main()
 	front = al_load_bitmap("front.jpg");
 	single = al_load_bitmap("one.jpg");
 	red_a = al_load_bitmap("2.png");
+	aim = al_load_bitmap("aim.png");
 
 
 	init_ships_params(ships_arr_user, back, middle1, middle2, front);
@@ -114,9 +114,10 @@ void main()
 		ships_arr_user[i].is_drawed = ON_SUBFIELD;
 	}
 
-
+	int img_index = 0;
 	while (true)
 	{
+	
 		al_flip_display();
 		al_clear_to_color(al_map_rgb(15, 74, 88));
 		al_draw_bitmap(ocean, 0, 0, 0);
@@ -125,12 +126,14 @@ void main()
 		al_draw_bitmap(ships_field_image, subfield1_x_indent, subfield1_y_indent, 0);
 		al_draw_bitmap(ships_field_image, subfield2_x_indent, subfield2_y_indent, 0);
 		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
+		
 
 		
+
 		
-		//al_wait_for_event(event_queue, &event);
 		event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN ? event.mouse.button = 0 : 0;
-		al_wait_for_event_timed(event_queue, &event, 0.005);
+		al_wait_for_event(event_queue, &event);
+		//al_wait_for_event_timed(event_queue, &event, 0.05);
 		
 		if (event.type == ALLEGRO_EVENT_MOUSE_AXES)
 		{
@@ -149,8 +152,6 @@ void main()
 			if (event.mouse.button == 1)
 			{
 				DrawShoots(ships_arr_enemy, bat_field_enemy, x, y, ENEMY);
-				//enemy_shoot = true;
-				
 			}
 			else if (event.mouse.button == 2 && ship_number >= 0 && ship_number < 10)
 				ships_arr_user[ship_number].ship_pos == HORIZONTAL ? ships_arr_user[ship_number].ship_pos = VERTICAL : ships_arr_user[ship_number].ship_pos = HORIZONTAL;
@@ -161,9 +162,11 @@ void main()
 		Draw_ships_on_field(bat_field_enemy, ships_arr_enemy, ENEMY);
 		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
 		Ships_of_subfield(ships_arr_enemy, ENEMY, SubfieldShips);
-		DrawSelectedShip(ships_arr_user, x, y, ship_number, bat_field_user);
+		al_draw_rotated_bitmap(aim, 20, 20, x, y, 0, 0);
+		//DrawSelectedShip(ships_arr_user, x, y, ship_number, bat_field_user);
 		enemy_shoot ? EnemyShoots(ships_arr_user, bat_field_user, shooting, Settings) : 0;
 		enemy_shoot = false;
+		al_draw_bitmap(aim, shooting[4].y * img_pix_size + field1_x_indent, shooting[4].x * img_pix_size + field1_y_indent, 0);
 	}
 }
 

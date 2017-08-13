@@ -56,6 +56,7 @@ const int subfield2_y_indent = field2_y_indent + field_size * img_pix_size + img
 //Data section
 ALLEGRO_DISPLAY* display = nullptr;
 ALLEGRO_BITMAP* ocean = nullptr;
+ALLEGRO_BITMAP* aim = nullptr;
 ALLEGRO_BITMAP* back = nullptr;
 ALLEGRO_BITMAP* middle1 = nullptr;
 ALLEGRO_BITMAP* middle2 = nullptr;
@@ -120,7 +121,7 @@ void Draw_ships_on_field(Fields bat_field[field_size][field_size], Ships ships_a
 void Ships_of_subfield(Ships ships_arr[field_size], which_field player, subfield SubfieldShips[ships_count][4], bool init = false);
 void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number, subfield SubfieldShips[ships_count][4]);
 void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], int x, int y, which_field player);
-void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[4], enemy_shoot_settings &Settings);
+void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[5], enemy_shoot_settings &Settings);
 
 
 /*******************************************************************************************************************************************/
@@ -564,7 +565,7 @@ void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field
 
 /*******************************************************************************************************************************************/
 
-void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[4], enemy_shoot_settings &Settings)
+void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[5], enemy_shoot_settings &Settings)
 {
 	int shootX = -2, shootY = -2;
 	ships_arr[Settings.ship].points_to_death == 0 ? (Settings.shooted = false, Settings.count = 0) : 0;
@@ -700,5 +701,10 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 			shooting[Settings.count].y = y;
 		}
 	}
+	shooting[4].x = shootX;
+	shooting[4].y = shootY;
 	DrawShoots(ships_arr, bat_field, shootY, shootX, USER);
 }
+
+
+
