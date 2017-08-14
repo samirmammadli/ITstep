@@ -68,6 +68,7 @@ const int subfield2_y_indent = field2_y_indent + field_size * img_pix_size + img
 
 //Data section
 ALLEGRO_DISPLAY* display = nullptr;
+ALLEGRO_BITMAP* display_icon = nullptr;
 ALLEGRO_BITMAP* ocean = nullptr;
 ALLEGRO_BITMAP* aim = nullptr;
 ALLEGRO_BITMAP* instructions = nullptr;

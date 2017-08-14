@@ -43,6 +43,8 @@ void main()
 
 	//LOAD RESOURCES
 	display = al_create_display(1150, 700);
+	display_icon = al_load_bitmap("data\\icon.png");
+	al_set_display_icon(display, display_icon);
 	al_set_window_title(display, "Sea Battle");
 	background = al_load_bitmap("data\\fon.png");
 	ships_field_image = al_load_bitmap("data\\background2.png");
@@ -164,7 +166,7 @@ void main()
 		Settings.mode == 0 ? al_draw_text(font, al_map_rgb(0, 255, 0), field1_x_indent + (field_size * img_pix_size) + 130, field1_y_indent + 90, 0, "Easy") : 0;
 		
 		destroyed[1] == 20 ? al_draw_text(font, al_map_rgb(0, 255, 0), field1_x_indent + (field_size * img_pix_size) + 45, field1_y_indent + 210, 0, "** YOU WIN **") : 0;
-		destroyed[0] == 20 ? al_draw_text(font, al_map_rgb(255, 0, 0), field1_x_indent + (field_size * img_pix_size) + 30, field1_y_indent + 210, 0, "** YOU LOOSE **") : 0;
+		destroyed[0] == 20 ? al_draw_text(font, al_map_rgb(255, 0, 0), field1_x_indent + (field_size * img_pix_size) + 35, field1_y_indent + 210, 0, "** YOU LOST **") : 0;
 
 
 		destroyed[0] < 20 && destroyed[1] < 20 ? al_draw_rotated_bitmap(aim, 20, 20, x, y, 0, 0) : 0;
