@@ -22,14 +22,8 @@ void main()
 	srand(time(0));
 
 
-
 	// Current Mouse x and y positions
 	int x = 0, y = 0;
-
-	// Convertaion mouse x and y positions to field cell
-	int temp_x = 0;
-	int temp_y = 0;
-
 
 	//INIT ALLEGRO COMPONENTS
 	al_init();
@@ -82,7 +76,7 @@ void main()
 	Ships_of_subfield(ships_arr_user, USER, SubfieldShips, true);
 
 	////////////////
-	ship_number = -1;
+	 ship_number = -1;
 	///////////////
 
 	while (drawed_ships != 10)
@@ -141,6 +135,8 @@ void main()
 	}
 
 	int img_index = 0;
+
+	
 	while (true)
 	{
 		//Drawing 
@@ -151,7 +147,6 @@ void main()
 		al_draw_bitmap(background, field2_x_indent, field2_y_indent, 0);
 		al_draw_bitmap(ships_field_image, subfield1_x_indent, subfield1_y_indent, 0);
 		al_draw_bitmap(ships_field_image, subfield2_x_indent, subfield2_y_indent, 0);
-		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
 		Draw_ships_on_field(bat_field_user, ships_arr_user, USER);
 		Draw_ships_on_field(bat_field_enemy, ships_arr_enemy, ENEMY);
 		Ships_of_subfield(ships_arr_user, USER, SubfieldShips);
@@ -199,8 +194,7 @@ void main()
 				{
 					DrawShoots(ships_arr_enemy, bat_field_enemy, x, y, ENEMY, destroyed);
 				}
-				else if (event.mouse.button == 2 && ship_number >= 0 && ship_number < 10)
-					ships_arr_user[ship_number].ship_pos == HORIZONTAL ? ships_arr_user[ship_number].ship_pos = VERTICAL : ships_arr_user[ship_number].ship_pos = HORIZONTAL;
+				
 			}
 
 			enemy_shoot && destroyed[1] < 20 ? EnemyShoots(ships_arr_user, bat_field_user, shooting, Settings, destroyed) : 0;

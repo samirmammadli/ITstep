@@ -52,6 +52,8 @@ bool enemy_shoot = false;
 int drawed_ships = 0;
 
 
+FILE* f;
+
 //Constant Global Values
 const int field_size = 10;
 const int ships_count = 10;
@@ -131,7 +133,6 @@ struct Ships
 	Ship_State is_drawed = ON_SUBFIELD;
 	image_position	ship_pos = HORIZONTAL;
 	ALLEGRO_BITMAP** ship_image = new ALLEGRO_BITMAP*[4]{ nullptr };
-
 };
 
 
@@ -143,8 +144,6 @@ void Ships_of_subfield(Ships ships_arr[field_size], which_field player, subfield
 void Selected_Ship(Ships ships_arr[field_size], int x, int y, int &ship_number, subfield SubfieldShips[ships_count][4]);
 void DrawShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], int x, int y, which_field player, int destroyed[2]);
 void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][field_size], shoots shooting[5], enemy_shoot_settings &Settings, int destroyed[2]);
-
-
 /*******************************************************************************************************************************************/
 
 //Put ships on the field, and shows is selected ship position on the field right or wrong 
@@ -726,6 +725,3 @@ void EnemyShoots(Ships ships_arr[ships_count], Fields bat_field[field_size][fiel
 	shooting[4].y = shootY;
 	DrawShoots(ships_arr, bat_field, shootY, shootX, USER, destroyed);
 }
-
-
-
