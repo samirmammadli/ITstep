@@ -12,6 +12,23 @@ public:
 	void iter();
 	void operations();
 	void print();
+	Samir operator+ (Samir t2)
+	{
+		t2.a += a;
+		t2.b += b;
+		return t2;
+	}
+	Samir operator- (Samir t2)
+	{
+		t2.a -= a;
+		t2.b -= b;
+		return t2;
+	}
+	void operator++ (int)
+	{
+		++a;
+		b += 1.3;
+	}
 };
 
 Samir::Samir(int q)
@@ -43,22 +60,33 @@ void Samir::operations()
 void Samir::print()
 {
 	if (b == 0 && oper == '/') cout << "На ноль делить нельзя !" << endl;
-	else cout << "Ответ: " << sum << endl;
+	else
+	{
+		//cout << "Ответ: " << sum << endl;
+		cout << a << "    " << b << endl;
+	}
 }
 
 void main()
 {
 	setlocale(NULL, "Russian");
 	Samir calc(18);
+	Samir calc2(7);
 	char key = 0;
-	while (key != 13)
-	{
-		system("cls");
-		calc.iter();
-		calc.operations();
-		calc.print();
-		cout << "Для продолжения нажмите любую клавишу, для выхода нажмите ВВОД.\n";
-		key = _getch();
-	}
-	
+	//while (key != 13)
+	//{
+	//	system("cls");
+	//	calc.iter();
+	//	calc.operations();
+	//	calc.print();
+	//	cout << "Для продолжения нажмите любую клавишу, для выхода нажмите ВВОД.\n";
+	//	key = _getch();
+	//}
+	calc.print();
+	calc2.print();
+	calc = calc + calc2 + calc2;
+	calc.print();
+	calc2.print();
+	calc2++;
+	calc2.print();
 }
