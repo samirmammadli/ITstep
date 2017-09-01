@@ -16,7 +16,7 @@ String TileMap[H] = {
 	"0                                                                                                                                                    0",
 	"0                                                                                    w                                                               0",
 	"0                   w                                  w                   w                                                                         0",
-	"0                                      w                                       kk																	  0",
+	"0                                      w                                       kk                                                                    0",
 	"0                                                                             k  k    k    k                                                         0",
 	"0                      c                                                      k      kkk  kkk  w                                                     0",
 	"0                                                                       r     k       k    k                                                         0",
