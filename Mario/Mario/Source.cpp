@@ -20,11 +20,11 @@ String TileMap[H] = {
 	"0                                                                             k  k    k    k                                                         0",
 	"0                      c                                                      k      kkk  kkk  w                                                     0",
 	"0                                                                       r     k       k    k                                                         0",
-	"0                                                                      rr     k  k                                                                   0",
-	"0                                                                     rrr      kk                                                                    0",
-	"0               c    kckck                                           rrrr                                                                            0",
-	"0                                      t0                           rrrrr                                                                            0",
-	"0G                                     00              t0          rrrrrr            G                                                               0",
+	"0                                                                      rr     k  k                 k                                                 0",
+	"0                                                                     rrr      kk                   kk                                               0",
+	"0              kc    kckck                                           rrrr                             kk                                             0",
+	"0                                      t0                           rrrrr                               kk                                           0",
+	"0G                                     00              t0          rrrrrr            G                    kk                                         0",
 	"0           d    g       d             00              00         rrrrrrr                                                                            0",
 	"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 	"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
@@ -206,11 +206,12 @@ int main()
 	music.play();
 
 	Clock clock;
+	float time;
 
 	while (window.isOpen())
 	{
 
-		float time = clock.getElapsedTime().asMicroseconds();
+		time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 
 		time = time / 500;  // çäåñü ðåãóëèðóåì ñêîðîñòü èãðû
