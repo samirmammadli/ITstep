@@ -1,9 +1,11 @@
 #include <iostream>
-#include 
+#include <string>
 using namespace std;
 
 void main()
 {
 	setlocale(NULL, "Russian");
-	cout << "Ayyyy ga  ем €вл€етс€ наш “€па?\n";
+	string lesh;
+	lesh = "hgfuiwehgiuew";
+	cout << lesh << endl;
 }
