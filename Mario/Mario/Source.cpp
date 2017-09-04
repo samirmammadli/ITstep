@@ -7,12 +7,20 @@ using namespace sf;
 float offsetX = 0, offsetY = 0;
 
 
-const int H = 17;
+const int H = 25;   //17
 const int W = 150;
 
 
 String TileMap[H] = {
 	"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+	"0                                                                                                                                                    0",
+	"0                                                                                                                                                    0",
+	"0                                                                                                                                                    0",
+	"0                                                                                                                                                    0",
+	"0                                                                                                                                                    0",
+	"0                                                                                                                                                    0",
+	"0                                                                                                                                                    0",
+	"0                                                                                                                                                    0",
 	"0                                                                                                                                                    0",
 	"0                                                                                    w                                                               0",
 	"0                   w                                  w                   w                                                                         0",
@@ -20,11 +28,11 @@ String TileMap[H] = {
 	"0                                                                             k  k    k    k                                                         0",
 	"0                      c                                                      k      kkk  kkk  w                                                     0",
 	"0                                                                       r     k       k    k                                                         0",
-	"0                                                                      rr     k  k                 k                                                 0",
-	"0                                                                     rrr      kk                   kk                                               0",
-	"0              kc    kckck                                           rrrr                             kk                                             0",
-	"0                                      t0                           rrrrr                               kk                                           0",
-	"0G                                     00              t0          rrrrrr            G                    kk                                         0",
+	"0                                                                      rr     k  k                                                                   0",
+	"0                                                                     rrr      kk                                                                    0",
+	"0              kc    k kck                                           rrrr                                                                            0",
+	"0                                      t0                           rrrrr                                                                            0",
+	"0G                                     00              t0          rrrrrr            G                                                               0",
 	"0           d    g       d             00              00         rrrrrrr                                                                            0",
 	"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 	"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
@@ -108,7 +116,7 @@ public:
 				}
 
 				if (TileMap[i][j] == 'c') {
-					0;// TileMap[i][j]=' '; 
+					//TileMap[i][j]=' '; 
 				}
 			}
 
@@ -184,7 +192,10 @@ public:
 int main()
 {
 
-	RenderWindow window(VideoMode(400, 250), "Shmario");
+	/*Clock ujal;
+	int a  = ujal.getElapsedTime().asMilliseconds();*/
+
+	RenderWindow window(VideoMode(800, 400), "Shmario");
 
 	Texture tileSet;
 	tileSet.loadFromFile("Mario_Tileset.png");
@@ -192,7 +203,7 @@ int main()
 
 	PLAYER Mario(tileSet);
 	ENEMY  enemy;
-	enemy.set(tileSet, 48 * 16, 13 * 16);
+	enemy.set(tileSet, 48 * 16, 21 * 16); // 13
 
 
 	Sprite tile(tileSet);
@@ -214,7 +225,7 @@ int main()
 		time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 
-		time = time / 500;  // çäåñü ðåãóëèðóåì ñêîðîñòü èãðû
+		time /= 600;  // çäåñü ðåãóëèðóåì ñêîðîñòü èãðû
 
 		if (time > 20) time = 20;
 
@@ -226,11 +237,11 @@ int main()
 		}
 
 
-		if (Keyboard::isKeyPressed(Keyboard::Left))    Mario.dx = -0.1;
+		if (Keyboard::isKeyPressed(Keyboard::A))    Mario.dx = -0.1;
 
-		if (Keyboard::isKeyPressed(Keyboard::Right))    Mario.dx = 0.1;
+		if (Keyboard::isKeyPressed(Keyboard::D))    Mario.dx = 0.1;
 
-		if (Keyboard::isKeyPressed(Keyboard::Up))	if (Mario.onGround) { Mario.dy = -0.27; Mario.onGround = false;  sound.play(); }
+		if (Keyboard::isKeyPressed(Keyboard::W))	if (Mario.onGround) { Mario.dy = -0.27; Mario.onGround = false;  sound.play(); }
 
 
 
@@ -283,8 +294,9 @@ int main()
 
 
 
-		window.draw(Mario.sprite);
+		
 		window.draw(enemy.sprite);
+		window.draw(Mario.sprite);
 
 		window.display();
 	}
