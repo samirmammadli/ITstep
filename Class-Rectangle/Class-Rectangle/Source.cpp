@@ -4,95 +4,52 @@ using namespace std;
 
 class CRect {
 
-	bool is_correct = false;
-	int left_top_x;
-	int left_top_y;
-	int right_bottom_x;
-	int right_bottom_y;
+	int left;
+	int right;
+	int top;
+	int bottom;
 public:
 	CRect()
 	{
-		this->left_top_x = 0;
-		this->left_top_y = 0;
-		this->right_bottom_x = 0;
-		this->right_bottom_y = 0;
+		this->left = 0;
+		this->right = 0;
+		this->top = 0;
+		this->bottom = 0;
 	}
-	CRect(int left_top_x, int left_top_y, int right_bottom_x, int right_bottom_y)
+	CRect(int l, int r, int t, int b)
 	{
-
-		this->left_top_x < 0 ? this->left_top_x *= -1 : 0;
-		this->left_top_y < 0 ? this->left_top_y *= -1 : 0;
-		this->right_bottom_x < 0 ? this->right_bottom_x *= -1 : 0;
-		this->right_bottom_y < 0 ? this->right_bottom_y *= -1 : 0;
-
-		if (left_top_x >= 0 && left_top_x <= 50 && left_top_y >= 0 && left_top_y <= 50 && right_bottom_x >= 0 && right_bottom_x <= 50 && right_bottom_y >= 0 && right_bottom_y <= 50)
-		{
-			if (left_top_x != right_bottom_x && left_top_y != right_bottom_y)
-			{
-				this->left_top_x = left_top_x;
-
-				this->left_top_y = left_top_y;
-
-				this->right_bottom_x = right_bottom_x;
-
-				this->right_bottom_y = right_bottom_y;
-
-				this->is_correct = true;
-			}		
-		}
-	}
-	bool IsRectNull()
-	{
-		if (this->left_top_x == 0 && this->left_top_y == 0 && this->right_bottom_x == 0 && this->right_bottom_y == 0)
-			return true;
-		else
-			return false;
-	}
-	void SetRectEmpty()
-	{
-		this->left_top_x = 0;
-
-		this->left_top_y = 0;
-
-		this->right_bottom_x = 0;
-
-		this->right_bottom_y = 0;
-	}
-	void NormalizeRect()
-	{
-		int temp;
-		if (right_bottom_y > left_top_y)
-		{
-			temp = right_bottom_y;
-			right_bottom_y = left_top_y;
-			left_top_y = temp;
-		}
-		if (right_bottom_x < left_top_x)
-		{
-			temp = right_bottom_x;
-			right_bottom_x = left_top_x;
-			left_top_x = temp;
-		}
+		this->left = l;
+		this->right = r;
+		this->top = t;
+		this->bottom = b;
 	}
 	int getWidth()
 	{
-		return this->right_bottom_x - this->left_top_x;
+		return this->right - this->left;
 	}
 	int getHeight()
 	{
-		return this->left_top_y - this->right_bottom_y;
+		return this->top - this->bottom;
+	}
+	void NormalizeRect()
+	{
+		if (this->left > this->right)
+			swap(this->left, this->right);
+		if (this->bottom > this->top)
+			swap(this->bottom , this->top);
+	}
+	bool getIsRectNull()
+	{
+		if (this->left == 0, this->right == 0, this->top == 0, this->bottom == 0)
+			return true;
+		else
+			return false;
 	}
 };
 
 void main()
 {
-	CRect rect1(21, 18, 17, 24);
-	rect1.NormalizeRect();
-	cout << rect1.getWidth() << endl;
-	cout << rect1.getHeight() << endl;
-	rect1.SetRectEmpty();
-	cout << rect1.getWidth() << endl;
-	cout << rect1.getHeight() << endl;
+
 	/*int left_x, left_y, bot_x, bot_y;
 	cout << "Write rectangle`s coordinates (min = -50, max = 50):\n";
 	cout << "Input Left top X: ";
