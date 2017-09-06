@@ -12,7 +12,7 @@ Student::Student()
 }
 Student::Student(string name, string surname, string phone, int age, double average)
 {
-	if (age > 14 && age < 40 && average >= 0 && average <= 12)
+	if (age > 14 && age < 40 && average >= 0 && average <= 12 && phone.size() <= 12)
 	{
 		this->name = name;
 		this->surname = surname;
@@ -52,13 +52,16 @@ void Student::SetSurname(string surname)
 }
 void Student::SetPhone(string phone)
 {
+	if (phone.size() <= 13)
 	this->phone = phone;
 }
 void Student::SetAge(int age)
 {
-	this->age = age;
+	if (age > 14 && age < 40)
+		this->age = age;
 }
 void Student::SetAverage(double average)
 {
-	this->average = average;
+	if (average >= 0 && average <= 12)
+		this->average = average;
 }
