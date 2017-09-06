@@ -3,12 +3,14 @@
 class AcademyGroup
 {
 	Student** pSt;
+	int curr_student_count;
 	int count;
 public:
 	AcademyGroup();
 	~AcademyGroup();
-	void AddStudents();
-	void DeleteStudent();
+	void AddStudents(string name, string surname, string phone, int age, double average);
+	void AddSpace();
+	void DeleteStudent(int student_number);
 	void EditStudent();
 	void Print();
 	void FindStudent();
