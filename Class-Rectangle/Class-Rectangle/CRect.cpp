@@ -25,8 +25,6 @@ CRect::CRect(int l, int r, int t, int b)
 
 int CRect::getWidth()
 {
-	this->NormalizeRect();
-
 	if (this->left < 0 && this->right >= 0)
 		return this->left * -1 + this->right;
 	else if (this->left < 0 && this->right < 0)
@@ -76,6 +74,28 @@ bool CRect::PtInRect(int x, int y)
 	else
 		return false;
 }
+void CRect::OffsetRect(int x, int y)
+{
+	if (x + this->right <= 15 && x + this->left >= -15 && y + this->top <= 15 && y + this->bottom >= - 15)
+	{
+		this->right += x;
+		this->left += x;
+		this->top += y;
+		this->bottom += y;
+	}
+}
+void CRect::ChangeRect(int l, int r, int t, int b)
+{
+	bool IsCorrect = this->CheckData(l, r, t, b);
+
+	if (IsCorrect)
+	{
+		this->left = l;
+		this->right = r;
+		this->top = t;
+		this->bottom = b;
+	}
+}
 
 void CRect::Print()
 {
@@ -99,6 +119,7 @@ void CRect::Print()
 		}
 		cout << endl;
 	}
+	cout << endl;
 }
 
 bool CRect::CheckData(int a, int b, int c, int d)

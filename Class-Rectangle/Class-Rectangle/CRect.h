@@ -17,6 +17,8 @@ public:
 	bool getIsRectNull();
 	bool PtInRect(int x, int y);
 	bool CheckData(int a, int b, int c, int d);
+	void ChangeRect(int l, int r, int t, int b);
+	void OffsetRect(int x, int y);
 	void setRectEmpty();
 	void NormalizeRect();
 	void Print();
