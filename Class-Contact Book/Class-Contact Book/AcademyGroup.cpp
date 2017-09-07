@@ -13,10 +13,22 @@ AcademyGroup::AcademyGroup()
 	}
 }
 
+AcademyGroup::AcademyGroup(string name, string surname, string phone, int age, double average)
+{
+	this->count = 10;
+	this->curr_student_count = 0;
+	this->pSt = new Student*[this->count];
+	for (int i = 0; i < this->count; i++)
+	{
+		this->pSt[i] = nullptr;
+	}
+	this->pSt[curr_student_count] = new Student(name, surname, phone, age, average);
+	this->curr_student_count++;
+}
+
 
 AcademyGroup::~AcademyGroup()
 {
-
 	for (int i = 0; i < this->count; i++)
 	{
 		delete pSt[i];
@@ -28,8 +40,56 @@ void AcademyGroup::AddStudents(string name, string surname, string phone, int ag
 	if (this->curr_student_count == this->count - 1)
 		this->AddSpace();
 
-	this->pSt[this->curr_student_count] = new Student(name, surname, phone, age, average);
+	this->pSt[curr_student_count] = new Student(name, surname, phone, age, average);
 	this->curr_student_count++;
+}
+
+void AcademyGroup::AddStudents()
+{
+	if (this->curr_student_count == this->count - 1)
+		this->AddSpace();
+
+	int choose, temp;
+	double temp_;
+	string temp_str;
+
+	cout << "Input Student`s name:\n";
+	cin >> temp_str;
+	this->pSt[curr_student_count]->SetName(temp_str);
+
+	cout << "Input Student`s surname:\n";
+	cin >> temp_str;
+	this->pSt[curr_student_count]->SetSurname(temp_str);
+
+	cout << "Input Student`s phone:\n";
+	cin >> temp_str;
+	this->pSt[curr_student_count]->SetPhone(temp_str);
+
+	cout << "Input Student`s age:\n";
+	cin >> temp;
+	if (temp > 14 && temp < 56)
+		this->pSt[curr_student_count]->SetAge(temp);
+	else
+	{
+		printf("Invalid age! (from 15 to 55)\n");
+		system("pause");
+		return;
+	}
+
+
+	cout << "Input Student`s average:\n";
+	cin >> temp_;
+	if (temp_ >= 0 && temp_ <= 12.0)
+		this->pSt[curr_student_count]->SetAverage(temp_);
+	else
+	{
+		printf("Invalid average! (from 0 to 12)\n");
+		system("pause");
+		return;
+	}
+	this->curr_student_count++;
+	cout << "Student Added!\n";
+	system("pause");
 }
 
 void AcademyGroup::AddSpace()
@@ -47,6 +107,7 @@ void AcademyGroup::AddSpace()
 
 void AcademyGroup:: DeleteStudent(int student_number)
 {
+	system("cls");
 	student_number--;
 	
 	if (student_number >=0 && student_number < this->curr_student_count)
@@ -62,20 +123,68 @@ void AcademyGroup:: DeleteStudent(int student_number)
 			}
 		}
 		this->curr_student_count--;
+		cout << "Student successfully deleted!\n";
 	}
-}
-void AcademyGroup::EditStudent(int number, string name, string surname, string phone, int age, double average)
-{
+	else
+		cout << "Invalid Student Number!\n";
 
-	/*if (number >= 0 && number < this->curr_student_count)
+	system("pause");
+}
+void AcademyGroup::EditStudent(int student_number)
+{
+	system("cls");
+	student_number--;
+	if (student_number >= 0 && student_number < this->curr_student_count)
 	{
-		if (age > )
+		int choose, temp;
+		double temp_;
+		string temp_str;
+		cout << "1. Edit name.\n";
+		cout << "2. Edit surname.\n";
+		cout << "3. Edit phone.\n";
+		cout << "4. Edit age.\n";
+		cout << "5. Edit average.\n";
+		cin >> choose;
+		switch (choose)
+		{
+		case 1:
+			cout << "Input Student`s name:\n";
+			cin >> temp_str;
+			this->pSt[student_number]->SetName(temp_str);
+			break;
+		case 2:
+			cout << "Input Student`s surname:\n";
+			cin >> temp_str;
+			this->pSt[student_number]->SetSurname(temp_str);
+			break;
+		case 3:
+			cout << "Input Student`s phone:\n";
+			cin >> temp_str;
+			this->pSt[student_number]->SetPhone(temp_str);
+			break;
+		case 4:
+			cout << "Input Student`s age:\n";
+			cin >> temp;
+			temp > 14 && temp < 56 ? this->pSt[student_number]->SetAge(temp) : printf("Invalid age! (from 15 to 55)\n");
+			break;
+		case 5:
+			cout << "Input Student`s average:\n";
+			cin >> temp_;
+			temp_ >= 0 && temp_ <= 12.0 ? this->pSt[student_number]->SetAverage(temp_) : printf("Invalid average! (from 0 to 12)\n");
+			break;
+		default:
+			cout << "Invalid Operation Number!\n";
+		}
 	}
-*/
+	else
+		cout << "Invalid Student Number!\n";
+
+	system("pause");
 }
 
 void AcademyGroup::Print()
 {
+	system("cls");
 	cout << "Number:     " << "Name:          " << "Surname:          " << "Age:        " << "Phone:                " << "Average:\n" << endl;
 	for (int i = 0; i < curr_student_count; i++)
 	{
@@ -84,12 +193,84 @@ void AcademyGroup::Print()
 		cout << endl;
 	}
 	cout << "__________________________________________________________________________________________________________\n";
+	system("pause");
 }
 
-void AcademyGroup::FindStudent()
+void AcademyGroup::FindStudent(string find)
 {
+	cout << "Number:     " << "Name:          " << "Surname:          " << "Age:        " << "Phone:                " << "Average:\n" << endl;
+	for (int i = 0; i < curr_student_count; i++)
+	{
+		if (this->pSt[i]->GetName().rfind(find, sizeof(string)) != find.npos)
+		{
+			cout << "__________________________________________________________________________________________________________\n";
+			printf_s("%-12d%-15s%-18s%-12d%-22s%.2f", i + 1, this->pSt[i]->GetName().c_str(), this->pSt[i]->GetSurname().c_str(), this->pSt[i]->GetAge(), this->pSt[i]->GetPhone().c_str(), this->pSt[i]->GetAverage());
+			cout << endl;
+		}
+	}
+	cout << "__________________________________________________________________________________________________________\n";
 }
 
-void AcademyGroup::Sort()
+void AcademyGroup::Sort(Sorting sort_by)
 {
+	Student * temp = new Student;
+	switch (sort_by)
+	{
+	case NAME:
+		for (int i = 0; i < this->curr_student_count; i++)
+		{
+			for (int j = i; j < this->curr_student_count; j++)
+			{
+				if (this->pSt[i]->GetName() > this->pSt[j]->GetName())
+				{
+					temp = this->pSt[i];
+					this->pSt[i] = this->pSt[j];
+					this->pSt[j] = temp;
+				}
+			}
+		}
+		break;
+	case SURNAME:
+		for (int i = 0; i < this->curr_student_count; i++)
+		{
+			for (int j = i; j < this->curr_student_count; j++)
+			{
+				if (this->pSt[i]->GetSurname() > this->pSt[j]->GetSurname())
+				{
+					temp = this->pSt[i];
+					this->pSt[i] = this->pSt[j];
+					this->pSt[j] = temp;
+				}
+			}
+		}
+		break;
+	case AGE:
+		for (int i = 0; i < this->curr_student_count; i++)
+		{
+			for (int j = i; j < this->curr_student_count; j++)
+			{
+				if (this->pSt[i]->GetAge() > this->pSt[j]->GetAge())
+				{
+					temp = this->pSt[i];
+					this->pSt[i] = this->pSt[j];
+					this->pSt[j] = temp;
+				}
+			}
+		}
+		break;
+	case AVERAGE:
+		for (int i = 0; i < this->curr_student_count; i++)
+		{
+			for (int j = i; j < this->curr_student_count; j++)
+			{
+				if (this->pSt[i]->GetAverage() > this->pSt[j]->GetAverage())
+				{
+					temp = this->pSt[i];
+					this->pSt[i] = this->pSt[j];
+					this->pSt[j] = temp;
+				}
+			}
+		}
+		break;
+	}
 }
