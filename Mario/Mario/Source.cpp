@@ -1,7 +1,12 @@
 ﻿#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <string>
+using namespace std;
 
 using namespace sf;
+
+
+
 
 
 float offsetX = 0, offsetY = 0;
@@ -191,6 +196,8 @@ public:
 
 int main()
 {
+
+
 
 	/*Clock ujal;
 	int a  = ujal.getElapsedTime().asMilliseconds();*/

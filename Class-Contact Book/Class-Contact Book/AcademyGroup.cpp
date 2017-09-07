@@ -201,11 +201,14 @@ void AcademyGroup::Print()
 
 void AcademyGroup::FindStudent(string find)
 {
+	int size;
 	cout << "Number:     " << "Name:          " << "Surname:          " << "Age:        " << "Phone:                " << "Average:\n" << endl;
 	for (int i = 0; i < curr_student_count; i++)
 	{
-		if (this->pSt[i]->GetName().rfind(find, sizeof(string)) != find.npos)
+		size = this->pSt[i]->GetName().length();
+		if (this->pSt[i]->GetName().rfind(find, size) != find.npos)
 		{
+		
 			cout << "__________________________________________________________________________________________________________\n";
 			printf_s("%-12d%-15s%-18s%-12d%-22s%.2f", i + 1, this->pSt[i]->GetName().c_str(), this->pSt[i]->GetSurname().c_str(), this->pSt[i]->GetAge(), this->pSt[i]->GetPhone().c_str(), this->pSt[i]->GetAverage());
 			cout << endl;
