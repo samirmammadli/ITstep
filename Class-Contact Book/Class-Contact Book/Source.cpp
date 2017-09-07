@@ -23,7 +23,8 @@ void main()
 		cout << "3. Find student.\n";
 		cout << "4. Sort students.\n";
 		cout << "5. Print students.\n";
-		cout << "6. Exit.\n";
+		cout << "6. Delete student.\n";
+		cout << "7. Exit.\n";
 		cin >> oper;
 
 		if (oper == 1)
@@ -85,8 +86,16 @@ void main()
 		}
 		else if (oper == 5)
 			Group1.Print();
-
 		else if (oper == 6)
+		{
+			int stud_num;
+			cout << "Input student`s number: ";
+			cin >> stud_num;
+			Group1.DeleteStudent(stud_num);
+			system("pause");
+		}
+
+		else if (oper == 7)
 			exit(0);
 		else
 		{

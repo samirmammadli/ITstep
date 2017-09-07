@@ -132,8 +132,6 @@ void AcademyGroup:: DeleteStudent(int student_number)
 	}
 	else
 		cout << "Invalid Student Number!\n";
-
-	system("pause");
 }
 void AcademyGroup::EditStudent(int student_number)
 {
@@ -191,11 +189,10 @@ void AcademyGroup::Print()
 	cout << "Number:     " << "Name:          " << "Surname:          " << "Age:        " << "Phone:                " << "Average:\n" << endl;
 	for (int i = 0; i < curr_student_count; i++)
 	{
-		cout << "__________________________________________________________________________________________________________\n";
-		printf_s("%-12d%-15s%-18s%-12d%-22s%.2f", i + 1, this->pSt[i]->GetName().c_str(), this->pSt[i]->GetSurname().c_str(), this->pSt[i]->GetAge(), this->pSt[i]->GetPhone().c_str(), this->pSt[i]->GetAverage());
-		cout << endl;
+		cout << "________________________________________________________________________________________\n";
+		printf_s("%-12d%-15s%-18s%-12d%-22s%.2f\n", i + 1, this->pSt[i]->GetName().c_str(), this->pSt[i]->GetSurname().c_str(), this->pSt[i]->GetAge(), this->pSt[i]->GetPhone().c_str(), this->pSt[i]->GetAverage());
 	}
-	cout << "__________________________________________________________________________________________________________\n";
+	cout << "________________________________________________________________________________________\n";
 	system("pause");
 }
 
