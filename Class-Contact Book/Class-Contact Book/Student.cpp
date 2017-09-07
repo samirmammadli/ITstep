@@ -12,13 +12,21 @@ Student::Student()
 }
 Student::Student(string name, string surname, string phone, int age, double average)
 {
-	if (age > 14 && age < 40 && average >= 0 && average <= 12 && phone.size() <= 12)
+	if (age > 14 && age < 56 && average >= 0 && average <= 12.0 && phone.size() <= 15)
 	{
 		this->name = name;
 		this->surname = surname;
 		this->phone = phone;
 		this->age = age;
 		this->average = average;
+	}
+	else
+	{
+		this->name = "Empty";
+		this->surname = "Empty";
+		this->phone = "Empty";
+		this->age = 0;
+		this->average = 0;
 	}
 
 }

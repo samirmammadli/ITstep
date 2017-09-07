@@ -11,7 +11,7 @@ public:
 	void AddStudents(string name, string surname, string phone, int age, double average);
 	void AddSpace();
 	void DeleteStudent(int student_number);
-	void EditStudent();
+	void EditStudent(int number, string name, string surname, string phone, int age, double average);
 	void Print();
 	void FindStudent();
 	void Sort();
