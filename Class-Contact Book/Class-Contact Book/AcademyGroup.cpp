@@ -53,6 +53,8 @@ void AcademyGroup::AddStudents()
 	double temp_;
 	string temp_str;
 
+	this->pSt[curr_student_count] = new Student;
+
 	cout << "Input Student`s name:\n";
 	cin >> temp_str;
 	this->pSt[curr_student_count]->SetName(temp_str);
@@ -73,6 +75,8 @@ void AcademyGroup::AddStudents()
 	{
 		printf("Invalid age! (from 15 to 55)\n");
 		system("pause");
+		delete this->pSt[curr_student_count];
+		this->pSt[curr_student_count] = nullptr;
 		return;
 	}
 
@@ -84,6 +88,8 @@ void AcademyGroup::AddStudents()
 	else
 	{
 		printf("Invalid average! (from 0 to 12)\n");
+		delete this->pSt[curr_student_count];
+		this->pSt[curr_student_count] = nullptr;
 		system("pause");
 		return;
 	}
@@ -107,7 +113,6 @@ void AcademyGroup::AddSpace()
 
 void AcademyGroup:: DeleteStudent(int student_number)
 {
-	system("cls");
 	student_number--;
 	
 	if (student_number >=0 && student_number < this->curr_student_count)
@@ -132,7 +137,6 @@ void AcademyGroup:: DeleteStudent(int student_number)
 }
 void AcademyGroup::EditStudent(int student_number)
 {
-	system("cls");
 	student_number--;
 	if (student_number >= 0 && student_number < this->curr_student_count)
 	{
@@ -184,7 +188,6 @@ void AcademyGroup::EditStudent(int student_number)
 
 void AcademyGroup::Print()
 {
-	system("cls");
 	cout << "Number:     " << "Name:          " << "Surname:          " << "Age:        " << "Phone:                " << "Average:\n" << endl;
 	for (int i = 0; i < curr_student_count; i++)
 	{

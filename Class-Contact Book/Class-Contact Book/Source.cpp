@@ -6,7 +6,7 @@
 void main()
 {
 	int oper = 0;
-	AcademyGroup Group1("Samir", "Mammadli", "+994557099110", 31, 12);
+	AcademyGroup Group1("Tahir", "Mammadov", "+994557099110", 31, 12);
 	Group1.AddStudents("Samir", "Mammadli", "+994557099110", 31, 12);
 	Group1.AddStudents("Zahid", "Abbasli", "+994557892564", 27, 8);
 	Group1.AddStudents("Kamal", "Jafarov", "+994503481574", 28, 6);
@@ -25,6 +25,7 @@ void main()
 
 	while (true)
 	{
+		system("cls");
 		cout << "1. Add student.\n";
 		cout << "2. Edit student.\n";
 		cout << "3. Find student.\n";
@@ -34,7 +35,11 @@ void main()
 		cin >> oper;
 
 		if (oper == 1)
+		{
+			system("cls");
 			Group1.AddStudents();
+		}
+			
 
 		else if (oper == 2)
 		{
@@ -43,15 +48,18 @@ void main()
 			cout << "Enter Studen`s number: ";
 			cin >> number;
 			Group1.EditStudent(number);
+			system("cls");
 		}
 			
 
 		else if (oper == 3)
 		{
+			system("cls");
 			string name;
 			cout << "Input Student`s name: ";
 			cin >> name;
 			Group1.FindStudent(name);
+			system("cls");
 		}
 		else if (oper == 4)
 		{
@@ -78,8 +86,9 @@ void main()
 				break;
 			default:
 				cout << "Invalid operation number!\n";
+				system("pause");
 				break;
-			}
+			}	
 		}
 		else if (oper == 5)
 			Group1.Print();
@@ -88,5 +97,7 @@ void main()
 			exit(0);
 		else
 			cout << "Invalid operation number! \n";
+		system("pause");
 	}
+	system("cls");
 }
