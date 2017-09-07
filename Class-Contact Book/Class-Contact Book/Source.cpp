@@ -13,14 +13,6 @@ void main()
 	Group1.AddStudents("Rufat", "Mammadov", "+994557099457", 31, 11);
 	Group1.AddStudents("Vulgar", "Yusubov", "+994706826060", 27, 5);
 	Group1.AddStudents("Ilgar", "Ahmedov", "+994715593302", 28, 7.2);
-	
-
-	/*Group1.DeleteStudent(5);
-	Group1.Sort(AGE);
-	Group1.Print();
-	Group1.EditStudent(3);
-	system("cls");
-	Group1.Print();*/
 
 
 	while (true)
@@ -59,13 +51,14 @@ void main()
 			cout << "Input Student`s name: ";
 			cin >> name;
 			Group1.FindStudent(name);
+			system("pause");
 			system("cls");
 		}
 		else if (oper == 4)
 		{
 			system("cls");
 			int input;
-			cout << "1. Sort by Name";
+			cout << "1. Sort by Name\n";
 			cout << "2. Sort by Surname.\n";
 			cout << "3. Sort by age.\n";
 			cout << "4. Sort by average.\n";
@@ -96,8 +89,10 @@ void main()
 		else if (oper == 6)
 			exit(0);
 		else
+		{
 			cout << "Invalid operation number! \n";
-		system("pause");
+			system("pause");
+		}		
 	}
 	system("cls");
 }

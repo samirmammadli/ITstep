@@ -216,7 +216,6 @@ void AcademyGroup::FindStudent(string find)
 
 void AcademyGroup::Sort(Sorting sort_by)
 {
-	Student * temp = new Student;
 	switch (sort_by)
 	{
 	case NAME:
@@ -226,9 +225,7 @@ void AcademyGroup::Sort(Sorting sort_by)
 			{
 				if (this->pSt[i]->GetName() > this->pSt[j]->GetName())
 				{
-					temp = this->pSt[i];
-					this->pSt[i] = this->pSt[j];
-					this->pSt[j] = temp;
+					swap(this->pSt[i], this->pSt[j]);
 				}
 			}
 		}
@@ -240,9 +237,7 @@ void AcademyGroup::Sort(Sorting sort_by)
 			{
 				if (this->pSt[i]->GetSurname() > this->pSt[j]->GetSurname())
 				{
-					temp = this->pSt[i];
-					this->pSt[i] = this->pSt[j];
-					this->pSt[j] = temp;
+					swap(this->pSt[i], this->pSt[j]);
 				}
 			}
 		}
@@ -254,9 +249,7 @@ void AcademyGroup::Sort(Sorting sort_by)
 			{
 				if (this->pSt[i]->GetAge() > this->pSt[j]->GetAge())
 				{
-					temp = this->pSt[i];
-					this->pSt[i] = this->pSt[j];
-					this->pSt[j] = temp;
+					swap(this->pSt[i], this->pSt[j]);
 				}
 			}
 		}
@@ -268,9 +261,7 @@ void AcademyGroup::Sort(Sorting sort_by)
 			{
 				if (this->pSt[i]->GetAverage() > this->pSt[j]->GetAverage())
 				{
-					temp = this->pSt[i];
-					this->pSt[i] = this->pSt[j];
-					this->pSt[j] = temp;
+					swap(this->pSt[i], this->pSt[j]);
 				}
 			}
 		}
