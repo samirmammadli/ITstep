@@ -103,7 +103,7 @@ void AcademyGroup::AddSpace()
 	Student **temp = new Student*[count + 10];
 	for (int i = 0; i < count + 10; i++)
 	{
-		temp[i] = new Student;
+		temp[i] = nullptr;
 	}
 	memcpy(temp, this->pSt, this->count * sizeof(Student*));
 	this->count += 10;
