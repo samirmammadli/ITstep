@@ -1,15 +1,13 @@
 #include "AcademyGroup.h"
 
-
-
 AcademyGroup::AcademyGroup()
 {
-	//this->pSt.push_back(new Student("Empty", "Empty", "Empty", 0, 0));
+	0;
 }
 
 AcademyGroup::AcademyGroup(string name, string surname, string phone, int age, double average)
 {
-	
+
 	this->pSt.push_back(new Student(name, surname, phone, age, average));
 }
 
@@ -97,7 +95,13 @@ void AcademyGroup::EditStudent(int student_number)
 		double temp_;
 		string temp_str;
 		cout << "\nNumber:     " << "Name:          " << "Surname:          " << "Age:        " << "Phone:                " << "Average:\n" << endl;
-		printf_s("%-12d%-15s%-18s%-12d%-22s%.2f\n\n", student_number + 1, this->pSt[student_number]->GetName().c_str(), this->pSt[student_number]->GetSurname().c_str(), this->pSt[student_number]->GetAge(), this->pSt[student_number]->GetPhone().c_str(), this->pSt[student_number]->GetAverage());
+		printf_s("%-12d%-15s%-18s%-12d%-22s%.2f\n\n", student_number + 1,
+			this->pSt[student_number]->GetName().c_str(),
+			this->pSt[student_number]->GetSurname().c_str(),
+			this->pSt[student_number]->GetAge(),
+			this->pSt[student_number]->GetPhone().c_str(),
+			this->pSt[student_number]->GetAverage());
+
 		cout << "1. Edit name.\n";
 		cout << "2. Edit surname.\n";
 		cout << "3. Edit phone.\n";

@@ -11,8 +11,6 @@ enum Sorting {
 class AcademyGroup
 {
 	vector<Student*> pSt;
-	//int curr_student_count;
-	//int count;
 public:
 	AcademyGroup();
 	AcademyGroup(string name, string surname, string phone, int age, double average);
