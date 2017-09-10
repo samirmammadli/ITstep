@@ -1,9 +1,11 @@
 ﻿#include <SFML/Graphics.hpp>
 #include <iostream>
+#include <conio.h>
 using namespace sf;
 int main()
 {
-
+	int a;
+	a = _getch();
 	Clock clock;
 	RenderWindow window(sf::VideoMode(640, 480), "Lesson 5. kychka-pc.ru");
 
