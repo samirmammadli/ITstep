@@ -8,6 +8,20 @@ void main()
 {
 	setlocale(LC_ALL, "Russian");
 	string lesh;
-	lesh = "hgfuiwehgiuew";
-	cout << lesh << endl;
+	lesh = "Salam aleykum";
+	string temp = "aleyakum";
+
+	unsigned long long int  a;
+	if (lesh.rfind(temp, lesh.length()) != lesh.npos)
+		cout << "Nashel!\n";
+	else
+		cout << "Ne nawel!\n";
+
+	a = lesh.rfind(temp, lesh.length());
+	cout << lesh.npos << endl;
+	cout << a << endl;
+
+	
+
+
 }
