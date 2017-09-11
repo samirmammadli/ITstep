@@ -5,8 +5,9 @@ using namespace sf;
 int main()
 {
 	Clock clock;
+	Clock timing;
 	RenderWindow window(sf::VideoMode(640, 480), "Lesson 5. kychka-pc.ru");
-	float a = 0;
+	int a = 0;
 
 	Image image;
 	image.loadFromFile("images/snake.png");
@@ -23,7 +24,7 @@ int main()
 
 	Sprite herosprite;
 	herosprite.setTexture(herotexture);
-	herosprite.setTextureRect(IntRect(96, 0, 96, 96));//получили нужный нам прямоугольник с котом
+	herosprite.setTextureRect(IntRect(190, 65, 65, 62));//получили нужный нам прямоугольник с котом
 	herosprite.setPosition(0, 50); //выводим спрайт в позицию x y 
 	herosprite.setScale(0.5, 0.5);
 	
@@ -35,14 +36,14 @@ int main()
 	while (window.isOpen())
 	{
 		time = clock.getElapsedTime().asMicroseconds(); //дать прошедшее время в микросекундах
-		a += time;
+
 		
 		clock.restart(); //перезагружает время
-		time = time / 2000; //скорость игры
+		time = time / 4000; //скорость игры
 		
 
-		 if (a > 1000000) std::cout << time << "\n";//смотрим как живет время (перезагружается, как видим)
-		 a > 1000000 ? a = 0 : 0;
+		 if (int(timing.getElapsedTime().asSeconds()) > a) std::cout << int(timing.getElapsedTime().asSeconds()) << "\n";//смотрим как живет время (перезагружается, как видим)
+		 a = timing.getElapsedTime().asSeconds();
 		sf::Event event;
 		window.pollEvent(event);
 
