@@ -6,8 +6,9 @@ using namespace std;
 
 class MyString
 {
+	size_t npos;
 	char* symbols;
-	int length;
+	int length = 0;
 
 public:
 	MyString();
@@ -27,7 +28,7 @@ public:
 	//Вернуть char массив
 	char* c_str();
 	//Обменять значения двух строк
-	void swap(MyString &str);
+	void Swap(MyString &str);
 	//Вставить подстроку по индексу
 	void insert(int index, MyString str);
 	//Удалить символы
@@ -35,7 +36,7 @@ public:
 	//Заменить символы
 	void replace(int start, int finish, MyString str);
 	//Найти подстроку в строке и вернуть ее индекс
-	int find(const MyString str);
+	int find(MyString str);
 };
 
 
