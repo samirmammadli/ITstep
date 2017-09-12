@@ -37,6 +37,6 @@ public:
 	void replace(int start, int finish, MyString str);
 	//Ќайти подстроку в строке и вернуть ее индекс
 	int find(MyString str);
+
+	friend MyString operator+ (const MyString &str1, const MyString &str2);
 };
-
-

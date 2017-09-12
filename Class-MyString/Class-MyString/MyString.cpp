@@ -144,3 +144,23 @@ int MyString::find(MyString str)
 	else
 	return -1;
 }
+
+
+
+MyString operator+ (const MyString &str1, const MyString &str2)
+{
+	//MyString str3;
+	//str3.length = str1.length + str2.length - 1;
+	//str3.symbols = new char[str3.length];
+	//strcpy(str3.symbols, str1.symbols);
+	//strcat(str3.symbols, str2.symbols);
+	//return str3;
+
+	
+	int __length = str1.length + str2.length;
+	char* tmp = new char[__length];
+	strcpy(tmp, str1.symbols);
+	strcat(tmp, str2.symbols);
+	cout << tmp;
+	return MyString(tmp);
+}
