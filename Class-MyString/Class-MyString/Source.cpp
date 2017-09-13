@@ -21,7 +21,7 @@ void main()
 	MyString str8 = "Pis deilem";
 
 	MyString str3;
-	str3 = str1 + str2 +str4 + str5 + str6 + str7 + str8;
+	str3 = str1 + str2 + str4 + str5 +str6 + str7 + str8;
 	cout << str3 << endl;
 	str3 += str1;
 	cout << str3 << endl;
