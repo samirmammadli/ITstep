@@ -7,20 +7,22 @@ using namespace std;
 class MyString
 {
 	size_t npos;
+	size_t str_max_size = 4294967291;
 	char* symbols;
 	int length = 0;
 
 public:
+	
 	MyString();
 	MyString(char *str);
 	MyString(string str);
 	//Конструктор копирования
-	MyString(MyString &str);
+	MyString(const MyString &str);
 	//Деструктор
 	~MyString();
 
 	//Длинна строки
-	int Length();
+	int Length() const;
 	//Очистить строку
 	void clear();
 	//Пустая ли строка
@@ -37,6 +39,21 @@ public:
 	void replace(int start, int finish, MyString str);
 	//Найти подстроку в строке и вернуть ее индекс
 	int find(MyString str);
+	//Перегрузка оператора=
+	MyString operator= (const MyString &str);
+	//Перегрузка оператора+=
+	void operator+= (const MyString &str);
+	//Перегрузка оператора==
+	bool operator== (const MyString &str);
+	//Перегрузка оператора<< через дружественную функцию
+	friend ostream& operator<< (ostream &out, const MyString &str);
+	//Перегрузка оператора>> через дружественную функцию
+	friend void operator>> (istream &in, MyString &str);
+	
+	
+	//Перегрузка оператора+ через дружественную функцию
+	//friend MyString operator+ (const MyString &str1, const MyString &str2);
 
-	friend MyString operator+ (const MyString &str1, const MyString &str2);
+
+	MyString operator+ (const MyString &str);
 };

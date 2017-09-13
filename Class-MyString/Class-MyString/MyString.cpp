@@ -12,7 +12,7 @@ MyString::MyString(char *str)
 {
 	this->length = strlen(str) + 1;
 	this->symbols = new char[this->length];
-	memcpy(symbols, str, this->length);
+	memcpy(this->symbols, str, this->length);
 }
 
 MyString::MyString(string str)
@@ -23,9 +23,9 @@ MyString::MyString(string str)
 }
 
 //Конструктор копирования
-MyString::MyString(MyString &str)
+MyString::MyString(const MyString &str)
 {
-	this->length = str.Length() + 1;
+	this->length = str.length;
 	this->symbols = new char[this->length];
 	strcpy(this->symbols, str.symbols);
 }
@@ -37,7 +37,7 @@ MyString::~MyString()
 }
 
 //Длинна строки
-int MyString::Length()
+int MyString::Length() const
 {
 	return this->length - 1;
 }
@@ -145,22 +145,84 @@ int MyString::find(MyString str)
 	return -1;
 }
 
-
-
-MyString operator+ (const MyString &str1, const MyString &str2)
+//Перегрузка оператора=
+MyString MyString::operator= (const MyString &str)
 {
-	//MyString str3;
-	//str3.length = str1.length + str2.length - 1;
-	//str3.symbols = new char[str3.length];
-	//strcpy(str3.symbols, str1.symbols);
-	//strcat(str3.symbols, str2.symbols);
-	//return str3;
+	this->length = str.length;
+	delete[] this->symbols;
+	this->symbols = new char[this->length];
+	strcpy(this->symbols, str.symbols);
+	return *this;
 
-	
-	int __length = str1.length + str2.length;
-	char* tmp = new char[__length];
-	strcpy(tmp, str1.symbols);
-	strcat(tmp, str2.symbols);
-	cout << tmp;
-	return MyString(tmp);
 }
+
+//Перегрузка оператора+=
+void MyString::operator+= (const MyString &str)
+{
+	this->length += str.Length();
+	char * temp = new char[this->length];
+	strcpy(temp, this->symbols);
+	strcat(temp, str.symbols);
+	delete[] this->symbols;
+	this->symbols = temp;
+}
+
+//Перегрузка оператора==
+bool MyString::operator== (const MyString &str)
+{
+	bool match = true;
+	if (str.Length() == this->Length())
+	{
+		for (int i = 0; i < this->Length(); i++)
+		{
+			if (this->symbols[i] != str.symbols[i])
+				match = false;
+		}
+	}
+	else
+		match = false;
+
+	return match;
+}
+
+//Перегрузка оператора<< через дружественную функцию
+ostream& operator<< (ostream &out, const MyString &str)
+{
+	out << str.symbols;
+	return out;
+}
+
+//Перегрузка оператора>> через дружественную функцию
+void operator>> (istream &in, MyString &str)
+{
+	
+	
+	delete[] str.symbols;
+	str.symbols = new char[5000];
+	in.getline(str.symbols, LONG_MAX);
+	str.length = strlen(str.symbols) + 1;
+	//return in;
+}
+
+////Перегрузка оператора+ через дружественную функцию
+//MyString operator+ (const MyString &str1, const MyString &str2)
+//{
+//	int _length = str1.length + str2.length - 1;
+//	char* tmp = new char[_length];
+//	strcpy(tmp, str1.symbols);
+//	strcat(tmp, str2.symbols);
+//	return MyString(tmp);
+//}
+
+//Перегрузка оператора+ через дружественную функцию
+MyString MyString::operator+ (const MyString &str)
+{
+	
+	MyString temp;
+	temp.length = length + str.length - 1;
+	temp.symbols = new char[temp.length];
+	strcpy(temp.symbols, symbols);
+	strcat(temp.symbols, str.symbols);
+	return temp;
+}
+
