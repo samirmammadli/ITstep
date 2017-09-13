@@ -146,7 +146,7 @@ int MyString::find(MyString str)
 }
 
 //Перегрузка оператора=
-MyString MyString::operator= (const MyString &str)
+MyString& MyString::operator= (const MyString &str)
 {
 	this->length = str.length;
 	delete[] this->symbols;
@@ -157,7 +157,7 @@ MyString MyString::operator= (const MyString &str)
 }
 
 //Перегрузка оператора+=
-void MyString::operator+= (const MyString &str)
+MyString& MyString::operator+= (const MyString &str)
 {
 	this->length += str.Length();
 	char * temp = new char[this->length];
@@ -165,6 +165,7 @@ void MyString::operator+= (const MyString &str)
 	strcat(temp, str.symbols);
 	delete[] this->symbols;
 	this->symbols = temp;
+	return *this;
 }
 
 //Перегрузка оператора==
@@ -193,16 +194,40 @@ ostream& operator<< (ostream &out, const MyString &str)
 }
 
 //Перегрузка оператора>> через дружественную функцию
-void operator>> (istream &in, MyString &str)
+istream& operator>> (istream &in, MyString &str)
 {
 	
-	
+	char * temp = new char[5000];
+	in.getline(temp, 5000);
+	str.length = strlen(temp) + 1;
 	delete[] str.symbols;
-	str.symbols = new char[5000];
-	in.getline(str.symbols, LONG_MAX);
-	str.length = strlen(str.symbols) + 1;
-	//return in;
+	str.symbols = new char[str.length];
+	strcpy(str.symbols, temp);
+	return in;
 }
+
+//Перегрузка оператора+
+MyString MyString::operator+ (const MyString &str)
+{
+
+	MyString temp;
+	temp.length = length + str.length - 1;
+	temp.symbols = new char[temp.length];
+	strcpy(temp.symbols, symbols);
+	strcat(temp.symbols, str.symbols);
+	return temp;
+}
+
+//Перегрузка оператора[]
+char& MyString::operator[] (int index)
+{
+	return this->symbols[index];
+}
+
+
+
+
+
 
 ////Перегрузка оператора+ через дружественную функцию
 //MyString operator+ (const MyString &str1, const MyString &str2)
@@ -214,15 +239,5 @@ void operator>> (istream &in, MyString &str)
 //	return MyString(tmp);
 //}
 
-//Перегрузка оператора+ через дружественную функцию
-MyString MyString::operator+ (const MyString &str)
-{
-	
-	MyString temp;
-	temp.length = length + str.length - 1;
-	temp.symbols = new char[temp.length];
-	strcpy(temp.symbols, symbols);
-	strcat(temp.symbols, str.symbols);
-	return temp;
-}
+
 

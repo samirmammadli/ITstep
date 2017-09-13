@@ -40,20 +40,25 @@ public:
 	//Найти подстроку в строке и вернуть ее индекс
 	int find(MyString str);
 	//Перегрузка оператора=
-	MyString operator= (const MyString &str);
+	MyString& operator= (const MyString &str);
 	//Перегрузка оператора+=
-	void operator+= (const MyString &str);
+	MyString& operator+= (const MyString &str);
 	//Перегрузка оператора==
 	bool operator== (const MyString &str);
 	//Перегрузка оператора<< через дружественную функцию
 	friend ostream& operator<< (ostream &out, const MyString &str);
 	//Перегрузка оператора>> через дружественную функцию
-	friend void operator>> (istream &in, MyString &str);
-	
-	
-	//Перегрузка оператора+ через дружественную функцию
-	//friend MyString operator+ (const MyString &str1, const MyString &str2);
-
-
+	friend istream& operator>> (istream &in, MyString &str);
+	//Перегрузка оператора+
 	MyString operator+ (const MyString &str);
+	//Перегрузка оператора[]
+	char& operator[] (int index);
+
+
+
+
+
+
+	////Перегрузка оператора+ через дружественную функцию
+	//friend MyString operator+ (const MyString &str1, const MyString &str2);
 };
