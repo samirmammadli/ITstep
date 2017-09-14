@@ -4,10 +4,12 @@
 using namespace std;
 
 
+
 class Test {
 	int x;
 	int y;
 	static Test * obj;
+	
 	Test(int x = 0, int y = 0)
 	{
 		this->x = x;
@@ -19,6 +21,8 @@ public:
 		return obj;
 	}
 };
+
+
 
 
 Test* Test::obj = new Test;
