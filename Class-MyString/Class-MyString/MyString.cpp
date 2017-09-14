@@ -73,7 +73,7 @@ void MyString::Swap(MyString &str)
 }
 
 //Вставить подстроку по индексу
-void MyString::insert(int index, MyString str)
+void MyString::insert(int index, const MyString &str)
 {
 	if (index >= 0 && index < this->length)
 	{
@@ -112,7 +112,7 @@ void MyString::erase(int start, int count)
 }
 
 //Заменить символы
-void MyString::replace(int start, int finish, MyString str)
+void MyString::replace(int start, int finish, const MyString &str)
 {
 	if (start >= 0 && start < this->Length() && finish > start && finish < this->Length() && finish - start < str.Length())
 	{
@@ -125,7 +125,7 @@ void MyString::replace(int start, int finish, MyString str)
 }
 
 //Найти подстроку в строке и вернуть ее индекс
-int MyString::find(MyString str)
+int MyString::find(const MyString &str)
 {
 	int j;
 	int StrLen = str.Length();
@@ -139,9 +139,7 @@ int MyString::find(MyString str)
 			}
 			if (j == StrLen) return i;
 		}
-		return -1;
 	}
-	else
 	return -1;
 }
 
@@ -186,6 +184,29 @@ bool MyString::operator== (const MyString &str)
 	return match;
 }
 
+//Перегрузка оператора!=
+bool MyString::operator!=(const MyString &str)
+{
+	return !(*this == str);
+}
+
+//Перегрузка оператора>
+bool MyString::operator> (const MyString &str)
+{
+	for (int i = 0; this->symbols[i] != '\0' && str.symbols[i] != '\0' ; i++)
+	{
+		if (this->symbols[i] > str.symbols[i])
+			return true;
+	}
+	return false;
+}
+
+//Перегрузка оператора<
+bool MyString::operator< (const MyString &str)
+{
+	return !(*this > str);
+}
+
 //Перегрузка оператора<< через дружественную функцию
 ostream& operator<< (ostream &out, const MyString &str)
 {
@@ -209,7 +230,6 @@ istream& operator>> (istream &in, MyString &str)
 //Перегрузка оператора+
 MyString MyString::operator+ (const MyString &str)
 {
-
 	MyString temp;
 	temp.length = length + str.length - 1;
 	temp.symbols = new char[temp.length];
@@ -228,16 +248,6 @@ char& MyString::operator[] (int index)
 
 
 
-
-////Перегрузка оператора+ через дружественную функцию
-//MyString operator+ (const MyString &str1, const MyString &str2)
-//{
-//	int _length = str1.length + str2.length - 1;
-//	char* tmp = new char[_length];
-//	strcpy(tmp, str1.symbols);
-//	strcat(tmp, str2.symbols);
-//	return MyString(tmp);
-//}
 
 
 

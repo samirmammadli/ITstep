@@ -6,8 +6,6 @@ using namespace std;
 
 class MyString
 {
-	size_t npos;
-	size_t str_max_size = 4294967291;
 	char* symbols;
 	int length = 0;
 
@@ -32,19 +30,25 @@ public:
 	//Обменять значения двух строк
 	void Swap(MyString &str);
 	//Вставить подстроку по индексу
-	void insert(int index, MyString str);
+	void insert(int index,const MyString &str);
 	//Удалить символы
 	void erase(int start, int count);
 	//Заменить символы
-	void replace(int start, int finish, MyString str);
+	void replace(int start, int finish,const MyString &str);
 	//Найти подстроку в строке и вернуть ее индекс
-	int find(MyString str);
+	int find(const MyString &str);
 	//Перегрузка оператора=
 	MyString& operator= (const MyString &str);
 	//Перегрузка оператора+=
 	MyString& operator+= (const MyString &str);
 	//Перегрузка оператора==
 	bool operator== (const MyString &str);
+	//Перегрузка оператора!=
+	bool operator!=(const MyString &str);
+	//Перегрузка оператора>
+	bool operator> (const MyString &str);
+	//Перегрузка оператора<
+	bool MyString::operator< (const MyString &str);
 	//Перегрузка оператора<< через дружественную функцию
 	friend ostream& operator<< (ostream &out, const MyString &str);
 	//Перегрузка оператора>> через дружественную функцию
@@ -53,12 +57,4 @@ public:
 	MyString operator+ (const MyString &str);
 	//Перегрузка оператора[]
 	char& operator[] (int index);
-
-
-
-
-
-
-	////Перегрузка оператора+ через дружественную функцию
-	//friend MyString operator+ (const MyString &str1, const MyString &str2);
 };
