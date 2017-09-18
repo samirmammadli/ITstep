@@ -23,14 +23,22 @@ public:
 };
 
 
-
+template <typename T>
+void samir (T index)
+{
+	cout << index << endl;
+}
 
 Test* Test::obj = new Test;
 
+struct point {
+	int x;
+	int y;
+};
+
 void main()
 {
-
-	Test *p = Test::Obj();
+	/*Test *p = Test::Obj();
 
 
 	setlocale(LC_ALL, "Russian");
@@ -46,5 +54,28 @@ void main()
 
 	a = lesh.rfind(temp, lesh.length());
 	cout << lesh.npos << endl;
-	cout << a << endl;
+	cout << a << endl;*/
+
+	point a[4] = {};
+
+	a[1].x = 10;
+	a[1].y = 10;
+
+
+	int x = 1;
+	int y = 1;
+
+	int ax = 0;
+	int ay = 1;
+
+	int tempx = ax - x;
+	int tempy = ay - y;
+	ax -= tempx;
+	ay -= tempy;
+	
+
+	cout << ax << endl;
+	cout << ay << endl;
+
+
 }
