@@ -2,6 +2,7 @@
 #include <iostream>
 #include <conio.h>
 using namespace sf;
+using namespace std;
 
 
 
@@ -56,14 +57,16 @@ int main()
 	float CurrentFrame = 0;
 	float time = 0;
 	sf::Event event;
+	float delay = 1;
+	float temp = 1;
 	while (window.isOpen())	
 	{
 
 		window.setKeyRepeatEnabled(false);
-			time = clock.getElapsedTime().asSeconds(); //дать прошедшее время в микросекундах
+			time += clock.getElapsedTime().asSeconds(); //дать прошедшее время в микросекундах
 			clock.restart(); //перезагружает время
-			time *= 100;
-			
+			time;
+		//cout << time << endl;
 			
 			(window.pollEvent(event));
 			
@@ -71,12 +74,12 @@ int main()
 					window.close();
 				else if (event.type == sf::Event::KeyPressed)
 				{
-					if (event.key.code == sf::Keyboard::A)
-						herosprite.getPosition().x > 0 ? herosprite.move(-15, 0) : 0;
-					else if (event.key.code == sf::Keyboard::D)
-						herosprite.getPosition().x < 770 ? herosprite.move(15, 0) : 0;
-					else if (event.key.code == sf::Keyboard::W)
-						herosprite.getPosition().y > 0 ? herosprite.move(0, -25) : 0;
+					//if (event.key.code == sf::Keyboard::A)
+					//	herosprite.getPosition().x > 0 ? herosprite.move(-30, 0) : 0; //15
+					//else if (event.key.code == sf::Keyboard::D)
+					//	herosprite.getPosition().x < 770 ? herosprite.move(30, 0) : 0;
+					if (event.key.code == sf::Keyboard::W)
+						temp = delay -= 0.2;
 				}
 
 			
@@ -84,9 +87,17 @@ int main()
 		
 			
 			
-			herosprite.getPosition().y < 570 ? (herosprite.move(0, time)) : 0;//происходит само движение персонажа влево
-			/*if (Keyboard::isKeyPressed(Keyboard::A) || (Keyboard::isKeyPressed(Keyboard::Left)))
-				herosprite.getPosition().x > 0 ? herosprite.move(-time, 0) : 0;*/
+			time > delay && herosprite.getPosition().y < 570 ? ((herosprite.move(0, 17)), time = 0) : 0;//происходит само движение персонажа влево
+			//delay = 0;
+				
+			if (Keyboard::isKeyPressed(Keyboard::S) || (Keyboard::isKeyPressed(Keyboard::Down)))
+			{
+				cout << delay << endl;
+				delay -= delay - 0.05;
+				cout << delay << endl;
+			}
+			if (event.type == Event::KeyReleased)
+				delay = temp;
 			
 
 		
