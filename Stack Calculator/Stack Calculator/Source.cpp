@@ -113,6 +113,7 @@ void main()
 	/*cout << numbers.peek() << endl;
 	cout << numbers.getSize() << endl;*/
 	//string math = "1+3*2*4-6";
+	//
 
 	
 }
