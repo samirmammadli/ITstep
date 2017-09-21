@@ -2,12 +2,6 @@
 #include "Calculator.h"
 
 
-
-
-
-
-
-
 void test1(const Calculator s1)
 {
 	0;
@@ -21,10 +15,10 @@ void main()
 	int u;
 	char * lesh = new char[200];
 	cin.getline(lesh, 200);
-	Stack<double> numb(200);
-	Stack<char> symb(200);
-	int size = strlen(lesh) +1;
-	for (int i = 0;i < size; i++)
+	Stack<double> numbers(200);
+	Stack<char> operators(200);
+	int size = strlen(lesh) + 1;
+	for (int i = 0; i < size; i++)
 	{
 		if (lesh[i] >= 48 && lesh[i] <= 57)
 		{
@@ -36,44 +30,46 @@ void main()
 				i++;
 			}
 			i--;
-			numb.push(temp);
+			numbers.push(temp);
 		}
-		else //(i > 0 && (lesh[i] == '+' || lesh[i] == '-' || lesh[i] == '*' || lesh[i] == '/'))
+		else 
 		{
-			if (symb.peek() == '*' || symb.peek() == '/')
+			if (operators.peek() == '*' || operators.peek() == '/')
 			{
-				double temp = numb.peek();
-				numb.pop();
-				symb.peek() == '*' ? temp *= numb.peek() : temp = numb.peek() / temp;
-				numb.pop();
-				numb.push(temp);
-				symb.pop();
+				double temp = numbers.peek();
+				numbers.pop();
+				operators.peek() == '*' ? temp *= numbers.peek() : temp = numbers.peek() / temp;
+				numbers.pop();
+				numbers.push(temp);
+				operators.pop();
 			}
-			lesh[i] != '\0' ? symb.push(lesh[i]) : 0;
+			lesh[i] != '\0' ? operators.push(lesh[i]) : 0;
 		}
 	}
 
 	double total = 0;
-	size = symb.getCount();
-	for (int i = 0; i < size; i++)
+	while (numbers.getCount() > 1)
 	{
-		double temp = numb.peek();
-		numb.pop();
-		symb.peek() == '+' ? temp = temp + numb.peek() : (temp = numb.peek() - temp, temp *= -1);
-		numb.pop();
-		numb.push(temp);
-		symb.pop();
+		double temp = numbers.peek();
+		operators.peek() == '-' ? temp *= -1 : 0;
+		operators.pop();
+		numbers.pop();
+		operators.peek() == '-' ? temp = (numbers.peek() * -1) + temp : temp = numbers.peek() + temp;
+		operators.pop();
+		numbers.pop();
+		numbers.push(temp);
+		operators.push('+');
 	}
 
 
-	for (int i = 0; i < numb.getCount(); i++)
+	for (int i = 0; i < numbers.getCount(); i++)
 	{
-		cout << "Numbers : " << numb.arr[i] << " ";
+		cout << "Numbers : " << numbers.arr[i] << " ";
 	}
 	cout << endl;
-	cout << "Symb : " << symb.arr << endl;
-	cout << "Answer: " << total << endl;
-	cout << "Symb Size: " << symb.getCount() << endl;
+	cout << "Symb : " << operators.arr << endl;
+	//cout << "Answer: " << total << endl;
+	cout << "Symb Size: " << operators.getCount() << endl;
 
 
 
