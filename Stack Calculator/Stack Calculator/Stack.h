@@ -1,8 +1,10 @@
 #pragma once
+#include "Stack.h"
 #include <iostream>
 #include <string>
 using namespace std;
 
+class Calculator;
 
 template <class T>
 class Stack
@@ -12,6 +14,7 @@ private:
 	const int size;
 	int count;
 public:
+	friend Calculator;
 	Stack(int size);
 	Stack(const Stack<T> &obj);
 	~Stack();
@@ -28,7 +31,7 @@ public:
 template <class T>
 Stack<T>::Stack(int size) : size(size)
 {
-	arr = new T[size];
+	arr = new T[size]{};
 	count = 0;
 }
 

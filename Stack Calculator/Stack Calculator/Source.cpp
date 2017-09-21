@@ -1,4 +1,5 @@
 #include "Stack.h"
+#include "Calculator.h"
 
 
 
@@ -7,24 +8,18 @@
 
 
 
-//void test(Stack<int> s1)
-//{
-//	cout << s1.peek() << endl;
-//	cout << s1.getCount() << endl;
-//	cout << s1.getSize() << endl;
-//}
+void test1(const Calculator &s1)
+{
+	0;
+}
 
 void main()
 {
-	Stack<int> numbers(100);
-	Stack<char> operators(100);
+	Calculator* test = Calculator::Obj();
+	cout << test->getMaxSize() << endl;
+	test1(*test);
 
-	//numbers.push(15);
 
-	/*cout << numbers.peek() << endl;
-	cout << numbers.getSize() << endl;*/
-	//string math = "1+3*2*4-6";
-	//
 
 	
 }

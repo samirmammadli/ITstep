@@ -5,13 +5,15 @@ class Calculator
 {
 	Stack<int>* numbers;
 	Stack<char>* operators;
-	string input;
+	string* input;
 	const int max_size;
-public:
+	static Calculator* obj;
 	Calculator(int size);
+public:
+	static Calculator* Obj();
 	Calculator(const Calculator &calc);
 	~Calculator();
-
 	void inputExpression();
+	int getMaxSize();
 };
 
