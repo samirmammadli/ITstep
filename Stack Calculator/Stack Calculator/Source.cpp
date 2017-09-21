@@ -21,9 +21,10 @@ void main()
 	int u;
 	char * lesh = new char[200];
 	cin.getline(lesh, 200);
-	Stack<int> numb(200);
+	Stack<double> numb(200);
 	Stack<char> symb(200);
-	for (int i = 0; lesh[i] != '\0'; i++)
+	int size = strlen(lesh) +1;
+	for (int i = 0;i < size; i++)
 	{
 		if (lesh[i] >= 48 && lesh[i] <= 57)
 		{
@@ -37,25 +38,31 @@ void main()
 			i--;
 			numb.push(temp);
 		}
-		if (lesh[i] == '+' || lesh[i] == '-' || lesh[i] == '*' || lesh[i] == '/')
+		else //(i > 0 && (lesh[i] == '+' || lesh[i] == '-' || lesh[i] == '*' || lesh[i] == '/'))
 		{
-			if (symb.peek() == '*')
+			if (symb.peek() == '*' || symb.peek() == '/')
 			{
-				int temp = numb.peek();
+				double temp = numb.peek();
 				numb.pop();
-				temp *= numb.peek();
+				symb.peek() == '*' ? temp *= numb.peek() : temp = numb.peek() / temp;
 				numb.pop();
 				numb.push(temp);
 				symb.pop();
 			}
-			symb.push(lesh[i]);
+			lesh[i] != '\0' ? symb.push(lesh[i]) : 0;
 		}
-			
 	}
-	
-	for (int i = 0; i < numb.getSize(); i++)
+
+	double total = 0;
+	size = symb.getCount();
+	for (int i = 0; i < size; i++)
 	{
-		0;
+		double temp = numb.peek();
+		numb.pop();
+		symb.peek() == '+' ? temp = temp + numb.peek() : (temp = numb.peek() - temp, temp *= -1);
+		numb.pop();
+		numb.push(temp);
+		symb.pop();
 	}
 
 
@@ -65,6 +72,8 @@ void main()
 	}
 	cout << endl;
 	cout << "Symb : " << symb.arr << endl;
+	cout << "Answer: " << total << endl;
+	cout << "Symb Size: " << symb.getCount() << endl;
 
 
 
