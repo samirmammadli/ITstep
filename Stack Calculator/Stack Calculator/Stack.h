@@ -10,10 +10,11 @@ template <class T>
 class Stack
 {
 private:
-	T *arr;
+	
 	const int size;
 	int count;
 public:
+	T *arr;
 	friend Calculator;
 	Stack(int size);
 	Stack(const Stack<T> &obj);
@@ -63,8 +64,10 @@ template<class T>
 T Stack<T>::pop()
 {
 	if (!this->isEmpty())
+	{
+		this->count--;
 		return this->arr[count - 1];
-	this->count--;
+	}
 }
 
 template<class T>
