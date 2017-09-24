@@ -123,13 +123,13 @@ void main()
 	list.add(77);
 	list.add(88);
 	list.add(99);
-	list.remove(2);
+	list.remove(8);
 	for (size_t i = 0; i < 10; i++)
 	{
 		
 		//cout << i << "   ";
-		
+		cout << list[i] << endl;
 		//list[i];
 	}
-	cout << list[22] << endl;
+	
 }
