@@ -10,6 +10,5 @@ void main()
 	char *temp = new char[200];
 	cin.getline(temp, 200);
 	cout << "Total: " << test->inputExpression(temp) << endl;
-	system("pause");
 }
 
