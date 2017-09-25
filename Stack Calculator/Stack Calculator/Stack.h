@@ -10,11 +10,10 @@ template <class T>
 class Stack
 {
 private:
-	
 	const int size;
 	int count;
-public:
 	T *arr;
+public:
 	friend Calculator;
 	Stack(int size);
 	Stack(const Stack<T> &obj);
