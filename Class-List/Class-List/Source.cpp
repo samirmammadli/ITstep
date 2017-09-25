@@ -20,6 +20,17 @@ public:
 		head = nullptr;
 		count = 0;
 	}
+	~List()
+	{
+		Node* temp = head;
+		temp->previous = nullptr;
+		for (int i = 0; i < count-2; i++)
+		{
+			temp = temp->next;
+			delete temp->previous;
+		}
+		delete temp;
+	}
 
 	void add(int data)
 	{
