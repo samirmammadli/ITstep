@@ -35,7 +35,10 @@ int Calculator::getMaxSize()
 double Calculator::inputExpression(char* temp)
 {
 	Calculate(temp);
-	return this->numbers->peek();
+	double answer = this->numbers->peek();
+	this->numbers->count = 0;
+	this->operators->count = 0;
+	return answer;
 }
 
 int Calculator::Calculate (char* input, int i)
@@ -74,6 +77,7 @@ int Calculator::Calculate (char* input, int i)
 			floating = false;
 			i--;
 			numbers->push(temp);
+			cout << temp << endl;
 		}
 		else
 		{
