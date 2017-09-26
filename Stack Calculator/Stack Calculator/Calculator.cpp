@@ -77,7 +77,6 @@ int Calculator::Calculate (char* input, int i)
 			floating = false;
 			i--;
 			numbers->push(temp);
-			cout << temp << endl;
 		}
 		else
 		{
