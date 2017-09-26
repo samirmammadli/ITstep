@@ -3,7 +3,7 @@
 
 class Calculator
 {
-	Stack<int>* numbers;
+	Stack<double>* numbers;
 	Stack<char>* operators;
 	const int max_size;
 	static Calculator* obj;
@@ -13,7 +13,7 @@ public:
 	static Calculator* Obj();
 	Calculator(const Calculator &calc);
 	~Calculator();
-	int inputExpression(char* temp);
+	double inputExpression(char* temp);
 	int getMaxSize();
 };
 

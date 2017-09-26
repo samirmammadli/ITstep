@@ -7,13 +7,13 @@ Calculator* Calculator::Obj()
 
 Calculator::Calculator(int size = 200) : max_size(size)
 {
-	this->numbers = new Stack<int>(max_size);
+	this->numbers = new Stack<double>(max_size);
 	this->operators = new Stack<char>(max_size);
 }
 
 Calculator::Calculator(const Calculator &calc) : max_size(calc.max_size)
 {
-	this->numbers = new Stack<int>(max_size);
+	this->numbers = new Stack<double>(max_size);
 	this->operators = new Stack<char>(max_size);
 	memcpy(this->operators->arr, calc.operators->arr, max_size);
 	memcpy(this->numbers->arr, calc.numbers->arr, sizeof(int) * max_size);
@@ -32,7 +32,7 @@ int Calculator::getMaxSize()
 	return this->max_size;
 }
 
-int Calculator::inputExpression(char* temp)
+double Calculator::inputExpression(char* temp)
 {
 	Calculate(temp);
 	return this->numbers->peek();
@@ -45,16 +45,33 @@ int Calculator::Calculate (char* input, int i)
 	for (; i < size; i++)
 	{
 		input[i] == '(' ? (operators->push('('), i = Calculate(input, i + 1)) : 0;
-		if (input[i] >= 48 && input[i] <= 57)
+		if (input[i] >= 48 && input[i] <= 57 || input[i] == '.')
 		{
 			count++;
-			int temp = 0;
-			while (input[i] >= 48 && input[i] <= 57)
+			double temp = 0;
+			double float_temp = 0.1;
+			bool floating = false;
+			while (input[i] >= 48 && input[i] <= 57 || input[i] == '.')
 			{
-				temp *= 10;
-				temp += input[i] - 48;
-				i++;
+				if (input[i] == '.')
+				{
+					floating = true;
+					i++;
+				}
+				if (!floating)
+				{
+					temp *= 10;
+					temp += input[i] - 48;
+					i++;
+				}
+				else
+				{
+					temp += (input[i] - 48) * float_temp;
+					float_temp *= 0.1;
+					i++;
+				}
 			}
+			floating = false;
 			i--;
 			numbers->push(temp);
 		}
@@ -62,7 +79,7 @@ int Calculator::Calculate (char* input, int i)
 		{
 			if (operators->peek() == '*' || operators->peek() == '/')
 			{
-				int temp = numbers->peek();
+				double temp = numbers->peek();
 				numbers->pop();
 				operators->peek() == '*' ? temp *= numbers->peek() : temp = numbers->peek() / temp;
 				numbers->pop();
@@ -73,10 +90,10 @@ int Calculator::Calculate (char* input, int i)
 			input[i] != '\0' ? operators->push(input[i]) : 0;
 		}
 	}
-	int total = 0;
+	double total = 0;
 	for (int i = 0; i < count && numbers->count > 0; i++)
 	{
-		int temp = numbers->peek();
+		double temp = numbers->peek();
 		if (operators->peek() == '-') temp *= -1;
 		total += temp;
 		numbers->pop();
