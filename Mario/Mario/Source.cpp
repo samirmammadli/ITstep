@@ -2,6 +2,16 @@
 #include <time.h>
 using namespace sf;
 
+class Test
+{
+	int a;
+public:
+	Test(int a) : a(a)
+	{
+
+	}
+};
+
 int N = 30, M = 20;
 int size = 16;
 int w = size*N;

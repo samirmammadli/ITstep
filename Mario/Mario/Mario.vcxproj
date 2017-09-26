@@ -96,7 +96,7 @@
     <Link>
       <AdditionalLibraryDirectories>C:\SFML-2.4.2\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>NotSet</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -110,7 +110,7 @@
     <Link>
       <AdditionalLibraryDirectories>C:\SFML-2.4.2\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>NotSet</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,7 +128,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\SFML-2.4.2\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>NotSet</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,7 +146,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\SFML-2.4.2\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>NotSet</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
