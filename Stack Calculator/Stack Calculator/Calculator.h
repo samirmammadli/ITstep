@@ -13,7 +13,7 @@ public:
 	static Calculator* Obj();
 	Calculator(const Calculator &calc);
 	~Calculator();
-	double inputExpression(char* temp);
+	int inputExpression(char* temp);
 	int getMaxSize();
 };
 

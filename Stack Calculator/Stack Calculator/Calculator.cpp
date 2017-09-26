@@ -32,7 +32,7 @@ int Calculator::getMaxSize()
 	return this->max_size;
 }
 
-double Calculator::inputExpression(char* temp)
+int Calculator::inputExpression(char* temp)
 {
 	Calculate(temp);
 	return this->numbers->peek();
@@ -40,12 +40,14 @@ double Calculator::inputExpression(char* temp)
 
 int Calculator::Calculate (char* input, int i)
 {
+	int count = 0;
 	int size = strlen(input) + 1;
 	for (; i < size; i++)
 	{
 		input[i] == '(' ? (operators->push('('), i = Calculate(input, i + 1)) : 0;
 		if (input[i] >= 48 && input[i] <= 57)
 		{
+			count++;
 			int temp = 0;
 			while (input[i] >= 48 && input[i] <= 57)
 			{
@@ -60,7 +62,7 @@ int Calculator::Calculate (char* input, int i)
 		{
 			if (operators->peek() == '*' || operators->peek() == '/')
 			{
-				double temp = numbers->peek();
+				int temp = numbers->peek();
 				numbers->pop();
 				operators->peek() == '*' ? temp *= numbers->peek() : temp = numbers->peek() / temp;
 				numbers->pop();
@@ -71,22 +73,18 @@ int Calculator::Calculate (char* input, int i)
 			input[i] != '\0' ? operators->push(input[i]) : 0;
 		}
 	}
-	double total = 0;
-	while (numbers->getCount() > 0)
+	int total = 0;
+	for (int i = 0; i < count && numbers->count > 0; i++)
 	{
-		double temp = numbers->peek();
-		operators->peek() == '-' ? temp *= -1 : 0;
+		int temp = numbers->peek();
+		if (operators->peek() == '-') temp *= -1;
 		total += temp;
 		numbers->pop();
-		if (operators->peek() == '(')
-		{
-			numbers->push(total);
-			operators->pop();
-			return i + 1;
-		}
 		operators->pop();
 	}
+	if (operators->peek() == '(') operators->pop();
 	numbers->push(total);
+	return i+1;
 }
 
 Calculator* Calculator::obj = new Calculator;
