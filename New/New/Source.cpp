@@ -3,6 +3,7 @@
 #include <string>
 #include <direct.h>
 #include <io.h>
+#include <sstream>
 using namespace std;
 
 
@@ -10,7 +11,8 @@ using namespace std;
 void main()
 {
 	int a;
-	string str;
+	string str = "wekljgiwrhgpiuqerhrgqe";
+	printf("%.10s", str.c_str());
 	getline(cin, str);
 	cin >> a;
 	cout << str << endl;
