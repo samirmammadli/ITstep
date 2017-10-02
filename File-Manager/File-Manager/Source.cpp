@@ -84,18 +84,18 @@ public:
 	void move();
 };
 
-//string deletepapka(string &str)
+//void deletepapka(string path, string word)
 //{
 //	string temp;
 //	int count = 0;
 //	_finddata_t fileinfo;
-//	int handle = _findfirst(str.c_str(), &fileinfo);
+//	int handle = _findfirst(path.c_str(), &fileinfo);
 //	int find = handle;
 //	while (find != -1)
 //	{
 //		if (fileinfo.attrib & _A_SUBDIR)
 //		{
-//			deletepapka(str);
+//			deletepapka(path);
 //		}
 //			
 //		temp = fileinfo.name;
