@@ -13,7 +13,7 @@ struct FileProp
 {
 	string type;
 	string attr = "";
-	string size_type;
+	string size_type = "Bytes";
 	float size;
 	
 };
@@ -84,6 +84,29 @@ public:
 	void move();
 };
 
+//string deletepapka(string &str)
+//{
+//	string temp;
+//	int count = 0;
+//	_finddata_t fileinfo;
+//	int handle = _findfirst(str.c_str(), &fileinfo);
+//	int find = handle;
+//	while (find != -1)
+//	{
+//		if (fileinfo.attrib & _A_SUBDIR)
+//		{
+//			deletepapka(str);
+//		}
+//			
+//		temp = fileinfo.name;
+//		find = _findnext(handle, &fileinfo);
+//	}
+//	_findclose(handle);
+//	return 
+//}
+
+
+
 void main()
 {
 	
@@ -94,8 +117,8 @@ void main()
 	string str;
 	getline(cin, str);
 	system("cls");
-	FileManager filemanager;
-	filemanager.showDirectory(str);
+	FileManager fm;
+	fm.showDirectory(str);
 	//setlocale(LC_ALL, "Russian");
 
 	//rename("text.txt", str.c_str());
@@ -103,6 +126,7 @@ void main()
 
 	//mkdir(str.c_str());
 	//rmdir(str.c_str());
+	rmdir("F:\papka");
 	
 
 }
