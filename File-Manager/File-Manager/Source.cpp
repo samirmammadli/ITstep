@@ -12,10 +12,6 @@
 #define findclose _findclose
 using namespace std;
 
-
-
-
-
 enum Colors
 {
 	BLACK,
@@ -110,6 +106,7 @@ public:
 	}
 	void print()
 	{
+		bool exit_func = false;
 		cout << "***************************************************************************\n";
 		cout << "Name:                                        |Type:| Attr:   | Size:  |   |\n";
 		cout << "***************************************************************************\n";
@@ -122,20 +119,78 @@ public:
 			cout << buffer[i];
 			COLORS(CYAN, DARKBLUE);
 			i++;
-			if (i == buffer.size() - 1 || i % textBufferSize == 0) control(i, index);
+			if (i == buffer.size() - 1 || i % textBufferSize == 0) control(i, index, exit_func);
 		}
 		
 	}
-	void control(int &i, int &index)
+	void control(int &i, int &index, bool &exit_func)
 	{
-		int key = _getch();
-		if (key == 'w' && index > 0) index--;
-		if (key == 's' && index < buffer.size()- 2) index++;
+		int key = 0;
+		bool key_pressed = false;
+		while (!key_pressed)
+		{
+			key = _getch();
+			if (key == 'w' && index > 0) (index--, key_pressed = true);
+			else if (key == 's' && index < buffer.size() - 2) (index++, key_pressed = true);
+			else if (key == 13)
+			{
+				exit_func = true;
+				return;
+			}
+			
+		}
+		if (index % textBufferSize == 0 && index !=0)
+		{
+			system("cls");
+			cout << "***************************************************************************\n";
+			cout << "Name:                                        |Type:| Attr:   | Size:  |   |\n";
+			cout << "***************************************************************************\n";
+		}
 		i = index - index % textBufferSize;
 		SetConsoleCursorPosition(h, { 0, 3 });
 
 	}
-	void findFiles(string mask);
+	int findFiles(string mask, string patch)
+	{
+		int count = 0;
+		_finddata_t fileinfo;
+		int handle = _findfirst(mask.c_str(), &fileinfo);
+		if (handle != -1)
+		{
+			patch.pop_back();
+			string name = fileinfo.name;
+			cout << patch + name << endl;
+			count++;
+		}
+		findclose(handle);
+		return count;
+	}
+	void findFolders(string mask, string word)
+	{
+		_finddata_t fileinfo;
+		int handle = _findfirst(mask.c_str(), &fileinfo);
+		int find = -1;
+		if (handle != -1) find = _findnext(handle, &fileinfo);
+		string temp = mask;
+		temp.pop_back();
+		temp += word;
+		findFiles(temp, mask);
+		while (find != -1)
+		{
+			string name_check = fileinfo.name;
+			if (fileinfo.attrib & _A_SUBDIR && name_check != "..")
+			{
+				string temp = mask;
+				temp.pop_back();
+				temp += fileinfo.name;
+				temp += "\\*";
+				findFolders(temp, word);
+			}
+			find = _findnext(handle, &fileinfo);
+		}
+		findclose(handle);
+		return;
+	}
 	void changeDirectory(string dir);
 	void remove(string path);
 	void rename(string path, string name);
@@ -143,19 +198,32 @@ public:
 	void move();
 };
 
+
+
+void hideCursor(bool switch_cursor)
+{
+	CONSOLE_CURSOR_INFO info;
+	info.bVisible = !switch_cursor;
+	info.dwSize = 1;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}
+
+
 void main()
 { 
+	hideCursor(true);
 	system("color 1B");
 	setlocale(LC_ALL, "Russian");
-	//FileManager fm("C:\\Windows\\System32\\");
-	//fm.find("*.txt");
-	//fm.changeDirectory("Debug");
 
-	string str;
+
+	/*string str;
 	getline(cin, str);
-	system("cls");
+	system("cls");*/
 	FileManager fm;
-	fm.showDirectory(str);
+	//fm.showDirectory(str);
+	 fm.findFolders("C:\\Andy\\*", "*.txt");
+
+
 	
 
 	//rename("text.txt", str.c_str());
