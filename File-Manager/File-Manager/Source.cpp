@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <direct.h>
 #include <io.h>
@@ -142,9 +142,9 @@ public:
 		if (index % textBufferSize == 0 && index !=0)
 		{
 			system("cls");
-			cout << "***************************************************************************\n";
+			cout << "═══════════════════════════════════════════════════════════════════════════\n";
 			cout << "Name:                                        |Type:| Attr:   | Size:  |   |\n";
-			cout << "***************************************************************************\n";
+			cout << "═══════════════════════════════════════════════════════════════════════════\n";
 		}
 		i = index - index % textBufferSize;
 		SetConsoleCursorPosition(h, { 0, 3 });
@@ -219,12 +219,12 @@ void main()
 	setlocale(LC_ALL, "Russian");
 
 
-	/*string str;
+	string str;
 	getline(cin, str);
-	system("cls");*/
+	system("cls");
 	FileManager fm;
-	//fm.showDirectory(str);
-	fm.findFolders("C:\\*", "*.??");
+	fm.showDirectory(str);
+	//fm.findFolders("C:\\*", "*.??");
 
 
 
