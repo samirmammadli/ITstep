@@ -155,7 +155,10 @@ public:
 		int count = 0;
 		_finddata_t fileinfo;
 		int handle = _findfirst(mask.c_str(), &fileinfo);
-		if (handle != -1)
+		int find = -1;
+		if (handle != -1) find = _findnext(handle, &fileinfo);
+		if (handle != -1) find = _findnext(handle, &fileinfo);
+		if (find != -1)
 		{
 			patch.pop_back();
 			string name = fileinfo.name;
@@ -221,7 +224,7 @@ void main()
 	system("cls");*/
 	FileManager fm;
 	//fm.showDirectory(str);
-	fm.findFolders("C:\\*", "*.txt");
+	fm.findFolders("C:\\*", "*.??");
 
 
 
