@@ -221,10 +221,9 @@ void main()
 	system("cls");*/
 	FileManager fm;
 	//fm.showDirectory(str);
-	 fm.findFolders("C:\\Andy\\*", "*.txt");
+	fm.findFolders("C:\\*", "*.txt");
 
 
-	
 
 	//rename("text.txt", str.c_str());
 	//remove(str.c_str());
