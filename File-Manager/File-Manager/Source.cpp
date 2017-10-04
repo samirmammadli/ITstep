@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include <windows.h>
 #include <conio.h>
-#define COORDS(row, col) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
+#define COORDS(col, row) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
 
 #define COLORS(fg, bg) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), bg * 16 + fg)
 #define findclose _findclose
@@ -33,7 +33,82 @@ enum Colors
 	DEFAULT = 7
 };
 
-HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+
+class PrintHead {
+	enum Sides {
+		VERTICAL, HORIZONTAL, UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT
+	};
+	 int width;
+	 int height;
+	 unsigned char* symbols;
+	
+public:
+	
+	PrintHead()
+	{
+		width = 79;
+		height = 35;
+		symbols = new unsigned char[6];
+		symbols[VERTICAL] = 186;
+		symbols[HORIZONTAL] = 205;
+		symbols[UPLEFT] = 201;
+		symbols[UPRIGHT] = 187;
+		symbols[DOWNLEFT] = 200;
+		symbols[DOWNRIGHT] = 188;
+	}
+	void  Print()
+	{
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+			{
+				if (i == 0 && j == 0)
+				{
+					COORDS(i, j);
+					cout << symbols[UPLEFT];
+				}
+				else if (i == 0 && j == width - 1)
+				{
+					COORDS(i, j);
+					cout << symbols[UPRIGHT];
+				}
+				else if (i == height - 1 && j == 0)
+				{
+					COORDS(i, j);
+					cout << symbols[DOWNLEFT];
+				}
+				else if (i == height - 1 && j == width - 1)
+				{
+					COORDS(i, j);
+					cout << symbols[DOWNRIGHT];
+				}
+				else if (j == 0)
+				{
+					COORDS(i, j);
+					cout << symbols[VERTICAL];
+				}
+				else if (j == width -1)
+				{
+					COORDS(i, j);
+					cout << symbols[VERTICAL];
+				}
+				else if (i == 0)
+				{
+					COORDS(i, j);
+					cout << symbols[HORIZONTAL];
+				}
+				else if (i == height -1)
+				{
+					COORDS(i, j);
+					cout << symbols[HORIZONTAL];
+				}
+					
+			}
+		}
+	}
+	
+};
 
 struct FileProp
 {
@@ -45,6 +120,7 @@ struct FileProp
 
 class FileManager
 {
+	PrintHead a;
 	int textBufferSize = 25;
 	vector<string> buffer;
 	string path;
@@ -102,28 +178,28 @@ public:
 		findclose(handle);
 		/*cout << "\nInformation: was found " << count;
 		cout << " file(s) in folder:  " << str << "\n\n";*/
-		print();
 	}
 	void print()
 	{
-		bool exit_func = false;
-		cout << "***************************************************************************\n";
-		cout << "Name:                                        |Type:| Attr:   | Size:  |   |\n";
-		cout << "***************************************************************************\n";
+		
+		a.Print();
+		bool stop = false;
 		int i = 0;
-		int index = 0;
-		SetConsoleCursorPosition(h, { 0, 3 });
-		while (buffer.size() != 0)
+		int cursor = 0;
+		COORDS( 0, 3 );
+		while (!stop && buffer.size() > 0)
 		{
-			if (i == index) COLORS(BLUE, CYAN);
+			if (i == cursor) COLORS(BLUE, CYAN);
+
+			COORDS(short(i % textBufferSize +1) , 2);
 			cout << buffer[i];
 			COLORS(CYAN, DARKBLUE);
 			i++;
-			if (i == buffer.size() - 1 || i % textBufferSize == 0) control(i, index, exit_func);
+			if (i == buffer.size() - 1 || i % textBufferSize == 0) stop = control(i, cursor);
 		}
 		
 	}
-	void control(int &i, int &index, bool &exit_func)
+	bool control(int &i, int &index)
 	{
 		int key = 0;
 		bool key_pressed = false;
@@ -134,20 +210,17 @@ public:
 			else if (key == 's' && index < buffer.size() - 2) (index++, key_pressed = true);
 			else if (key == 13)
 			{
-				exit_func = true;
-				return;
+				return true;
 			}
 			
 		}
 		if (index % textBufferSize == 0 && index !=0)
 		{
 			system("cls");
-			cout << "═══════════════════════════════════════════════════════════════════════════\n";
-			cout << "Name:                                        |Type:| Attr:   | Size:  |   |\n";
-			cout << "═══════════════════════════════════════════════════════════════════════════\n";
+			a.Print();
 		}
 		i = index - index % textBufferSize;
-		SetConsoleCursorPosition(h, { 0, 3 });
+		return false;
 
 	}
 	int findFiles(string mask, string patch)
@@ -216,15 +289,18 @@ void main()
 { 
 	hideCursor(true);
 	system("color 1B");
-	setlocale(LC_ALL, "Russian");
+	//setlocale(LC_ALL, "Russian");
 
 
-	string str;
-	getline(cin, str);
+	string str = "c:\\windows\\system32\\*";
+	//getline(cin, str);
 	system("cls");
 	FileManager fm;
 	fm.showDirectory(str);
+	fm.print();
 	//fm.findFolders("C:\\*", "*.??");
+
+
 
 
 
