@@ -35,20 +35,16 @@ enum Colors
 
 
 
-class PrintHead {
+class mainFrame {
 	enum Sides {
 		VERTICAL, HORIZONTAL, UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT
 	};
-	 int width;
-	 int height;
 	 unsigned char* symbols;
 	
 public:
 	
-	PrintHead()
+	mainFrame()
 	{
-		width = 79;
-		height = 35;
 		symbols = new unsigned char[6];
 		symbols[VERTICAL] = 186;
 		symbols[HORIZONTAL] = 205;
@@ -57,48 +53,49 @@ public:
 		symbols[DOWNLEFT] = 200;
 		symbols[DOWNRIGHT] = 188;
 	}
-	void  Print()
+	void  printTable(int width = 0, int height = 0, int indentW = 0, int indentH = 0)
 	{
-		for (int i = 0; i < height; i++)
+
+		for (int i = indentH; i < height + indentH; i++)
 		{
-			for (int j = 0; j < width; j++)
+			for (int j = indentW; j < width + indentW; j++)
 			{
-				if (i == 0 && j == 0)
+				if (i == indentH && j == indentW)
 				{
 					COORDS(i, j);
 					cout << symbols[UPLEFT];
 				}
-				else if (i == 0 && j == width - 1)
+				else if (i == indentH && j == indentW + width - 1)
 				{
 					COORDS(i, j);
 					cout << symbols[UPRIGHT];
 				}
-				else if (i == height - 1 && j == 0)
+				else if (i == indentH + height - 1 && j == indentW)
 				{
 					COORDS(i, j);
 					cout << symbols[DOWNLEFT];
 				}
-				else if (i == height - 1 && j == width - 1)
+				else if (i == indentH + height - 1 && j == indentW + width - 1)
 				{
 					COORDS(i, j);
 					cout << symbols[DOWNRIGHT];
 				}
-				else if (j == 0)
+				else if (j == indentW)
 				{
 					COORDS(i, j);
 					cout << symbols[VERTICAL];
 				}
-				else if (j == width -1)
+				else if (j == indentW + width -1)
 				{
 					COORDS(i, j);
 					cout << symbols[VERTICAL];
 				}
-				else if (i == 0)
+				else if (i == indentH)
 				{
 					COORDS(i, j);
 					cout << symbols[HORIZONTAL];
 				}
-				else if (i == height -1)
+				else if (i == indentH + height -1)
 				{
 					COORDS(i, j);
 					cout << symbols[HORIZONTAL];
@@ -106,6 +103,10 @@ public:
 					
 			}
 		}
+	}
+	void printOptions(int _width, int _height)
+	{
+
 	}
 	
 };
@@ -118,11 +119,17 @@ struct FileProp
 	double size;
 };
 
+struct FileInfoCopy
+{
+	string buffer;
+	_finddata_t file;
+};
+
 class FileManager
 {
-	PrintHead a;
+	mainFrame a;
 	int textBufferSize = 25;
-	vector<string> buffer;
+	vector<FileInfoCopy> filecpy;
 	string path;
 	FileProp properties;
 	void getAttributes(const _finddata_t &file)
@@ -168,10 +175,13 @@ public:
 		
 		while (find != -1)
 		{
-			char temp[500];
+			FileInfoCopy temp;
+			char buffer[500];
 			getAttributes(fileinfo);
-			sprintf(temp, "%-45.34s%-4s%-9s| %-7.3g|%-3s|\n", fileinfo.name, properties.type.c_str(), properties.attr.c_str(), properties.size, properties.size_type.c_str());
-			buffer.push_back(temp);
+			sprintf(buffer, "%-45.34s%-4s%-9s| %-7.3g|%-3s|\n", fileinfo.name, properties.type.c_str(), properties.attr.c_str(), properties.size, properties.size_type.c_str());
+			temp.buffer = buffer;
+			temp.file = fileinfo;
+			filecpy.push_back(temp);
 			find = _findnext(handle, &fileinfo);
 			count++;
 		}
@@ -181,21 +191,22 @@ public:
 	}
 	void print()
 	{
-		
-		a.Print();
+	
+		a.printTable(79, 27);
+		a.printTable(40, 20, 80, 0);
 		bool stop = false;
 		int i = 0;
 		int cursor = 0;
 		COORDS( 0, 3 );
-		while (!stop && buffer.size() > 0)
+		while (!stop && filecpy.size() > 0)
 		{
-			if (i == cursor) COLORS(BLUE, CYAN);
+			if (i == cursor) COLORS(BLACK, DARKCYAN);
 
 			COORDS(short(i % textBufferSize +1) , 2);
-			cout << buffer[i];
+			cout << filecpy[i].buffer;
 			COLORS(CYAN, DARKBLUE);
 			i++;
-			if (i == buffer.size() - 1 || i % textBufferSize == 0) stop = control(i, cursor);
+			if (i == filecpy.size() - 1 || i % textBufferSize == 0) stop = control(i, cursor);
 		}
 		
 	}
@@ -207,7 +218,7 @@ public:
 		{
 			key = _getch();
 			if (key == 'w' && index > 0) (index--, key_pressed = true);
-			else if (key == 's' && index < buffer.size() - 2) (index++, key_pressed = true);
+			else if (key == 's' && index < filecpy.size() - 2) (index++, key_pressed = true);
 			else if (key == 13)
 			{
 				return true;
@@ -217,7 +228,8 @@ public:
 		if (index % textBufferSize == 0 && index !=0)
 		{
 			system("cls");
-			a.Print();
+			a.printTable(79, 27);
+			a.printTable(40, 20, 80, 0);
 		}
 		i = index - index % textBufferSize;
 		return false;
@@ -285,8 +297,11 @@ void hideCursor(bool switch_cursor)
 }
 
 
+
 void main()
 { 
+	
+
 	hideCursor(true);
 	system("color 1B");
 	//setlocale(LC_ALL, "Russian");
