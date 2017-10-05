@@ -55,7 +55,6 @@ public:
 	}
 	void  printTable(int width = 0, int height = 0, int indentW = 0, int indentH = 0)
 	{
-
 		for (int i = indentH; i < height + indentH; i++)
 		{
 			for (int j = indentW; j < width + indentW; j++)
@@ -63,44 +62,44 @@ public:
 				if (i == indentH && j == indentW)
 				{
 					COORDS(i, j);
-					cout << symbols[UPLEFT];
+						cout << symbols[UPLEFT];
 				}
 				else if (i == indentH && j == indentW + width - 1)
 				{
 					COORDS(i, j);
-					cout << symbols[UPRIGHT];
+						cout << symbols[UPRIGHT];
 				}
 				else if (i == indentH + height - 1 && j == indentW)
 				{
 					COORDS(i, j);
-					cout << symbols[DOWNLEFT];
+						cout << symbols[DOWNLEFT];
 				}
 				else if (i == indentH + height - 1 && j == indentW + width - 1)
 				{
 					COORDS(i, j);
-					cout << symbols[DOWNRIGHT];
+						cout << symbols[DOWNRIGHT];
 				}
 				else if (j == indentW)
 				{
 					COORDS(i, j);
-					cout << symbols[VERTICAL];
+						cout << symbols[VERTICAL];
 				}
-				else if (j == indentW + width -1)
+				else if (j == indentW + width - 1)
 				{
 					COORDS(i, j);
-					cout << symbols[VERTICAL];
+						cout << symbols[VERTICAL];
 				}
 				else if (i == indentH)
 				{
 					COORDS(i, j);
-					cout << symbols[HORIZONTAL];
+						cout << symbols[HORIZONTAL];
 				}
-				else if (i == indentH + height -1)
+				else if (i == indentH + height - 1)
 				{
 					COORDS(i, j);
-					cout << symbols[HORIZONTAL];
+						cout << symbols[HORIZONTAL];
 				}
-					
+
 			}
 		}
 	}
@@ -152,7 +151,7 @@ class FileManager
 			properties.size /= 1000;
 			properties.size_type = "Gb";
 		}
-		file.attrib & _A_SUBDIR ? properties.type = "|<DIR>|" : properties.type = "|file |";
+		file.attrib & _A_SUBDIR ? properties.type = "Folder" : properties.type = "File";
 		properties.attr = "";
 		if (file.attrib & _A_RDONLY)  properties.attr += " R ";
 		if (file.attrib & _A_HIDDEN)  properties.attr += " H ";
@@ -178,7 +177,8 @@ public:
 			FileInfoCopy temp;
 			char buffer[500];
 			getAttributes(fileinfo);
-			sprintf(buffer, "%-45.34s%-4s%-9s| %-7.3g|%-3s|\n", fileinfo.name, properties.type.c_str(), properties.attr.c_str(), properties.size, properties.size_type.c_str());
+			//sprintf(buffer, "%-45.34s%-4s%-9s| %-7.3g|%-3s|\n", fileinfo.name, properties.type.c_str(), properties.attr.c_str(), properties.size, properties.size_type.c_str());
+			sprintf(buffer, "%-76.70s", fileinfo.name);
 			temp.buffer = buffer;
 			temp.file = fileinfo;
 			filecpy.push_back(temp);
@@ -186,14 +186,15 @@ public:
 			count++;
 		}
 		findclose(handle);
-		/*cout << "\nInformation: was found " << count;
-		cout << " file(s) in folder:  " << str << "\n\n";*/
 	}
 	void print()
 	{
 	
 		a.printTable(79, 27);
 		a.printTable(40, 20, 80, 0);
+		a.printTable(40, 6, 80, 21);
+		a.printTable(120, 2, 0, 27);
+		//a.printTable(0, 0, )
 		bool stop = false;
 		int i = 0;
 		int cursor = 0;
@@ -230,6 +231,8 @@ public:
 			system("cls");
 			a.printTable(79, 27);
 			a.printTable(40, 20, 80, 0);
+			a.printTable(40, 6, 80, 21);
+			a.printTable(120, 2, 0, 27);
 		}
 		i = index - index % textBufferSize;
 		return false;
@@ -307,7 +310,7 @@ void main()
 	//setlocale(LC_ALL, "Russian");
 
 
-	string str = "c:\\windows\\system32\\*";
+	string str = "c:\\program files\\*";
 	//getline(cin, str);
 	system("cls");
 	FileManager fm;

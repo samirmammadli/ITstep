@@ -1,27 +1,25 @@
-#pragma once
 #include <iostream>
-#include <string>
-#include <direct.h>
-#include <io.h>
-#include <sstream>
 using namespace std;
-
-
-
+class A {
+public:
+	void Show() {
+		cout << "A";
+	}
+};
+class B :public A {
+public:
+	void Show() {
+		cout << "B";
+	}
+};
 void main()
 {
-	int a;
-	string str = "wekljgiwrhgpiuqerhrgqe";
-	printf("%.10s", str.c_str());
-	getline(cin, str);
-	cin >> a;
-	cout << str << endl;
+	A *ptr = new B();
 
-	unsigned long long int as = str.npos;
-	cout << as << endl;
+	ptr->Show();
+
+	delete ptr;
 }
-
-
 
 
 
