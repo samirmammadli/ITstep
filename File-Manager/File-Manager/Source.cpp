@@ -134,6 +134,7 @@ class FileManager
 	FileProp properties;
 	void getAttributes(const _finddata_t &file)
 	{
+		char temp[100];
 		properties.size = file.size;
 		properties.size_type = "B";
 
@@ -158,6 +159,19 @@ class FileManager
 		if (file.attrib & _A_HIDDEN)  properties.attr += " H ";
 		if (file.attrib & _A_SYSTEM)  properties.attr += " S" ;
 		if (properties.attr.size() == 0) properties.attr = " Normal";
+
+		sprintf(temp, "%31s", properties.type.c_str());
+		properties.type = temp;
+
+		sprintf(temp, "%-20s%16s", "Attributes:", properties.attr.c_str());
+		properties.attr = temp;
+
+
+		char tmp[100];
+		sprintf(tmp, "%.3g %s", properties.size, properties.size_type.c_str());
+		sprintf(temp, "%-20s%16s", "Size:", tmp);
+		properties.size_type = temp;
+
 	}
 public:
 	FileManager(string path = "C:\*")
@@ -177,7 +191,7 @@ public:
 		{
 			FileInfoCopy temp;
 			char buffer[500];
-			getAttributes(fileinfo);
+			//getAttributes(fileinfo);
 			//sprintf(buffer, "%-45.34s%-4s%-9s| %-7.3g|%-3s|\n", fileinfo.name, properties.type.c_str(), properties.attr.c_str(), properties.size, properties.size_type.c_str());
 			sprintf(buffer, "%-76.70s", fileinfo.name);
 			temp.buffer = buffer;
@@ -202,15 +216,25 @@ public:
 		COORDS( 0, 3 );
 		while (!stop && filecpy.size() > 0)
 		{
-			if (i == cursor) COLORS(BLACK, DARKCYAN);
-
-			COORDS(short(i % textBufferSize +1) , 2);
+			if (i == cursor)
+			{
+				getAttributes(filecpy[i].file);
+				Print.printText(2, 82, DARKBLUE, YELLOW, "Type:");
+				Print.printText(2, 87, DARKBLUE, CYAN, properties.type);
+				Print.printText(4, 82, DARKBLUE, WHITE, properties.attr);
+				Print.printText(6, 82, DARKBLUE, WHITE, properties.size_type);
+				Print.printText(14, 82, DARKBLUE, WHITE, "Date created: ");
+				Print.printText(16, 82, DARKBLUE, WHITE, "Date modified: ");
+				Print.printText(18, 82, DARKBLUE, WHITE, "Date archived: ");
+				COLORS(BLACK, DARKCYAN);
+			}
+			COORDS(short(i % textBufferSize + 1), 2);
 			cout << filecpy[i].buffer;
 			COLORS(CYAN, DARKBLUE);
 			i++;
 			if (i == filecpy.size() - 1 || i % textBufferSize == 0) stop = control(i, cursor);
 		}
-		
+
 	}
 	bool control(int &i, int &index)
 	{
@@ -312,7 +336,7 @@ void main()
 	//setlocale(LC_ALL, "Russian");
 
 
-	string str = "c:\\program files\\*";
+	string str = "\\*";
 	//getline(cin, str);
 	system("cls");
 	FileManager fm;
