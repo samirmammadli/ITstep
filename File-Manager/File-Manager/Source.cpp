@@ -35,15 +35,15 @@ enum Colors
 
 
 
-class mainFrame {
-	enum Sides {
+class Printing {
+	enum figPos {
 		VERTICAL, HORIZONTAL, UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT
 	};
 	 unsigned char* symbols;
 	
 public:
 	
-	mainFrame()
+	Printing()
 	{
 		symbols = new unsigned char[6];
 		symbols[VERTICAL] = 186;
@@ -99,15 +99,16 @@ public:
 					COORDS(i, j);
 						cout << symbols[HORIZONTAL];
 				}
-
 			}
 		}
 	}
-	void printOptions(int _width, int _height)
+	void printText(int indentH, int indentW, Colors bg, Colors fg, string text)
 	{
-
+		COORDS(indentH, indentW);
+		COLORS(fg, bg);
+		cout << text;
+		COLORS(CYAN, DARKBLUE);
 	}
-	
 };
 
 struct FileProp
@@ -126,7 +127,7 @@ struct FileInfoCopy
 
 class FileManager
 {
-	mainFrame a;
+	Printing Print;
 	int textBufferSize = 25;
 	vector<FileInfoCopy> filecpy;
 	string path;
@@ -190,11 +191,11 @@ public:
 	void print()
 	{
 	
-		a.printTable(79, 27);
-		a.printTable(40, 20, 80, 0);
-		a.printTable(40, 6, 80, 21);
-		a.printTable(120, 2, 0, 27);
-		//a.printTable(0, 0, )
+		Print.printTable(79, 27);
+		Print.printTable(40, 20, 80, 0);
+		Print.printTable(40, 6, 80, 21);
+		Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
+		Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
 		bool stop = false;
 		int i = 0;
 		int cursor = 0;
@@ -226,13 +227,14 @@ public:
 			}
 			
 		}
-		if (index % textBufferSize == 0 && index !=0)
+		if (index % textBufferSize == 0 && index !=0 && key == 's')
 		{
 			system("cls");
-			a.printTable(79, 27);
-			a.printTable(40, 20, 80, 0);
-			a.printTable(40, 6, 80, 21);
-			a.printTable(120, 2, 0, 27);
+			Print.printTable(79, 27);
+			Print.printTable(40, 20, 80, 0);
+			Print.printTable(40, 6, 80, 21);
+			Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
+			Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
 		}
 		i = index - index % textBufferSize;
 		return false;
