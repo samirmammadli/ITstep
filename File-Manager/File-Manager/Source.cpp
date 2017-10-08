@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <windows.h>
 #include <conio.h>
+#include <time.h>
 #define COORDS(col, row) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)row, (short)col})
 
 #define COLORS(fg, bg) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), bg * 16 + fg)
@@ -39,13 +40,12 @@ class Printing {
 	enum figPos {
 		VERTICAL, HORIZONTAL, UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT
 	};
-	 unsigned char* symbols;
+	  char* symbols;
 	
 public:
-	
 	Printing()
 	{
-		symbols = new unsigned char[6];
+		symbols = new  char[6];
 		symbols[VERTICAL] = 186;
 		symbols[HORIZONTAL] = 205;
 		symbols[UPLEFT] = 201;
@@ -116,6 +116,9 @@ struct FileProp
 	string type;
 	string attr = "";
 	string size_type = "Bytes";
+	string time_c;
+	string time_w;
+	string time_a;
 	double size;
 };
 
@@ -131,52 +134,101 @@ class FileManager
 	int textBufferSize = 25;
 	vector<FileInfoCopy> filecpy;
 	string path;
-	FileProp properties;
+	FileProp *properties;
+	FileManager(const FileManager &f)
+	{
+		this->properties = new FileProp;
+		memcpy(this->properties, f.properties, sizeof(FileProp));
+		this->Print = f.Print;
+		this->textBufferSize = f.textBufferSize;
+		this->path = f.path;
+		this->filecpy = f.filecpy;
+	}
+	void printFrame()
+	{
+		Print.printTable(79, 27);
+		Print.printTable(40, 20, 80, 0);
+		Print.printTable(40, 6, 80, 21);
+		Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
+		Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
+	}
+	void printInfo()
+	{
+		Print.printText(2, 82, DARKBLUE, YELLOW, "Type:");
+		Print.printText(2, 87, DARKBLUE, CYAN, properties->type);
+		Print.printText(4, 82, DARKBLUE, YELLOW, "Attributes:");
+		Print.printText(4, 93, DARKBLUE, CYAN, properties->attr);
+		Print.printText(6, 82, DARKBLUE, YELLOW, "Size:");
+		Print.printText(6, 87, DARKBLUE, CYAN, properties->size_type);
+		Print.printText(14, 82, DARKBLUE, YELLOW, "Created:");
+		Print.printText(14, 90, DARKBLUE, CYAN, properties->time_c);
+		Print.printText(16, 82, DARKBLUE, YELLOW, "Changed:");
+		Print.printText(16, 90, DARKBLUE, CYAN, properties->time_w);
+		Print.printText(18, 82, DARKBLUE, YELLOW, "Access:");
+		Print.printText(18, 89, DARKBLUE, CYAN, properties->time_a);
+	}
 	void getAttributes(const _finddata_t &file)
 	{
-		char temp[100];
-		properties.size = file.size;
-		properties.size_type = "B";
+		char temp[500];
+		properties->size = file.size;
+		properties->size_type = "B";
 
-		if (properties.size >= 1000)
+		if (properties->size >= 1000)
 		{
-			properties.size /= 1000;
-			properties.size_type = "Kb";
+			properties->size /= 1000;
+			properties->size_type = "Kb";
 		}
-		if (properties.size >= 1000)
+		if (properties->size >= 1000)
 		{
-			properties.size /= 1000;
-			properties.size_type = "Mb";
+			properties->size /= 1000;
+			properties->size_type = "Mb";
 		}
-		if (properties.size >= 1000)
+		if (properties->size >= 1000)
 		{
-			properties.size /= 1000;
-			properties.size_type = "Gb";
+			properties->size /= 1000;
+			properties->size_type = "Gb";
 		}
-		file.attrib & _A_SUBDIR ? properties.type = "Folder" : properties.type = "File";
-		properties.attr = "";
-		if (file.attrib & _A_RDONLY)  properties.attr += " R ";
-		if (file.attrib & _A_HIDDEN)  properties.attr += " H ";
-		if (file.attrib & _A_SYSTEM)  properties.attr += " S" ;
-		if (properties.attr.size() == 0) properties.attr = " Normal";
+		file.attrib & _A_SUBDIR ? properties->type = "Folder" : properties->type = "File";
+		properties->attr = "";
+		if (file.attrib & _A_RDONLY)  properties->attr += " R ";
+		if (file.attrib & _A_HIDDEN)  properties->attr += " H ";
+		if (file.attrib & _A_SYSTEM)  properties->attr += " S" ;
+		if (properties->attr.size() == 0) properties->attr = " Normal";
 
-		sprintf(temp, "%31s", properties.type.c_str());
-		properties.type = temp;
+		sprintf(temp, "%31s", properties->type.c_str());
+		properties->type = temp;
 
-		sprintf(temp, "%-20s%16s", "Attributes:", properties.attr.c_str());
-		properties.attr = temp;
+		sprintf(temp, "%25s", properties->attr.c_str());
+		properties->attr = temp;
 
 
 		char tmp[100];
-		sprintf(tmp, "%.3g %s", properties.size, properties.size_type.c_str());
-		sprintf(temp, "%-20s%16s", "Size:", tmp);
-		properties.size_type = temp;
+		sprintf(tmp, "%.3g %s", properties->size, properties->size_type.c_str());
+		sprintf(temp, "%31s", tmp);
+		properties->size_type = temp;
+
+		strftime(tmp, 20, "%d-%m-%Y %H:%M:%S", localtime(&file.time_create));
+		sprintf(temp, "%27s", tmp);
+		properties->time_c = temp;
+
+		strftime(tmp, 20, "%d-%m-%Y %H:%M:%S", localtime(&file.time_access));
+		sprintf(temp, "%28s", tmp);
+		properties->time_a = temp;
+
+		strftime(tmp, 20, "%d-%m-%Y %H:%M:%S", localtime(&file.time_write));
+		sprintf(temp, "%27s", tmp);
+		properties->time_w = temp;
 
 	}
 public:
 	FileManager(string path = "C:\*")
 	{
 		this->path = path;
+		properties = new FileProp;
+	}
+	~FileManager()
+	{
+		delete properties;
 	}
 
 	void showDirectory(string str)
@@ -191,8 +243,6 @@ public:
 		{
 			FileInfoCopy temp;
 			char buffer[500];
-			//getAttributes(fileinfo);
-			//sprintf(buffer, "%-45.34s%-4s%-9s| %-7.3g|%-3s|\n", fileinfo.name, properties.type.c_str(), properties.attr.c_str(), properties.size, properties.size_type.c_str());
 			sprintf(buffer, "%-76.70s", fileinfo.name);
 			temp.buffer = buffer;
 			temp.file = fileinfo;
@@ -204,65 +254,41 @@ public:
 	}
 	void print()
 	{
-	
-		Print.printTable(79, 27);
-		Print.printTable(40, 20, 80, 0);
-		Print.printTable(40, 6, 80, 21);
-		Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
-		Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
-		bool stop = false;
+		printFrame();
 		int i = 0;
 		int cursor = 0;
-		COORDS( 0, 3 );
-		while (!stop && filecpy.size() > 0)
-		{
-			if (i == cursor)
-			{
-				getAttributes(filecpy[i].file);
-				Print.printText(2, 82, DARKBLUE, YELLOW, "Type:");
-				Print.printText(2, 87, DARKBLUE, CYAN, properties.type);
-				Print.printText(4, 82, DARKBLUE, WHITE, properties.attr);
-				Print.printText(6, 82, DARKBLUE, WHITE, properties.size_type);
-				Print.printText(14, 82, DARKBLUE, WHITE, "Date created: ");
-				Print.printText(16, 82, DARKBLUE, WHITE, "Date modified: ");
-				Print.printText(18, 82, DARKBLUE, WHITE, "Date archived: ");
-				COLORS(BLACK, DARKCYAN);
-			}
-			COORDS(short(i % textBufferSize + 1), 2);
-			cout << filecpy[i].buffer;
-			COLORS(CYAN, DARKBLUE);
-			i++;
-			if (i == filecpy.size() - 1 || i % textBufferSize == 0) stop = control(i, cursor);
-		}
-
-	}
-	bool control(int &i, int &index)
-	{
 		int key = 0;
 		bool key_pressed = false;
-		while (!key_pressed)
-		{
-			key = _getch();
-			if (key == 'w' && index > 0) (index--, key_pressed = true);
-			else if (key == 's' && index < filecpy.size() - 2) (index++, key_pressed = true);
-			else if (key == 13)
-			{
-				return true;
-			}
-			
-		}
-		if (index % textBufferSize == 0 && index !=0 && key == 's')
-		{
-			system("cls");
-			Print.printTable(79, 27);
-			Print.printTable(40, 20, 80, 0);
-			Print.printTable(40, 6, 80, 21);
-			Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
-			Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
-		}
-		i = index - index % textBufferSize;
-		return false;
+		COORDS(0, 3);
 
+		while (filecpy.size() != 0)
+		{
+			while (true)
+			{
+				if (i == cursor)
+				{
+					getAttributes(filecpy[i].file);
+					printInfo();
+					COLORS(BLACK, DARKCYAN);
+				}
+				COORDS(short(i % textBufferSize + 1), 2);
+				cout << filecpy[i].buffer;
+				COLORS(CYAN, DARKBLUE);
+				i++;
+				if (i == filecpy.size() - 1 || i % textBufferSize == 0) break;
+			}
+			key = _getch();
+			if (key == 'w' && cursor > 0) (cursor--, key_pressed = true);
+			else if (key == 's' && cursor < filecpy.size() - 2) (cursor++, key_pressed = true);
+			else if (key == 13)
+				return;
+			if (cursor % textBufferSize == 0 && cursor != 0 && key == 's')
+			{
+				system("cls");
+				printFrame();
+			}
+			i = cursor - cursor % textBufferSize;
+		}
 	}
 	int findFiles(string mask, string patch)
 	{
@@ -336,7 +362,7 @@ void main()
 	//setlocale(LC_ALL, "Russian");
 
 
-	string str = "\\*";
+	string str = "C:\\windows\\system32\\*";
 	//getline(cin, str);
 	system("cls");
 	FileManager fm;
