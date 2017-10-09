@@ -55,7 +55,7 @@ public:
 	}
 	void  printTable(int width = 0, int height = 0, int indentW = 0, int indentH = 0)
 	{
-		//setlocale(LC_ALL, "C");
+		setlocale(LC_ALL, "C");
 		for (int i = indentH; i < height + indentH; i++)
 		{
 			for (int j = indentW; j < width + indentW; j++)
@@ -102,7 +102,7 @@ public:
 				}
 			}
 		}
-		//setlocale(LC_ALL, "Rus");
+		setlocale(LC_ALL, "Rus");
 	}
 	void printText(int indentH, int indentW, Colors bg, Colors fg, string text)
 	{
@@ -405,7 +405,7 @@ void main()
 
 	char dir[MAX_PATH];
 	getcwd(dir, 255);
-	//setlocale(LC_ALL, "Rus");
+	setlocale(LC_ALL, "Rus");
 	string str = dir;
 	str += "\\*";
 	system("cls");
