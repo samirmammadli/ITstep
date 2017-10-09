@@ -55,7 +55,7 @@ public:
 	}
 	void  printTable(int width = 0, int height = 0, int indentW = 0, int indentH = 0)
 	{
-		setlocale(LC_ALL, "C");
+		//setlocale(LC_ALL, "C");
 		for (int i = indentH; i < height + indentH; i++)
 		{
 			for (int j = indentW; j < width + indentW; j++)
@@ -102,7 +102,7 @@ public:
 				}
 			}
 		}
-		setlocale(LC_ALL, "Rus");
+		//setlocale(LC_ALL, "Rus");
 	}
 	void printText(int indentH, int indentW, Colors bg, Colors fg, string text)
 	{
@@ -247,7 +247,7 @@ public:
 		{
 			char buffer[500];
 			sprintf(buffer, "%-76.70s", fileinfo.name);
-			temp.buffer = buffer;
+			temp.buffer = fileinfo.name;//temp.buffer = buffer;
 			temp.file = fileinfo;
 			filecpy.push_back(temp);
 			find = _findnext(handle, &fileinfo);
@@ -267,7 +267,7 @@ public:
 		Print.printText(27, 16, DARKBLUE, CYAN, temp);
 		int i = 0;
 		int cursor = 0;
-		int key = 0;
+		int key = -1;
 		bool key_pressed = false;
 		COORDS(0, 3);
 		while (true)
@@ -302,6 +302,15 @@ public:
 				}
 
 			}
+			else if (key == 0)
+			{
+				key = getch();
+				if (key == 60)
+				{
+					
+					0;//Rename(str + filecpy[cursor].file.name);
+				}
+			}
 			if (key == 13 && (filecpy[cursor].file.attrib & _A_SUBDIR))
 			{
 				chdir(filecpy[cursor].file.name);
@@ -309,7 +318,7 @@ public:
 				return;
 			}
 				
-			if (cursor % textBufferSize == 0 && cursor != 0 && key == 80)
+			if (cursor % textBufferSize == 0 && key == 80 || (cursor % textBufferSize == textBufferSize -1 && key == 72) && cursor != 0)
 			{
 				system("cls");
 				printFrame();
@@ -370,7 +379,7 @@ public:
 	{
 		remove(path.c_str());
 	}
-	void rename(string path, string name);
+	void Rename(string path, string name);
 	void copy(string oldpath, string newpath);
 	void move();
 };
@@ -396,7 +405,7 @@ void main()
 
 	char dir[MAX_PATH];
 	getcwd(dir, 255);
-	setlocale(LC_ALL, "Rus");
+	//setlocale(LC_ALL, "Rus");
 	string str = dir;
 	str += "\\*";
 	system("cls");
