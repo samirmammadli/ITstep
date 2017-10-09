@@ -55,6 +55,7 @@ public:
 	}
 	void  printTable(int width = 0, int height = 0, int indentW = 0, int indentH = 0)
 	{
+		setlocale(LC_ALL, "C");
 		for (int i = indentH; i < height + indentH; i++)
 		{
 			for (int j = indentW; j < width + indentW; j++)
@@ -101,6 +102,7 @@ public:
 				}
 			}
 		}
+		setlocale(LC_ALL, "Rus");
 	}
 	void printText(int indentH, int indentW, Colors bg, Colors fg, string text)
 	{
@@ -151,6 +153,7 @@ class FileManager
 		Print.printTable(40, 6, 80, 21);
 		Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
 		Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
+
 	}
 	void printInfo()
 	{
@@ -166,6 +169,7 @@ class FileManager
 		Print.printText(16, 90, DARKBLUE, CYAN, properties->time_w);
 		Print.printText(18, 82, DARKBLUE, YELLOW, "Access:");
 		Print.printText(18, 89, DARKBLUE, CYAN, properties->time_a);
+		Print.printText(27, 0, DARKBLUE, YELLOW, "Current Folder:");
 	}
 	void getAttributes(const _finddata_t &file)
 	{
@@ -233,15 +237,14 @@ public:
 
 	void showDirectory(string str)
 	{
+		FileInfoCopy temp;
+		filecpy.clear();
 		_finddata_t fileinfo;
 		int handle = _findfirst(str.c_str(), &fileinfo);
-		int find = -1;
-		if (handle != -1) find = _findnext(handle, &fileinfo);
+		int find = handle;
 		int count = 0;
-		
 		while (find != -1)
 		{
-			FileInfoCopy temp;
 			char buffer[500];
 			sprintf(buffer, "%-76.70s", fileinfo.name);
 			temp.buffer = buffer;
@@ -250,21 +253,31 @@ public:
 			find = _findnext(handle, &fileinfo);
 			count++;
 		}
+		
 		findclose(handle);
 	}
-	void print()
+	void print(string &str)
 	{
+		system("cls");
+		str.pop_back();
+		char temp[MAX_PATH];
 		printFrame();
+		chdir(str.c_str());
+		getcwd(temp, MAX_PATH);
+		Print.printText(27, 16, DARKBLUE, CYAN, temp);
 		int i = 0;
 		int cursor = 0;
 		int key = 0;
 		bool key_pressed = false;
 		COORDS(0, 3);
-
-		while (filecpy.size() != 0)
+		while (true)
 		{
-			while (true)
+			for (;filecpy.size() != 0; i++)
 			{
+				if (filecpy[i].file.attrib & _A_SUBDIR)
+					COLORS(WHITE, DARKBLUE);
+				else if (filecpy[i].file.attrib & _A_HIDDEN)
+					COLORS(DARKCYAN, DARKBLUE);
 				if (i == cursor)
 				{
 					getAttributes(filecpy[i].file);
@@ -274,18 +287,33 @@ public:
 				COORDS(short(i % textBufferSize + 1), 2);
 				cout << filecpy[i].buffer;
 				COLORS(CYAN, DARKBLUE);
-				i++;
-				if (i == filecpy.size() - 1 || i % textBufferSize == 0) break;
+				if (i == filecpy.size() - 1 || (i + 1) % textBufferSize == 0) break;
 			}
 			key = _getch();
-			if (key == 'w' && cursor > 0) (cursor--, key_pressed = true);
-			else if (key == 's' && cursor < filecpy.size() - 2) (cursor++, key_pressed = true);
-			else if (key == 13)
+			if (key == 224)
+			{
+				key = _getch();
+				if (key == 72 && cursor > 0) (cursor--, key_pressed = true);
+				else if (key == 80 && cursor < filecpy.size() - 1) (cursor++, key_pressed = true);
+				else if (key == 83)
+				{
+					Remove(str + filecpy[cursor].file.name);
+					return;
+				}
+
+			}
+			if (key == 13 && (filecpy[cursor].file.attrib & _A_SUBDIR))
+			{
+				chdir(filecpy[cursor].file.name);
+				system("cls");
 				return;
-			if (cursor % textBufferSize == 0 && cursor != 0 && key == 's')
+			}
+				
+			if (cursor % textBufferSize == 0 && cursor != 0 && key == 80)
 			{
 				system("cls");
 				printFrame();
+				Print.printText(27, 16, DARKBLUE, CYAN, temp);
 			}
 			i = cursor - cursor % textBufferSize;
 		}
@@ -334,8 +362,14 @@ public:
 		findclose(handle);
 		return;
 	}
-	void changeDirectory(string dir);
-	void remove(string path);
+	void changeDirectory(string dir)
+	{
+
+	}
+	void Remove(string path)
+	{
+		remove(path.c_str());
+	}
 	void rename(string path, string name);
 	void copy(string oldpath, string newpath);
 	void move();
@@ -359,15 +393,24 @@ void main()
 
 	hideCursor(true);
 	system("color 1B");
-	//setlocale(LC_ALL, "Russian");
 
-
-	string str = "C:\\windows\\system32\\*";
-	//getline(cin, str);
+	char dir[MAX_PATH];
+	getcwd(dir, 255);
+	setlocale(LC_ALL, "Rus");
+	string str = dir;
+	str += "\\*";
 	system("cls");
+	str = "C:\\*";
 	FileManager fm;
-	fm.showDirectory(str);
-	fm.print();
+	while (true)
+	{
+		fm.showDirectory(str);
+		fm.print(str);
+		str = getcwd(dir, 255);
+		str += "\\*";
+	}
+	/*fm.showDirectory(str);
+	fm.print();*/
 	//fm.findFolders("C:\\*", "*.??");
 
 
@@ -382,3 +425,19 @@ void main()
 	
 
 }
+
+
+//#include <stdio.h>
+//#include <direct.h>
+//#include <iostream>
+//int main(void)
+//{
+//	char dir[255];
+//	getcwd(dir, 255);
+//	printf("Current directory is %s\n", dir);
+//	strcpy(dir, "C:\\Users\\Samir\\Source\\Repos\\ITstep\\..\\");
+//	chdir(dir);
+//	getcwd(dir, 255);
+//	printf("Current directory is %s\n", dir);
+//	return 0;
+//}
