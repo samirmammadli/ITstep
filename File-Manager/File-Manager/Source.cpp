@@ -403,6 +403,7 @@ void main()
 	hideCursor(true);
 	system("color 1B");
 
+
 	char dir[MAX_PATH];
 	getcwd(dir, 255);
 	setlocale(LC_ALL, "Rus");
