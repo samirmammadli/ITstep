@@ -235,7 +235,7 @@ public:
 		delete properties;
 	}
 
-	void showDirectory(string str)
+	void showDirectory(string &str)
 	{
 		FileInfoCopy temp;
 		filecpy.clear();
@@ -243,6 +243,7 @@ public:
 		int handle = _findfirst(str.c_str(), &fileinfo);
 		int find = handle;
 		int count = 0;
+		if (handle == -1) (str.pop_back(), str += "\\..\\*");
 		while (find != -1)
 		{
 			char buffer[500];
@@ -270,7 +271,7 @@ public:
 		int key = -1;
 		bool key_pressed = false;
 		COORDS(0, 3);
-		while (true)
+		while (filecpy.size() != 0)
 		{
 			for (;filecpy.size() != 0; i++)
 			{
