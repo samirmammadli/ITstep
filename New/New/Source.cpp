@@ -3,12 +3,14 @@ using namespace std;
 
 class A {
 public:
-	void Show() {
+	int x;
+	virtual void Show() {
 		cout << "A";
 	}
 };
 class B :public A {
 public:
+	int y;
 	void Show() {
 		cout << "B";
 	}
@@ -18,6 +20,7 @@ void main()
 	A *ptr = new B();
 
 	ptr->Show();
+	B::pt
 
 	delete ptr;
 }
