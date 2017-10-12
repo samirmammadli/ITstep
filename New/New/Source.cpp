@@ -19,8 +19,7 @@ void main()
 {
 	A *ptr = new B();
 
-	ptr->Show();
-	B::pt
+
 
 	delete ptr;
 }
