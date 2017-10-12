@@ -45,6 +45,20 @@ class FmBuild {
 		if (Key == 'y') return true;
 		else return false;
 	}
+	void pathField()
+	{
+		COLORS(WHITE, DARKRED);
+		Print.printTable(100, 3, 10, 10);
+		Print.printText(10, 49, DARKRED, WHITE, " Input new patch: ");
+		Print.printText(11, 11, DARKRED, WHITE, "                                                                                                  ");
+	}
+	void searchField()
+	{
+		COLORS(WHITE, DARKRED);
+		Print.printTable(100, 3, 10, 10);
+		Print.printText(10, 53, DARKRED, WHITE, " Input name: ");
+		Print.printText(11, 11, DARKRED, WHITE, "                                                                                                  ");
+	}
 	void getAttributes(const _finddata_t &file)
 	{
 		char temp[500];
@@ -128,13 +142,24 @@ public:
 		Print.printText(28, 15, BLACK, WHITE, "Del");
 		Print.printText(28, 18, DARKCYAN, BLACK, "Delete");
 		Print.printText(28, 31, BLACK, WHITE, "F3");
-		Print.printText(28, 33, DARKCYAN, BLACK, "Copy");
+		Print.printText(28, 33, DARKCYAN, BLACK, "Search");
 		Print.printText(28, 44, BLACK, WHITE, "F4");
 		Print.printText(28, 46, DARKCYAN, BLACK, "Cut");
 		Print.printText(28, 56, BLACK, WHITE, "F5");
 		Print.printText(28, 58, DARKCYAN, BLACK, "Paste");
 		Print.printText(28, 70, BLACK, WHITE, "ESC");
 		Print.printText(28, 73, DARKCYAN, BLACK, "EXIT");
+	}
+	void search(char * Temp)
+	{
+		filecpy.clear();
+		searchField();
+		COORDS(11, 11);
+		COLORS(WHITE, DARKRED);
+		cin.getline(Temp, MAX_PATH);
+		fm.findFolders(patch, Temp, filecpy);
+		COLORS(CYAN, DARKBLUE);
+		//fm.findFiles()
 	}
 	void setUP()
 	{
@@ -178,7 +203,15 @@ public:
 		}
 		showFolders();
 	}
-	void changeFolder()
+	void changeFolder(char *Temp)
+	{
+		pathField();
+		COORDS(11, 11);
+		COLORS(WHITE, DARKRED);
+		cin.getline(Temp, MAX_PATH);
+		COLORS(CYAN, DARKBLUE);
+	}
+	void nextFolder()
 	{
 		if (filecpy.size() > 0)
 		{
@@ -212,7 +245,7 @@ public:
 					COLORS(BLACK, DARKCYAN);
 				}
 				COORDS(short(i % textBufferSize + 1), 2);
-				cout << filecpy[i].file.name;
+				printf("%.75s", filecpy[i].file.name);
 				COLORS(CYAN, DARKBLUE);
 				if (i == filecpy.size() - 1 || (i + 1) % textBufferSize == 0) break;
 			}
