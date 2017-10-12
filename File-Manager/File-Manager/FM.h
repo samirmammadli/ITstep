@@ -4,10 +4,10 @@
 
 class FileManager
 {
-	string path;
+
 public:
 
-	 void showDirectory(string &str, vector<_finddata_t> &filecpy)
+	 void showDirectory(string &str, vector<FileInfoCopy> &filecpy)
 	{
 		FileInfoCopy temp;
 		filecpy.clear();
@@ -18,15 +18,17 @@ public:
 		if (handle == -1) (str.pop_back(), str += "\\..\\*");
 		while (find != -1)
 		{
-			filecpy.push_back(fileinfo);
+			temp.file = fileinfo;
+			filecpy.push_back(temp);
 			find = _findnext(handle, &fileinfo);
 			count++;
 		}
 		findclose(handle);
 	}
 	
-	void findFiles(string mask, string patch, vector<_finddata_t> &filecpy)
+	void findFiles(string mask, string patch, vector<FileInfoCopy> &filecpy)
 	{
+		FileInfoCopy temp;
 		_finddata_t fileinfo;
 		int handle = _findfirst(mask.c_str(), &fileinfo);
 		int find = -1;
@@ -34,11 +36,13 @@ public:
 		if (handle != -1) find = _findnext(handle, &fileinfo);
 		if (find != -1)
 		{
-			filecpy.push_back(fileinfo);
+			temp.buffer = patch;
+			temp.file = fileinfo;
+			filecpy.push_back(temp);
 		}
 		findclose(handle);
 	}
-	void findFolders(string mask, string word, vector<_finddata_t> &filecpy)
+	void findFolders(string mask, string word, vector<FileInfoCopy> &filecpy)
 	{
 		_finddata_t fileinfo;
 		int handle = _findfirst(mask.c_str(), &fileinfo);

@@ -15,7 +15,7 @@ void main()
 
 	hideCursor(true);
 	system("color 1B");
-
+	int key = -1;
 
 	char dir[MAX_PATH];
 	getcwd(dir, 255);
@@ -23,13 +23,29 @@ void main()
 	string str = dir;
 	str += "\\*";
 	system("cls");
-	str = "C:";
+	str = "C:\\windows\\system32\\*";
 	FmBuild fm;
+	fm.showFolders();
+	fm.printFrame();
+	fm.print();
 	while (true)
 	{
-		fm.print(str);
-		str = getcwd(dir, 255);
-		str += "\\*";
+		key = _getch();
+		if (key == 224)
+		{
+			key = _getch();
+			if (key == 72) fm.setUP();
+			else if (key == 80) fm.setDown();
+			else if (key == 83)
+			{
+				0;
+			}
+			if (key == 72 || key == 80) fm.print();
+		}
+		else if (key == 13) fm.changeFolder();
+		
+		/*str = getcwd(dir, 255);
+		str += "\\*";*/
 	}
 	/*fm.showDirectory(str);
 	fm.print();*/

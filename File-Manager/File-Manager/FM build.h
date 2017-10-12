@@ -6,30 +6,12 @@ class FmBuild {
 	FileManager fm;
 	Printing Print;
 	FileProp *properties;
-	vector<_finddata_t> filecpy;
+	vector<FileInfoCopy> filecpy;
+	string patch;
 	int textBufferSize = 25;
-
-	void printFrame()
-	{
-		Print.printTable(79, 27);
-		Print.printTable(40, 20, 80, 0);
-		Print.printTable(40, 6, 80, 21);
-		Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
-		Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
-		Print.printText(28, 0, BLACK, WHITE, "F2");
-		Print.printText(28, 2, DARKCYAN, BLACK, "Rename");
-		Print.printText(28, 15, BLACK, WHITE, "Del");
-		Print.printText(28, 18, DARKCYAN, BLACK, "Delete");
-		Print.printText(28, 31, BLACK, WHITE, "F3");
-		Print.printText(28, 33, DARKCYAN, BLACK, "Copy");
-		Print.printText(28, 44, BLACK, WHITE, "F4");
-		Print.printText(28, 46, DARKCYAN, BLACK, "Cut");
-		Print.printText(28, 56, BLACK, WHITE, "F5");
-		Print.printText(28, 58, DARKCYAN, BLACK, "Paste");
-		Print.printText(28, 70, BLACK, WHITE, "ESC");
-		Print.printText(28, 73, DARKCYAN, BLACK, "EXIT");
-
-	}
+	int i = 0;
+	int cursor = 0;
+	char temp[MAX_PATH];
 	void printInfo()
 	{
 		Print.printText(2, 82, DARKBLUE, YELLOW, "Type:");
@@ -99,88 +81,102 @@ class FmBuild {
 		properties->time_w = temp;
 
 	}
+	void checkScrolling(bool direction)
+	{
+		if (cursor % textBufferSize == 0 && direction || (cursor % textBufferSize == textBufferSize - 1 && !direction) && cursor != 0)
+		{
+			system("cls");
+			printFrame();
+		}
+		i = cursor - cursor % textBufferSize;
+	}
 public:
 	~FmBuild()
 	{
 		delete properties;
 	}
-	FmBuild()
+	FmBuild() : i(0), cursor(0), patch("\\*")
 	{
 		properties = new FileProp;
 	}
-	void print(string &str)
+	void printFrame()
 	{
-		filecpy.clear();
-		fm.showDirectory(str, filecpy);
-		system("cls");
-		str.pop_back();
-		char temp[MAX_PATH];
-		printFrame();
-		chdir(str.c_str());
-		getcwd(temp, MAX_PATH);
-		Print.printText(27, 8, DARKBLUE, CYAN, temp);
-		int i = 0;
-		int cursor = 0;
-		int key = -1;
-		bool key_pressed = false;
-		COORDS(0, 3);
-		while (filecpy.size() != 0)
+		Print.printTable(79, 27);
+		Print.printTable(40, 20, 80, 0);
+		Print.printTable(40, 6, 80, 21);
+		Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
+		Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
+		Print.printText(28, 0, BLACK, WHITE, "F2");
+		Print.printText(28, 2, DARKCYAN, BLACK, "Rename");
+		Print.printText(28, 15, BLACK, WHITE, "Del");
+		Print.printText(28, 18, DARKCYAN, BLACK, "Delete");
+		Print.printText(28, 31, BLACK, WHITE, "F3");
+		Print.printText(28, 33, DARKCYAN, BLACK, "Copy");
+		Print.printText(28, 44, BLACK, WHITE, "F4");
+		Print.printText(28, 46, DARKCYAN, BLACK, "Cut");
+		Print.printText(28, 56, BLACK, WHITE, "F5");
+		Print.printText(28, 58, DARKCYAN, BLACK, "Paste");
+		Print.printText(28, 70, BLACK, WHITE, "ESC");
+		Print.printText(28, 73, DARKCYAN, BLACK, "EXIT");
+	}
+	void setUP()
+	{
+		if (cursor > 0)
 		{
-			for (; filecpy.size() != 0; i++)
+			cursor--;
+			checkScrolling(false);
+		}
+	}
+	void setDown()
+	{
+		if (cursor < filecpy.size() - 1)
+		{
+			cursor++;
+			checkScrolling(true);
+		}
+	}
+	void showFolders()
+	{
+		i = 0;
+		cursor = 0;
+		filecpy.clear();
+		fm.showDirectory(patch, filecpy);
+	}
+	void getPatch()
+	{
+		patch.pop_back();
+		chdir(patch.c_str());
+		getcwd(temp, MAX_PATH);
+	}
+	void changeFolder()
+	{
+		chdir(filecpy[cursor].file.name);
+
+	}
+	void print(bool search = false)
+	{
+		if (!search) Print.printText(27, 8, DARKBLUE, CYAN, temp);
+		COORDS(0, 3);
+		if (filecpy.size() != 0)
+		{
+			for (; i < filecpy.size(); i++)
 			{
-				if (filecpy[i].attrib & _A_SUBDIR)
+				if (filecpy[i].file.attrib & _A_SUBDIR)
 					COLORS(WHITE, DARKBLUE);
-				else if (filecpy[i].attrib & _A_HIDDEN)
+				else if (filecpy[i].file.attrib & _A_HIDDEN)
 					COLORS(DARKCYAN, DARKBLUE);
 				if (i == cursor)
 				{
-					getAttributes(filecpy[i]);
+					getAttributes(filecpy[i].file);
 					printInfo();
+					//if (search) Print.printText(27, 8, DARKBLUE, CYAN, filecpy[i].buffer);
 					COLORS(BLACK, DARKCYAN);
 				}
 				COORDS(short(i % textBufferSize + 1), 2);
-				cout << filecpy[i].name;
+				cout << filecpy[i].file.name;
 				COLORS(CYAN, DARKBLUE);
 				if (i == filecpy.size() - 1 || (i + 1) % textBufferSize == 0) break;
 			}
-			key = _getch();
-			if (key == 224)
-			{
-				key = _getch();
-				if (key == 72 && cursor > 0) (cursor--, key_pressed = true);
-				else if (key == 72 && cursor == 0) (cursor = filecpy.size() - 1, key_pressed = true);
-				else if (key == 80 && cursor == filecpy.size() - 1) (cursor = 0, key_pressed = true);
-				else if (key == 80 && cursor < filecpy.size() - 1) (cursor++, key_pressed = true);
-				else if (key == 83)
-				{
-					fm.Remove(str + filecpy[cursor].name);
-					return;
-				}
-
-			}
-			else if (key == 0)
-			{
-				key = getch();
-				if (key == 60)
-				{
-
-					0;//Rename(str + filecpy[cursor].file.name);
-				}
-			}
-			if (key == 13 && (filecpy[cursor].attrib & _A_SUBDIR))
-			{
-				chdir(filecpy[cursor].name);
-				system("cls");
-				return;
-			}
-
-			if ((cursor == filecpy.size() - 1 && key == 72) || (cursor == 0 && key == 80) || cursor % textBufferSize == 0 && key == 80 || (cursor % textBufferSize == textBufferSize - 1 && key == 72) && cursor != 0)
-			{
-				system("cls");
-				printFrame();
-				Print.printText(27, 8, DARKBLUE, CYAN, temp);
-			}
-			i = cursor - cursor % textBufferSize;
 		}
 	}
 };
