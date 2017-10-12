@@ -28,6 +28,23 @@ class FmBuild {
 		Print.printText(18, 89, DARKBLUE, CYAN, properties->time_a);
 		Print.printText(27, 0, DARKBLUE, YELLOW, "Folder:");
 	}
+	bool removeWarning()
+	{
+		COLORS(WHITE, DARKRED);
+		Print.printTable(40, 6, 80, 21);
+		Print.printText(21, 92, DARKRED, WHITE, " Data Removal ");
+		Print.printText(22, 81, DARKRED, WHITE, "                                      ");
+		Print.printText(23, 81, DARKRED, WHITE, "    Do you want to remove");
+		if (filecpy[cursor].file.attrib & _A_SUBDIR)
+			Print.printText(23, 106, DARKRED, WHITE, " folder ?    ");
+		else
+			Print.printText(23, 106, DARKRED, WHITE, " file ?      ");
+		Print.printText(24, 81, DARKRED, WHITE, "                 Y/N ?                ");
+		Print.printText(25, 81, DARKRED, WHITE, "                                      ");
+		char Key = _getch();
+		if (Key == 'y') return true;
+		else return false;
+	}
 	void getAttributes(const _finddata_t &file)
 	{
 		char temp[500];
@@ -142,20 +159,42 @@ public:
 		filecpy.clear();
 		fm.showDirectory(patch, filecpy);
 	}
-	void getPatch()
+	void setPatch(string tmp_patch = "\\*")
 	{
-		patch.pop_back();
-		chdir(patch.c_str());
+		chdir(tmp_patch.c_str());
 		getcwd(temp, MAX_PATH);
+		patch = temp;
+		patch += "\\*";
+	}
+	void deleteFile()
+	{
+		if (filecpy.size() > 0 && !(filecpy[cursor].file.attrib & _A_SUBDIR))
+		{
+			if (removeWarning())
+			{
+				string tmp = temp;
+				fm.Remove(tmp + "\\" + filecpy[cursor].file.name);
+			}
+		}
+		showFolders();
 	}
 	void changeFolder()
 	{
-		chdir(filecpy[cursor].file.name);
-
+		if (filecpy.size() > 0)
+		{
+			setPatch(filecpy[cursor].file.name);
+			showFolders();
+		}
+		else
+		{
+			setPatch("..");
+			showFolders();
+		}
 	}
 	void print(bool search = false)
 	{
 		if (!search) Print.printText(27, 8, DARKBLUE, CYAN, temp);
+		printInfo();
 		COORDS(0, 3);
 		if (filecpy.size() != 0)
 		{
@@ -169,7 +208,7 @@ public:
 				{
 					getAttributes(filecpy[i].file);
 					printInfo();
-					//if (search) Print.printText(27, 8, DARKBLUE, CYAN, filecpy[i].buffer);
+					if (search) Print.printText(27, 8, DARKBLUE, CYAN, filecpy[i].buffer);
 					COLORS(BLACK, DARKCYAN);
 				}
 				COORDS(short(i % textBufferSize + 1), 2);

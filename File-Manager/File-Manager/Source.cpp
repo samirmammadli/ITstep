@@ -8,23 +8,22 @@ void hideCursor(bool switch_cursor)
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
 
-
+void Renew(FmBuild &fm)
+{
+	system("cls");
+	fm.printFrame();
+	fm.print();
+}
 
 void main()
 { 
 
 	hideCursor(true);
 	system("color 1B");
-	int key = -1;
-
-	char dir[MAX_PATH];
-	getcwd(dir, 255);
+	int key = 0;
 	setlocale(LC_ALL, "Rus");
-	string str = dir;
-	str += "\\*";
-	system("cls");
-	str = "C:\\windows\\system32\\*";
 	FmBuild fm;
+	fm.setPatch("G:\\");
 	fm.showFolders();
 	fm.printFrame();
 	fm.print();
@@ -38,11 +37,20 @@ void main()
 			else if (key == 80) fm.setDown();
 			else if (key == 83)
 			{
-				0;
+				fm.deleteFile();
+				Renew(fm);
 			}
 			if (key == 72 || key == 80) fm.print();
 		}
-		else if (key == 13) fm.changeFolder();
+		else if (key == 0)
+		{
+			key == getch();
+		}
+		else if (key == 13)
+		{
+			fm.changeFolder();
+			Renew(fm);
+		}
 		
 		/*str = getcwd(dir, 255);
 		str += "\\*";*/
