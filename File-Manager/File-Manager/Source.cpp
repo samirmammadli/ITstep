@@ -1,4 +1,4 @@
-﻿#include "FM.h"
+﻿#include "FM build.h"
 
 void hideCursor(bool switch_cursor)
 {
@@ -23,11 +23,10 @@ void main()
 	string str = dir;
 	str += "\\*";
 	system("cls");
-	str = "C:\\*";
+	str = "C:";
 	FmBuild fm;
 	while (true)
 	{
-		fm.showDirectory(str);
 		fm.print(str);
 		str = getcwd(dir, 255);
 		str += "\\*";

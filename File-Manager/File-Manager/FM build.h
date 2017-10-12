@@ -1,5 +1,5 @@
 #pragma once
-#include "Printing.h"
+#include "FM.h"
 
 
 class FmBuild {
@@ -16,6 +16,18 @@ class FmBuild {
 		Print.printTable(40, 6, 80, 21);
 		Print.printText(0, 37, DARKBLUE, YELLOW, " Name ");
 		Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
+		Print.printText(28, 0, BLACK, WHITE, "F2");
+		Print.printText(28, 2, DARKCYAN, BLACK, "Rename");
+		Print.printText(28, 15, BLACK, WHITE, "Del");
+		Print.printText(28, 18, DARKCYAN, BLACK, "Delete");
+		Print.printText(28, 31, BLACK, WHITE, "F3");
+		Print.printText(28, 33, DARKCYAN, BLACK, "Copy");
+		Print.printText(28, 44, BLACK, WHITE, "F4");
+		Print.printText(28, 46, DARKCYAN, BLACK, "Cut");
+		Print.printText(28, 56, BLACK, WHITE, "F5");
+		Print.printText(28, 58, DARKCYAN, BLACK, "Paste");
+		Print.printText(28, 70, BLACK, WHITE, "ESC");
+		Print.printText(28, 73, DARKCYAN, BLACK, "EXIT");
 
 	}
 	void printInfo()
@@ -32,7 +44,7 @@ class FmBuild {
 		Print.printText(16, 90, DARKBLUE, CYAN, properties->time_w);
 		Print.printText(18, 82, DARKBLUE, YELLOW, "Access:");
 		Print.printText(18, 89, DARKBLUE, CYAN, properties->time_a);
-		Print.printText(27, 0, DARKBLUE, YELLOW, "Current Folder:");
+		Print.printText(27, 0, DARKBLUE, YELLOW, "Folder:");
 	}
 	void getAttributes(const _finddata_t &file)
 	{
@@ -88,15 +100,25 @@ class FmBuild {
 
 	}
 public:
+	~FmBuild()
+	{
+		delete properties;
+	}
+	FmBuild()
+	{
+		properties = new FileProp;
+	}
 	void print(string &str)
 	{
+		filecpy.clear();
+		fm.showDirectory(str, filecpy);
 		system("cls");
 		str.pop_back();
 		char temp[MAX_PATH];
 		printFrame();
 		chdir(str.c_str());
 		getcwd(temp, MAX_PATH);
-		Print.printText(27, 16, DARKBLUE, CYAN, temp);
+		Print.printText(27, 8, DARKBLUE, CYAN, temp);
 		int i = 0;
 		int cursor = 0;
 		int key = -1;
@@ -126,6 +148,8 @@ public:
 			{
 				key = _getch();
 				if (key == 72 && cursor > 0) (cursor--, key_pressed = true);
+				else if (key == 72 && cursor == 0) (cursor = filecpy.size() - 1, key_pressed = true);
+				else if (key == 80 && cursor == filecpy.size() - 1) (cursor = 0, key_pressed = true);
 				else if (key == 80 && cursor < filecpy.size() - 1) (cursor++, key_pressed = true);
 				else if (key == 83)
 				{
@@ -150,11 +174,11 @@ public:
 				return;
 			}
 
-			if (cursor % textBufferSize == 0 && key == 80 || (cursor % textBufferSize == textBufferSize - 1 && key == 72) && cursor != 0)
+			if ((cursor == filecpy.size() - 1 && key == 72) || (cursor == 0 && key == 80) || cursor % textBufferSize == 0 && key == 80 || (cursor % textBufferSize == textBufferSize - 1 && key == 72) && cursor != 0)
 			{
 				system("cls");
 				printFrame();
-				Print.printText(27, 16, DARKBLUE, CYAN, temp);
+				Print.printText(27, 8, DARKBLUE, CYAN, temp);
 			}
 			i = cursor - cursor % textBufferSize;
 		}
