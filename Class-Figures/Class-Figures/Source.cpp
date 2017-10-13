@@ -62,14 +62,14 @@ public:
 class Figure
 {
 protected:
-	int width;
 	Point position;
 	Color bgcolor;
 	Color fgcolor;
 public:
-	Figure(int width = 0) : width(width)
+	Figure()
 	{
-
+		position.x = 0;
+		position.y = 0;
 	}
 	void setBgColor(short r, short g, short b)
 	{
@@ -95,10 +95,6 @@ public:
 	{
 		fgcolor.darken(value);
 	}
-	void setWidth(int width)
-	{
-		this->width = width;
-	}
 	void setPosition(int x, int y)
 	{
 		position.x = x;
@@ -115,42 +111,103 @@ public:
 	
 class Square : public Figure
 {
+	int size;
 public:
 	Square() : Figure()
 	{
-
+		size = 0;
 	}
-	void draw();
+	void setSize(int size)
+	{
+		this->size = size;
+	}
+	void draw()
+	{
+		cout << "Type - Square.\n";
+		cout << "Size: " << size << endl;
+		Figure::draw();
+	}
 };
 	
 
-class Rectangle : Figure
+class Rectangle : public Figure
 {
 	int height;
+	int width;
 public:
-	void draw();
+	Rectangle() :  Figure()
+	{
+		height = 0;
+		width = 0;
+	}
+	void setSize(int H, int W)
+	{
+		height = H;
+		width = W;
+	}
+	void draw()
+	{
+		cout << "Type - Rectangle.\n";
+		cout << "Height: " << height << endl;
+		cout << "Width: " << width << endl;
+		Figure::draw();
+	}
 };
 	
 
-class Circle : Figure
+class Circle : public Figure
 {
 	int radius;
 public:
-	void draw();
+	Circle() : Figure()
+	{
+		radius = 0;
+	}
+	void setRadius(int rad)
+	{
+		radius = rad;
+	}
+	void draw()
+	{
+		cout << "Type - Circle.\n";
+		cout << "Radius: " << radius << endl;
+		Figure::draw();
+	}
 };
 	
 
 
 void main()
 {
-	Circle f;
-	printf("#%02x%02x%02x\n", 0, 0, 0);
-}
+	Circle c;
+	c.draw();
+	c.setBgColor(154,221,13);
+	c.setFgColor(11, 100, 0);
+	c.setRadius(110);
+	c.setPosition(15, 25);
+	cout << endl;
+	c.draw();
 
-/*------ - DRAW------
-Type: Rectangle
-	Width : 100
-	Height : 200
-	Position : 10 x 20
-	Background Color : #ff00e5;
-Foreground Color : #000000;  */
+	cout << "--------------------------------------------\n";
+
+	Rectangle r;
+	r.draw();
+	r.setBgColor(154, 221, 13);
+	r.setFgColor(11, 100, 0);
+	r.setSize(150, 210);
+	r.setPosition(15, 25);
+	cout << endl;
+	r.draw();
+
+	cout << "--------------------------------------------\n";
+
+	Square s;
+	s.draw();
+	s.setBgColor(54, 21, 13);
+	s.setFgColor(111, 100, 0);
+	s.setSize(150);
+	s.setPosition(15, 25);
+	cout << endl;
+	s.draw();
+	
+}
