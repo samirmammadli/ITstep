@@ -59,6 +59,13 @@ class FmBuild {
 		Print.printText(10, 53, DARKRED, WHITE, " Input name: ");
 		Print.printText(11, 11, DARKRED, WHITE, "                                                                                                  ");
 	}
+	void renField()
+	{
+		COLORS(WHITE, DARKRED);
+		Print.printTable(100, 3, 10, 10);
+		Print.printText(10, 50, DARKRED, WHITE, " Input new name: ");
+		Print.printText(11, 11, DARKRED, WHITE, "                                                                                                  ");
+	}
 	void getAttributes(const _finddata_t &file)
 	{
 		char temp[500];
@@ -163,7 +170,6 @@ public:
 		hideCursor(true);
 		fm.findFolders(patch, Temp, filecpy);
 		COLORS(CYAN, DARKBLUE);
-		//fm.findFiles()
 	}
 	void setUP()
 	{
@@ -172,6 +178,20 @@ public:
 			cursor--;
 			checkScrolling(false);
 		}
+	}
+	void Rename(char *Temp)
+	{
+		renField();
+		COORDS(11, 11);
+		COLORS(WHITE, DARKRED);
+		hideCursor(false);
+		cin.getline(Temp, MAX_PATH);
+		hideCursor(true);
+		renField();
+		if (filecpy.size() > 0 )
+			fm.Rename(filecpy[cursor].buffer + filecpy[cursor].file.name, Temp);
+		showFolders();
+		COLORS(CYAN, DARKBLUE);
 	}
 	void setDown()
 	{
@@ -188,7 +208,7 @@ public:
 		filecpy.clear();
 		fm.showDirectory(patch, filecpy);
 	}
-	void setPatch(string tmp_patch = "\\*")
+	void setPath(string tmp_patch = "\\*")
 	{
 		chdir(tmp_patch.c_str());
 		getcwd(temp, MAX_PATH);
@@ -197,12 +217,17 @@ public:
 	}
 	void deleteFile()
 	{
-		if (filecpy.size() > 0 && !(filecpy[cursor].file.attrib & _A_SUBDIR))
+		if (filecpy.size() > 0)
 		{
-			if (removeWarning())
+			if (!(filecpy[cursor].file.attrib & _A_SUBDIR))
 			{
-				string tmp = temp;
-				fm.Remove(tmp + "\\" + filecpy[cursor].file.name);
+				if (removeWarning())
+					fm.Remove(filecpy[cursor].buffer + filecpy[cursor].file.name);
+			}
+			else
+			{
+				if (removeWarning())
+					fm.Remove(filecpy[cursor].buffer + filecpy[cursor].file.name, true);
 			}
 		}
 		showFolders();
@@ -217,22 +242,26 @@ public:
 		hideCursor(true);
 		COLORS(CYAN, DARKBLUE);
 	}
-	void nextFolder()
+	bool nextFolder()
 	{
-		if (filecpy.size() > 0)
+		if (filecpy.size() == 0)
 		{
-			setPatch(filecpy[cursor].file.name);
+			setPath("..");
 			showFolders();
+			return true;
+		}
+		else if (filecpy[cursor].file.attrib & _A_SUBDIR)
+		{
+			setPath(filecpy[cursor].file.name);
+			showFolders();
+			return true;
 		}
 		else
-		{
-			setPatch("..");
-			showFolders();
-		}
+			return false;
+		
 	}
 	void print(bool search = false)
 	{
-		if (!search) Print.printText(27, 8, DARKBLUE, CYAN, temp);
 		printInfo();
 		COORDS(0, 3);
 		if (filecpy.size() != 0)
@@ -247,7 +276,8 @@ public:
 				{
 					getAttributes(filecpy[i].file);
 					printInfo();
-					if (search) Print.printText(27, 8, DARKBLUE, CYAN, filecpy[i].buffer);
+					Print.printText(27, 8, DARKBLUE, CYAN, "                                                                                                                ");
+					Print.printText(27, 8, DARKBLUE, CYAN, filecpy[i].buffer);
 					COLORS(BLACK, DARKCYAN);
 				}
 				COORDS(short(i % textBufferSize + 1), 2);

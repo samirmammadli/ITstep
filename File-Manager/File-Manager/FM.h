@@ -19,6 +19,10 @@ public:
 		while (find != -1)
 		{
 			temp.file = fileinfo;
+			char tmp[MAX_PATH];
+			getcwd(tmp, MAX_PATH);
+			temp.buffer = tmp;
+			temp.buffer += "\\";
 			filecpy.push_back(temp);
 			find = _findnext(handle, &fileinfo);
 			count++;
@@ -71,11 +75,17 @@ public:
 		}
 		findclose(handle);
 	}
-	void Remove(string path)
+	void Remove(string path, bool folder = false)
 	{
-		remove(path.c_str());
+		if (!folder)
+			remove(path.c_str());
+		else
+			rmdir(path.c_str());
 	}
-	void Rename(string path, string name);
+	void Rename(string path, string name)
+	{
+		rename(path.c_str(), name.c_str());
+	}
 	void copy(string oldpath, string newpath);
 	void move();
 };

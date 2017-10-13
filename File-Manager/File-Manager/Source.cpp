@@ -11,21 +11,14 @@ void Renew(FmBuild &fm, bool search = false)
 
 void main()
 { 
-	vector<FileInfoCopy> file;
 	hideCursor(true);
 	system("color 1B");
 	int key = 0;
 	setlocale(LC_ALL, "Rus");
 	char temp[MAX_PATH];
 
-	/*FileManager fm;
-	fm.findFolders("C:\\*", "*.txt", file);
-	for (int i = 0; i < file.size(); i++)
-	{
-		cout << file[i].buffer  << file[i].file.name << endl;
-	}*/
 	FmBuild fm;
-	fm.setPatch("C:\\");
+	fm.setPath("C:\\");
 	fm.showFolders();
 	fm.printFrame();
 	fm.print();
@@ -50,9 +43,14 @@ void main()
 			if (key == 66)
 			{
 				fm.changeFolder(temp);
-				fm.setPatch(temp);
+				fm.setPath(temp);
 				fm.showFolders();
 				Renew(fm);
+			}
+			else if (key == 60)
+			{
+				fm.Rename(temp);
+				Renew(fm, true);
 			}
 			else if (key == 61)
 			{
@@ -62,8 +60,7 @@ void main()
 		}
 		else if (key == 13)
 		{
-			fm.nextFolder();
-			Renew(fm);
+			if (fm.nextFolder()) Renew(fm);
 		}
 		else if (key == 27)
 			exit(0);
