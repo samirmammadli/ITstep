@@ -1,12 +1,6 @@
 ﻿#include "FM build.h"
 
-void hideCursor(bool switch_cursor)
-{
-	CONSOLE_CURSOR_INFO info;
-	info.bVisible = !switch_cursor;
-	info.dwSize = 1;
-	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-}
+
 
 void Renew(FmBuild &fm, bool search = false)
 {
@@ -17,12 +11,19 @@ void Renew(FmBuild &fm, bool search = false)
 
 void main()
 { 
-
+	vector<FileInfoCopy> file;
 	hideCursor(true);
 	system("color 1B");
 	int key = 0;
 	setlocale(LC_ALL, "Rus");
 	char temp[MAX_PATH];
+
+	/*FileManager fm;
+	fm.findFolders("C:\\*", "*.txt", file);
+	for (int i = 0; i < file.size(); i++)
+	{
+		cout << file[i].buffer  << file[i].file.name << endl;
+	}*/
 	FmBuild fm;
 	fm.setPatch("C:\\");
 	fm.showFolders();
@@ -41,7 +42,7 @@ void main()
 				fm.deleteFile();
 				Renew(fm);
 			}
-			if (key == 72 || key == 80) fm.print();
+			if (key == 72 || key == 80) fm.print(true);
 		}
 		else if (key == 0)
 		{

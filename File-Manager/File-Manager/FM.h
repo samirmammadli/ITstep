@@ -31,14 +31,18 @@ public:
 		FileInfoCopy temp;
 		_finddata_t fileinfo;
 		int handle = _findfirst(mask.c_str(), &fileinfo);
-		int find = -1;
-		if (handle != -1) find = _findnext(handle, &fileinfo);
-		if (handle != -1) find = _findnext(handle, &fileinfo);
-		if (find != -1)
+		int find = handle;
+		while (find != -1)
 		{
-			temp.buffer = patch;
-			temp.file = fileinfo;
-			filecpy.push_back(temp);
+			string name_check = fileinfo.name;
+			if (name_check != ".." && name_check != ".")
+			{
+				temp.buffer = patch;
+				temp.buffer.pop_back();
+				temp.file = fileinfo;
+				filecpy.push_back(temp);
+			}
+			find = _findnext(handle, &fileinfo);
 		}
 		findclose(handle);
 	}

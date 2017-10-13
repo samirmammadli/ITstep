@@ -152,11 +152,15 @@ public:
 	}
 	void search(char * Temp)
 	{
+		i = 0;
+		cursor = 0;
 		filecpy.clear();
 		searchField();
 		COORDS(11, 11);
 		COLORS(WHITE, DARKRED);
+		hideCursor(false);
 		cin.getline(Temp, MAX_PATH);
+		hideCursor(true);
 		fm.findFolders(patch, Temp, filecpy);
 		COLORS(CYAN, DARKBLUE);
 		//fm.findFiles()
@@ -208,7 +212,9 @@ public:
 		pathField();
 		COORDS(11, 11);
 		COLORS(WHITE, DARKRED);
+		hideCursor(false);
 		cin.getline(Temp, MAX_PATH);
+		hideCursor(true);
 		COLORS(CYAN, DARKBLUE);
 	}
 	void nextFolder()
