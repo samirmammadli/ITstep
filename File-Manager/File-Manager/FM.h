@@ -116,9 +116,6 @@ public:
 	{
 		wstring temp1 = GetWC(oldpath);
 		wstring temp2 = GetWC(newpath);
-		printf("%s\n", oldpath.c_str());
-		printf("%s", newpath.c_str());
-		system("pause");
 		CopyFile(temp1.c_str(), temp2.c_str(), false);
 	}
 	void Move(string oldpath, string newpath)

@@ -82,10 +82,4 @@ void main()
 		else if (key == 27)
 			exit(0);
 	}
-	//rename("text.txt", str.c_str());
-	//remove(str.c_str());
-
-	//mkdir(str.c_str());
-	//rmdir(str.c_str());
-
 }
