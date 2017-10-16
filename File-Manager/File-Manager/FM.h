@@ -75,12 +75,38 @@ public:
 		}
 		findclose(handle);
 	}
+	void RemoveFolder(string path)
+	{
+		path += "\\*";
+		_finddata_t fileinfo;
+		int handle = _findfirst(path.c_str(), &fileinfo);
+		int find = handle;
+		path.pop_back();
+		
+		while (find != -1)
+		{
+			string name_check = fileinfo.name;
+			if (fileinfo.attrib & _A_SUBDIR && name_check != ".." && name_check != ".")
+			{
+				name_check = path + fileinfo.name;
+				RemoveFolder(name_check);
+			}
+			else if (!(fileinfo.attrib & _A_SUBDIR))
+			{
+				name_check = path + fileinfo.name;
+				remove(name_check.c_str());
+			}
+			find = _findnext(handle, &fileinfo);
+		}
+		findclose(handle);
+		rmdir(path.c_str());
+	}
 	void Remove(string path, bool folder = false)
 	{
 		if (!folder)
 			remove(path.c_str());
 		else
-			rmdir(path.c_str());
+			RemoveFolder(path);
 	}
 	void Rename(string path, string name)
 	{

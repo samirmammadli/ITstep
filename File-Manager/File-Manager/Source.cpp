@@ -18,7 +18,7 @@ void main()
 	char temp[MAX_PATH];
 
 	FmBuild fm;
-	fm.setPath("C:\\");
+	fm.setPath("C:\\users\\samir\\\desktop\\");
 	fm.showFolders();
 	fm.printFrame();
 	fm.print();
