@@ -112,6 +112,17 @@ public:
 	{
 		rename(path.c_str(), name.c_str());
 	}
-	void copy(string oldpath, string newpath);
-	void move();
+	void Copy(string oldpath, string newpath)
+	{
+		wstring temp1 = GetWC(oldpath);
+		wstring temp2 = GetWC(newpath);
+		printf("%s\n", oldpath.c_str());
+		printf("%s", newpath.c_str());
+		system("pause");
+		CopyFile(temp1.c_str(), temp2.c_str(), false);
+	}
+	void Move(string oldpath, string newpath)
+	{
+		MoveFile(GetWC(oldpath).c_str(), GetWC(newpath).c_str());
+	}
 };

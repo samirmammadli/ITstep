@@ -34,6 +34,12 @@ enum Colors
 	DEFAULT = 7
 };
 
+ wstring GetWC (const string &c)
+{
+	wstring wc(c.begin(), c.end());
+
+	return wc;
+}
 struct FileProp
 {
 	string type;

@@ -9,6 +9,8 @@ void Renew(FmBuild &fm, bool search = false)
 	fm.print(search);
 }
 
+
+
 void main()
 { 
 	hideCursor(true);
@@ -56,6 +58,21 @@ void main()
 			{
 				fm.search(temp);
 				Renew(fm, true);
+			}
+			else if (key == 62)
+			{
+				fm.Copy(true);
+				Renew(fm);
+			}
+			else if (key == 63)
+			{
+				fm.Paste();
+				Renew(fm);
+			}
+			else if (key == 64)
+			{
+				fm.Copy();
+				Renew(fm);
 			}
 		}
 		else if (key == 13)

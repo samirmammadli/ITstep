@@ -8,6 +8,9 @@ class FmBuild {
 	FileProp *properties;
 	vector<FileInfoCopy> filecpy;
 	string patch;
+	string cpybuffer[2];
+	bool isCopied = false;
+	bool Move = false;
 	int textBufferSize = 25;
 	int i = 0;
 	int cursor = 0;
@@ -146,16 +149,20 @@ public:
 		Print.printText(0, 97, DARKBLUE, YELLOW, " Info ");
 		Print.printText(28, 0, BLACK, WHITE, "F2");
 		Print.printText(28, 2, DARKCYAN, BLACK, "Rename");
-		Print.printText(28, 15, BLACK, WHITE, "Del");
-		Print.printText(28, 18, DARKCYAN, BLACK, "Delete");
-		Print.printText(28, 31, BLACK, WHITE, "F3");
-		Print.printText(28, 33, DARKCYAN, BLACK, "Search");
-		Print.printText(28, 44, BLACK, WHITE, "F4");
-		Print.printText(28, 46, DARKCYAN, BLACK, "Cut");
-		Print.printText(28, 56, BLACK, WHITE, "F5");
-		Print.printText(28, 58, DARKCYAN, BLACK, "Paste");
-		Print.printText(28, 70, BLACK, WHITE, "ESC");
-		Print.printText(28, 73, DARKCYAN, BLACK, "EXIT");
+		Print.printText(28, 13, BLACK, WHITE, "Del");
+		Print.printText(28, 16, DARKCYAN, BLACK, "Delete");
+		Print.printText(28, 27, BLACK, WHITE, "F3");
+		Print.printText(28, 29, DARKCYAN, BLACK, "Search");
+		Print.printText(28, 40, BLACK, WHITE, "F4");
+		Print.printText(28, 42, DARKCYAN, BLACK, "Cut");
+		Print.printText(28, 50, BLACK, WHITE, "F5");
+		Print.printText(28, 52, DARKCYAN, BLACK, "Paste");
+		Print.printText(28, 62, BLACK, WHITE, "F6");
+		Print.printText(28, 64, DARKCYAN, BLACK, "Copy");
+		Print.printText(28, 73, BLACK, WHITE, "F8");
+		Print.printText(28, 75, DARKCYAN, BLACK, "ChDir");
+		Print.printText(28, 85, BLACK, WHITE, "ESC");
+		Print.printText(28, 88, DARKCYAN, BLACK, "EXIT");
 	}
 	void search(char * Temp)
 	{
@@ -260,6 +267,30 @@ public:
 			return false;
 		
 	}
+	void Copy(bool M = false)
+	{
+			if (filecpy.size() > 0  && !(filecpy[cursor].file.attrib & _A_SUBDIR))
+			{
+				cpybuffer[0] = filecpy[cursor].buffer + filecpy[cursor].file.name;
+				cpybuffer[1] = filecpy[cursor].file.name;
+				isCopied = true;
+				Move = M;
+				showFolders();
+			}
+	}
+	void Paste()
+	{
+		if (filecpy.size() > 0 && isCopied)
+		{
+			isCopied = false;
+			if (!Move) fm.Copy(cpybuffer[0], filecpy[cursor].buffer + cpybuffer[1]);
+			else fm.Move(cpybuffer[0], filecpy[cursor].buffer + cpybuffer[1]);
+			cpybuffer[0].clear();
+			cpybuffer[1].clear();
+			showFolders();
+		}
+	}
+
 	void print(bool search = false)
 	{
 		printInfo();
