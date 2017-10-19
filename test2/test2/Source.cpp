@@ -53,11 +53,13 @@ public:
 
 int main()
 {
-	StudentArray* classA = new StudentArray("Anar", "Babayev");
-	classA->addStudent("Rufat", "Gulabli");
-	classA->addStudent("Samir", "Mammadli");
-	classA->show();
-	cout << classA->getSize() << endl;
 
+	/*wchar_t p[50];
+	wcin.getline(p, 50);
+	wprintf (p);*/
+
+	char p[50] = "Привет лошадь";
+	//cin.getline(p, 50);
+	printf(p); 
 	return 0;
 }
