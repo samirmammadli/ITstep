@@ -45,7 +45,6 @@ public:
 			COLORS(DEFAULT, BLACK);
 			COORDS(col + i+1, row);
 		}
-		COORDS(0, 0);
 	}
 	int handling()
 	{
@@ -62,7 +61,6 @@ public:
 
 		return -1;
 	}
-
 };
 
 
@@ -258,6 +256,7 @@ void main()
 				system("cls");
 				while (index == -1)
 				{
+					COORDS(0, 0);
 					a.acadInfo();
 					vector<string> u;
 					u.push_back("back");
