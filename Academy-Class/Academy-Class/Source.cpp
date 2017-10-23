@@ -58,7 +58,6 @@ public:
 		}
 		else if (key == 13)
 			return index;
-
 		return -1;
 	}
 };
@@ -73,8 +72,9 @@ protected:
 	string phone;
 	string email;
 	short age;
+	int personal_id;
 public:
-	Person() : name("Empty"), surname("Empty"), phone("Empty"), email("Empty"), age(0) {}
+	Person() : name("Empty"), surname("Empty"), phone("Empty"), email("Empty"), age(0), personal_id(0) {}
 	virtual ~Person() = 0 {}
 	//Set data
 	virtual void setName(string name) { this->name = name; }
@@ -165,6 +165,14 @@ class Group {
 	vector<Teacher*> teacher;
 public:
 	Group() : name("Empty"), subject("Empty") {}
+	//Set data
+	void setName(string name) { this->name = name; }
+	void setSubject(string subject) { this->subject = subject; }
+	void addStudentToGroup(Student *stud) { students.push_back(stud); }
+	void addTeacherToGroup(Teacher *teacher) { this->teacher.push_back(teacher); }
+	//Get data
+	vector<Student*> getStudents() const { return students; }
+	vector<Teacher*> getTeacher() const { return teacher; }
 };
 
 
@@ -172,14 +180,16 @@ class Academy {
 	string name;
 	string city;
 	string address;
-	int monthlyFee;
-	int money;
 	Director *director;
 	vector<Group> designers;
 	vector<Group> programmer;
 	vector<Group> admin;
 	vector<Student> students;
-	vector<Employee> employees;
+	vector<Employee*> employees;
+	int monthlyFee;
+	int money;
+	int stud_id;
+	int empl_id;
 public:
 	Academy(string name, string city, string address, int fee, int money)
 	{
@@ -188,17 +198,75 @@ public:
 		this->address = address;
 		this->monthlyFee = fee;
 		this->money = money;
+		stud_id = 0;
+		empl_id = 0;
 		director = nullptr;
 	}
 	~Academy() { delete director; } 
-	void acadInfo()
+
+	//Set data
+	void setName(string name) { this->name = name; }
+	void setCity(string city) { this->city = city; }
+	void setAddress(string address) { this->address = address; }
+	void setFee(int fee) { this->monthlyFee = fee; }
+	void setMoney(int money) { this->money = money; }
+	void setDirector(const Director &d) 
 	{
-		printf("%-20s%s\n", "Academy name:", name.c_str());
-		printf("%-20s%s\n", "City:", city.c_str());
-		printf("%-20s%s\n", "Adress:", address.c_str());
-		printf("%-20s%d Azn\n", "Monthly Fee:", monthlyFee);
-		printf("%-20s%d Azn\n", "Money:", money);
+		this->director = new Director;
+		*this->director = d;
 	}
+	void addStudent(const Student &stud) { students.push_back(stud); }
+	void addEmployee(Employee *empl) { employees.push_back(empl); }
+	void addGroup(const Group &gr, int group)
+	{
+		if (group == 1)
+			designers.push_back(gr);
+		else if (group == 2)
+			programmer.push_back(gr);
+		else if (group == 3)
+			admin.push_back(gr);
+	}
+	void deleteGroup(int group, int index)
+	{
+		if (group == 1)
+			designers.erase(designers.begin() + index);
+		else if (group == 2)
+			programmer.erase(programmer.begin() + index);
+		else if (group == 3)
+			admin.erase(admin.begin() + index);
+	}
+	void addTeacherToGroup(Teacher* teacher, int group, int index)
+	{
+		if (group == 1)
+			designers[index].addTeacherToGroup(teacher);
+		else if (group == 2)
+			programmer[index].addTeacherToGroup(teacher);
+		else if (group == 3)
+			admin[index].addTeacherToGroup(teacher);
+	}
+	void addStudentToGroup(Student* stud, int group, int index)
+	{
+		if (group == 1)
+			designers[index].addStudentToGroup(stud);
+		else if (group == 2)
+			programmer[index].addStudentToGroup(stud);
+		else if (group == 3)
+			admin[index].addStudentToGroup(stud);
+	}
+
+	//Get data
+	string getName() const { return name; }
+	string getCity() const { return city; }
+	string getAdress() const { return address; }
+	int getFee() const { return monthlyFee; }
+	int getMoney() const { return money; }
+	int getGroupCount() const { return admin.size() + programmer.size() + designers.size(); }
+	int getStudCount() const { return students.size(); }
+	int getEmployeeCount() const { return employees.size(); }
+	vector<Group> getDesigners() const { return designers; }
+	vector<Group> getProgrammers() const { return programmer; }
+	vector<Group> getAdmin() const { return admin; }
+	const Director* const getDirector() const { return director; }
 };
 
 
@@ -221,6 +289,7 @@ void hideCursor(bool switch_cursor)
 
 void main()
 {
+
 	//Program::menu();
 
 	//Teacher a;
@@ -238,6 +307,22 @@ void main()
 	Academy a("IT Step", "Baku", "Z.Aliyeva", 250, 150000);
 	Menu m;
 	vector<string> s;
+
+
+	{
+		printf("%-20s%s\n", "Academy name:", a.getName().c_str());
+		printf("%-20s%s\n", "City:", a.getCity().c_str());
+		printf("%-20s%s\n", "Adress:", a.getAdress().c_str());
+		printf("%-20s%d Azn\n", "Monthly Fee:", a.getFee());
+		printf("%-20s%d Azn\n", "Money:", a.getMoney());
+		printf("%-20s%d \n", "Groups:", a.getGroupCount());
+		printf("%-20s%d \n", "Students:", a.getStudCount());
+		printf("%-20s%d \n", "Employee:", a.getEmployeeCount());
+	}
+	system("pause");
+
+
+
 	s.push_back("Academy Info");
 	s.push_back("Show Groups");
 	s.push_back("Show Employees");
@@ -257,10 +342,9 @@ void main()
 				while (index == -1)
 				{
 					COORDS(0, 0);
-					a.acadInfo();
 					vector<string> u;
 					u.push_back("back");
-					m.printMenu(5, 0, u);
+					m.printMenu(8, 0, u);
 					index = m.handling();
 				}
 				system("cls");
