@@ -29,6 +29,52 @@ enum Colors
 	DEFAULT = 7
 };
 
+enum GroupName {
+	DESIGNERS,
+	PROGRAMMERS,
+	ADMIN
+};
+
+
+class SelectableMenuLines
+{
+	vector<string> main_menu;
+	vector<string> edit_acad;
+	vector<string> group_management;
+	vector<string> group_mgt_submenu;
+	vector<string> group_mgt_edit;
+	vector<string> stud_management;
+	vector<string> stud_mgt_edit;
+	vector<string> employee_management;
+	vector<string> employee_mgt_edit;
+public:
+	SelectableMenuLines()
+	{
+		main_menu.push_back("Academy general information");
+		main_menu.push_back("List of Groups");
+		main_menu.push_back("List of Students");
+		main_menu.push_back("List of Personnel");
+		main_menu.push_back("Edit academy");
+		main_menu.push_back("Group management");
+		main_menu.push_back("Student management");
+		main_menu.push_back("Employee management");
+		main_menu.push_back("Exit");
+
+		edit_acad.push_back("Change name");
+		edit_acad.push_back("Change city");
+		edit_acad.push_back("Change address");
+		edit_acad.push_back("Change monthly fee");
+		edit_acad.push_back("Change budget");
+
+		group_management.push_back("Programmers");
+		group_management.push_back("Designers");
+		group_management.push_back("Admins");
+	}
+
+};
+
+
+
 class Menu {
 	int size;
 	int index;
@@ -82,6 +128,7 @@ public:
 	virtual void setPhone(string phone) { this->phone = phone; }
 	virtual void setEmail(string email) { this->email = email; }
 	virtual void setAge(short age) { this->age = age; }
+	virtual void setID(int id) { personal_id = id; }
 
 	//Get data
 	virtual string getName() const { return this->name; } 
@@ -89,6 +136,7 @@ public:
 	virtual string getPhone() const { return this->phone; }
 	virtual string getEmail() const { return this->email; }
 	virtual short getAge() const { return this->age; }
+	virtual int getID() const { return this->personal_id; }
 
 };
 
@@ -168,8 +216,10 @@ public:
 	//Set data
 	void setName(string name) { this->name = name; }
 	void setSubject(string subject) { this->subject = subject; }
-	void addStudentToGroup(Student *stud) { students.push_back(stud); }
-	void addTeacherToGroup(Teacher *teacher) { this->teacher.push_back(teacher); }
+	void addStudent(Student *stud) { students.push_back(stud); }
+	void addTeacher(Teacher *teacher) { this->teacher.push_back(teacher); }
+	void deleteStudent(int index) { students.erase(students.begin() + index); }
+	void deleteTeacher(int index) { teacher.erase(teacher.begin() + index); }
 	//Get data
 	vector<Student*> getStudents() const { return students; }
 	vector<Teacher*> getTeacher() const { return teacher; }
@@ -191,7 +241,7 @@ class Academy {
 	int stud_id;
 	int empl_id;
 public:
-	Academy(string name, string city, string address, int fee, int money)
+	Academy(string name, string city, string address, const Director &drct, int fee, int money)
 	{
 		this->name = name;
 		this->city = city;
@@ -200,7 +250,7 @@ public:
 		this->money = money;
 		stud_id = 0;
 		empl_id = 0;
-		director = nullptr;
+		director = new Director{drct};
 	}
 	~Academy() { delete director; } 
 
@@ -212,46 +262,96 @@ public:
 	void setMoney(int money) { this->money = money; }
 	void setDirector(const Director &d) 
 	{
-		this->director = new Director;
-		*this->director = d;
+		this->director = new Director{ d };
 	}
-	void addStudent(const Student &stud) { students.push_back(stud); }
-	void addEmployee(Employee *empl) { employees.push_back(empl); }
-	void addGroup(const Group &gr, int group)
+	void addStudent(const Student &stud) 
 	{
-		if (group == 1)
-			designers.push_back(gr);
-		else if (group == 2)
-			programmer.push_back(gr);
-		else if (group == 3)
-			admin.push_back(gr);
+		students.push_back(stud);
+		students[students.size() - 1].setID(++stud_id);
 	}
-	void deleteGroup(int group, int index)
+	void addTeacher(const Teacher &teach)
 	{
-		if (group == 1)
+		Teacher *temp = new Teacher{teach};
+		employees.push_back(temp);
+		employees[employees.size() - 1]->setID(++empl_id);
+	}
+	void addSalesman(const Salesman &sale)
+	{
+		Salesman *temp = new Salesman{ sale };
+		employees.push_back(temp);
+		employees[employees.size() - 1]->setID(++empl_id);
+	}
+	void addEmployee(Employee *new_empl)
+	{
+		if (typeid(*new_empl) == typeid(Teacher))
+		{
+			Teacher *temp = new Teacher{ *dynamic_cast<Teacher*>(new_empl) };
+			employees.push_back(temp);
+		}
+		else if (typeid(*new_empl) == typeid(Salesman))
+		{
+			Salesman *temp = new Salesman{ *dynamic_cast<Salesman*>(new_empl) };
+			employees.push_back(temp);
+		}
+		employees[employees.size() - 1]->setID(++empl_id);
+	}
+	void deleteEmployee(int index)
+	{
+		employees.erase(employees.begin() + index);
+	}
+	void addGroup(const Group &new_group, GroupName which_group)
+	{
+		if (which_group == DESIGNERS)
+			designers.push_back(new_group);
+		else if (which_group == PROGRAMMERS)
+			programmer.push_back(new_group);
+		else if (which_group == ADMIN)
+			admin.push_back(new_group);
+	}
+	void deleteGroup(GroupName which_group, int index)
+	{
+		if (which_group == DESIGNERS)
 			designers.erase(designers.begin() + index);
-		else if (group == 2)
+		else if (which_group == PROGRAMMERS)
 			programmer.erase(programmer.begin() + index);
-		else if (group == 3)
+		else if (which_group == ADMIN)
 			admin.erase(admin.begin() + index);
 	}
-	void addTeacherToGroup(Teacher* teacher, int group, int index)
+	void addTeacherToGroup(Teacher* new_teacher, GroupName which_group, int index)
 	{
-		if (group == 1)
-			designers[index].addTeacherToGroup(teacher);
-		else if (group == 2)
-			programmer[index].addTeacherToGroup(teacher);
-		else if (group == 3)
-			admin[index].addTeacherToGroup(teacher);
+		if (which_group == DESIGNERS)
+			designers[index].addTeacher(new_teacher);
+		else if (which_group == PROGRAMMERS)
+			programmer[index].addTeacher(new_teacher);
+		else if (which_group == ADMIN)
+			admin[index].addTeacher(new_teacher);
 	}
-	void addStudentToGroup(Student* stud, int group, int index)
+	void deleteTeacherFromGroup(GroupName which_group, int index)
 	{
-		if (group == 1)
-			designers[index].addStudentToGroup(stud);
-		else if (group == 2)
-			programmer[index].addStudentToGroup(stud);
-		else if (group == 3)
-			admin[index].addStudentToGroup(stud);
+		if (which_group == DESIGNERS)
+			designers[index].deleteTeacher(index);
+		else if (which_group == PROGRAMMERS)
+			programmer[index].deleteTeacher(index);
+		else if (which_group == ADMIN)
+			admin[index].deleteTeacher(index);
+	}
+	void addStudentToGroup(Student* new_stud, GroupName which_group, int index)
+	{
+		if (which_group == DESIGNERS)
+			designers[index].addStudent(new_stud);
+		else if (which_group == PROGRAMMERS)
+			programmer[index].addStudent(new_stud);
+		else if (which_group == ADMIN)
+			admin[index].addStudent(new_stud);
+	}
+	void deleteStudentFromGroup(GroupName which_group, int index)
+	{
+		if (which_group == DESIGNERS)
+			designers[index].deleteStudent(index);
+		else if (which_group == PROGRAMMERS)
+			programmer[index].deleteStudent(index);
+		else if (which_group == ADMIN)
+			admin[index].deleteStudent(index);
 	}
 
 	//Get data
@@ -266,6 +366,7 @@ public:
 	vector<Group> getDesigners() const { return designers; }
 	vector<Group> getProgrammers() const { return programmer; }
 	vector<Group> getAdmin() const { return admin; }
+	vector<Employee*> getEmployees() const { return employees; }
 	const Director* const getDirector() const { return director; }
 };
 
@@ -287,8 +388,24 @@ void hideCursor(bool switch_cursor)
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
 
+void test(Academy &a)
+{
+	Teacher tech;
+	tech.addSkill("Kru");
+	tech.addSkill("Tiz");
+	tech.addSkill("Na");
+	tech.addSkill("Vnature");
+	a.addEmployee(&tech);
+	Salesman salik;
+	salik.setName("samir");
+	a.addEmployee(&salik);
+}
+
+
 void main()
 {
+
+
 
 	//Program::menu();
 
@@ -304,7 +421,38 @@ void main()
 	//else
 	//	cout << typeid(*temp).name() << endl;
 	//	cout << "Alinmadi\n";
-	Academy a("IT Step", "Baku", "Z.Aliyeva", 250, 150000);
+
+	Director x;
+
+	Academy a("IT Step", "Baku", "Z.Aliyeva", x, 250, 150000);
+	Student stud;
+	stud.setAge(18);
+	stud.setName("Samir");
+	stud.setSurname("Mammadli");
+	stud.setAverage(25);
+	stud.setEmail("admin@bcdtravel.az");
+	a.addStudent(stud);
+	test(a);
+	
+	//cout << a.getEmployees()[1]->getID() << endl;
+
+
+	vector<Employee*> temp = a.getEmployees();
+	for (int i = 0; i < temp.size(); i++)
+	{
+		if (typeid(*(temp[i])) == typeid(Teacher))
+		{
+			Teacher tmp = *dynamic_cast<Teacher*>(temp[i]);
+			for (int i = 0; i < tmp.getSkills().size(); i++)
+			{
+				cout << tmp.getSkills()[i] << endl;
+			}
+
+		}
+	
+	}
+	system("pause");
+
 	Menu m;
 	vector<string> s;
 
