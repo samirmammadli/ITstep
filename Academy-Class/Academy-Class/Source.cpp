@@ -8,24 +8,18 @@
 using namespace std;
 
 
+void hideCursor(bool switch_cursor)
+{
+	CONSOLE_CURSOR_INFO info;
+	info.bVisible = !switch_cursor;
+	info.dwSize = 1;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}
+
 enum Colors
 {
 	BLACK,
-	DARKBLUE,
-	DARKGREEN,
-	DARKCYAN,
-	DARKRED,
-	DARKMAGENTA,
-	BROWN,
-	LIGHTGREY,
-	DARKGREY,
-	BLUE,
-	GREEN,
-	CYAN,
-	RED,
-	MAGENTA,
-	YELLOW,
-	WHITE,
+	DARKGREY = 8,
 	DEFAULT = 7
 };
 
@@ -38,18 +32,32 @@ enum GroupName {
 
 class SelectableMenuLines
 {
+public:
+	vector<string> add_del_edit;
+	vector<string> person_edit;
 	vector<string> main_menu;
 	vector<string> edit_acad;
 	vector<string> group_management;
-	vector<string> group_mgt_submenu;
 	vector<string> group_mgt_edit;
-	vector<string> stud_management;
 	vector<string> stud_mgt_edit;
 	vector<string> employee_management;
-	vector<string> employee_mgt_edit;
-public:
+	vector<string> employee_submenu;
+	vector<string> director_mgt_edit;
+	vector<string> teacher_mgt_edit;
+	vector<string> salesman_mgt_edit;
+
 	SelectableMenuLines()
 	{
+		add_del_edit.push_back("Add");
+		add_del_edit.push_back("Delete");
+		add_del_edit.push_back("Edit");
+
+		person_edit.push_back("Change Name");
+		person_edit.push_back("Change Surname");
+		person_edit.push_back("Change Mail");
+		person_edit.push_back("Change Phone");
+		person_edit.push_back("Change age");
+
 		main_menu.push_back("Academy general information");
 		main_menu.push_back("List of Groups");
 		main_menu.push_back("List of Students");
@@ -58,6 +66,8 @@ public:
 		main_menu.push_back("Group management");
 		main_menu.push_back("Student management");
 		main_menu.push_back("Employee management");
+		main_menu.push_back("Raise salary");
+		main_menu.push_back("Lower salary");
 		main_menu.push_back("Exit");
 
 		edit_acad.push_back("Change name");
@@ -69,18 +79,42 @@ public:
 		group_management.push_back("Programmers");
 		group_management.push_back("Designers");
 		group_management.push_back("Admins");
-	}
 
+		group_mgt_edit.push_back("Change Name");
+		group_mgt_edit.push_back("Change Subject");
+		group_mgt_edit.push_back("Add Student");
+		group_mgt_edit.push_back("Delete Student");
+		group_mgt_edit.push_back("Add Teacher");
+		group_mgt_edit.push_back("Delete Teacher");
+
+		stud_mgt_edit = person_edit;
+		stud_mgt_edit.push_back("Change Average");
+		stud_mgt_edit.push_back("Change Presence");
+
+		employee_management.push_back("Director");
+		employee_management.push_back("Teacher");
+		employee_management.push_back("Salesman");
+
+		director_mgt_edit = person_edit;
+		director_mgt_edit.push_back("Change Rating");
+
+		teacher_mgt_edit = person_edit;
+		teacher_mgt_edit.push_back("Change Skills");
+
+		salesman_mgt_edit = person_edit;
+		salesman_mgt_edit.push_back("Change Contracts");
+	}
+	friend class AcademyMenuAssembling;
 };
 
 
 
-class Menu {
+class Control {
+public:
 	int size;
 	int index;
-public:
-	Menu() : size(0), index(0) {}
-	void printMenu(short col, short row, vector<string> f)
+	Control() : size(0), index(0) {}
+	void printMenu(vector<string> f, short col = 0, short row = 0)
 	{
 		size = f.size();
 		COORDS(col, row);
@@ -89,7 +123,7 @@ public:
 			if (i == index) COLORS(BLACK, DARKGREY);
 			cout << f[i];
 			COLORS(DEFAULT, BLACK);
-			COORDS(col + i+1, row);
+			COORDS(col + i + 1, row);
 		}
 	}
 	int handling()
@@ -102,13 +136,24 @@ public:
 			if (key == 72) index > 0 ? index-- : 0;
 			else if (key == 80) index < size - 1 ? index++ : 0;
 		}
-		else if (key == 13)
-			return index;
+		else if (key == 27) { index = 0; return -2; }
+		else if (key == 13) { int tmp = index; index = 0; return tmp; }
 		return -1;
 	}
+	int Scrolling(vector<string> f, short col = 0, short row = 0)
+	{
+		system("cls");
+		int value = -1;
+		while (value == -1)
+		{
+			printMenu(f, col, row);
+			value =	handling();
+		}
+		return value;
+	}
+	
+	friend class AcademyMenuAssembling;
 };
-
-
 
 
 class Person {
@@ -260,6 +305,24 @@ public:
 	void setAddress(string address) { this->address = address; }
 	void setFee(int fee) { this->monthlyFee = fee; }
 	void setMoney(int money) { this->money = money; }
+	void raiseSalary(int percent)
+	{
+		for (int i = 0; i < employees.size(); i++)
+		{
+			int salary = employees[i]->getSalary();
+			salary += salary / 100 * percent;
+			employees[i]->setSalary(salary);
+		}
+	}
+	void lowerSalary(int percent)
+	{
+		for (int i = 0; i < employees.size(); i++)
+		{
+			int salary = employees[i]->getSalary();
+			salary -= salary / 100 * percent;
+			employees[i]->setSalary(salary);
+		}
+	}
 	void setDirector(const Director &d) 
 	{
 		this->director = new Director{ d };
@@ -370,7 +433,64 @@ public:
 	const Director* const getDirector() const { return director; }
 };
 
-
+class AcademyMenuAssembling
+{
+	SelectableMenuLines Lines;
+	Control control;
+public:
+	void showAcadInfo(const Academy &a)
+	{
+		system("cls");
+		printf("%-20s%s\n", "Academy name:", a.getName().c_str());
+		printf("%-20s%s\n", "City:", a.getCity().c_str());
+		printf("%-20s%s\n", "Adress:", a.getAdress().c_str());
+		printf("%-20s%d Azn\n", "Monthly Fee:", a.getFee());
+		printf("%-20s%d Azn\n", "Money:", a.getMoney());
+		printf("%-20s%d \n", "Groups:", a.getGroupCount());
+		printf("%-20s%d \n", "Students:", a.getStudCount());
+		printf("%-20s%d \n", "Employee:", a.getEmployeeCount());
+		system("pause");
+	}
+	void lowerSalary(Academy &a)
+	{
+		system("cls");
+		int percent;
+		cout << "\t\tLower Salary for All Employees:\n";
+		cout << "Enter percent: ";
+		hideCursor(false);
+		cin >> percent;
+		hideCursor(true);
+		cout << "Salary is lowered for " << percent << "\%" << " percent!\n";
+		a.lowerSalary(percent);
+		system("pause");
+	}
+	void raiseSalary(Academy &a)
+	{
+		system("cls");
+		int percent;
+		cout << "\t\tRaise Salary for All Employees:\n";
+		cout << "Enter percent: ";
+		hideCursor(false);
+		cin >> percent;
+		hideCursor(true);
+		cout << "Salary is raised for " << percent << "\%" << " percent!\n";
+		a.raiseSalary(percent);
+		system("pause");
+	}
+	void editAcadName(Academy &a)
+	{
+		system("cls");
+		string name;
+		cout << "\t\tChange Academy Name\n";
+		cout << "Input new name: ";
+		hideCursor(false);
+		getline(cin, name);
+		hideCursor(true);
+		cout << "Academy name changed to: " << name << endl;
+		a.setName(name);
+		system("pause");
+	}
+};
 
 
 //class Program {
@@ -380,13 +500,7 @@ public:
 //	static void menu();
 //};
 
-void hideCursor(bool switch_cursor)
-{
-	CONSOLE_CURSOR_INFO info;
-	info.bVisible = !switch_cursor;
-	info.dwSize = 1;
-	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-}
+
 
 void test(Academy &a)
 {
@@ -404,26 +518,7 @@ void test(Academy &a)
 
 void main()
 {
-
-
-
-	//Program::menu();
-
-	//Teacher a;
-	//Employee *temp = &a;
-	//if (typeid(*temp) == typeid(Teacher))
-	//{
-	//	COORDS(15, 0);
-	//	cout << "Alindi\n";
-	//	cout << typeid(*temp).name() << endl;
-	//}
-	//	
-	//else
-	//	cout << typeid(*temp).name() << endl;
-	//	cout << "Alinmadi\n";
-
 	Director x;
-
 	Academy a("IT Step", "Baku", "Z.Aliyeva", x, 250, 150000);
 	Student stud;
 	stud.setAge(18);
@@ -434,73 +529,48 @@ void main()
 	a.addStudent(stud);
 	test(a);
 	
-	//cout << a.getEmployees()[1]->getID() << endl;
+	AcademyMenuAssembling bringinfo;
+	Control m;
+	SelectableMenuLines MenuLines;
 
-
-	vector<Employee*> temp = a.getEmployees();
-	for (int i = 0; i < temp.size(); i++)
-	{
-		if (typeid(*(temp[i])) == typeid(Teacher))
-		{
-			Teacher tmp = *dynamic_cast<Teacher*>(temp[i]);
-			for (int i = 0; i < tmp.getSkills().size(); i++)
-			{
-				cout << tmp.getSkills()[i] << endl;
-			}
-
-		}
-	
-	}
-	system("pause");
-
-	Menu m;
-	vector<string> s;
-
-
-	{
-		printf("%-20s%s\n", "Academy name:", a.getName().c_str());
-		printf("%-20s%s\n", "City:", a.getCity().c_str());
-		printf("%-20s%s\n", "Adress:", a.getAdress().c_str());
-		printf("%-20s%d Azn\n", "Monthly Fee:", a.getFee());
-		printf("%-20s%d Azn\n", "Money:", a.getMoney());
-		printf("%-20s%d \n", "Groups:", a.getGroupCount());
-		printf("%-20s%d \n", "Students:", a.getStudCount());
-		printf("%-20s%d \n", "Employee:", a.getEmployeeCount());
-	}
-	system("pause");
-
-
-
-	s.push_back("Academy Info");
-	s.push_back("Show Groups");
-	s.push_back("Show Employees");
-	s.push_back("Exit");
 	hideCursor(true);
-	int index;
+	int index = -1;
 	while (true)
 	{
-		m.printMenu(0, 0, s);
-		index = m.handling();
-		if (index != -1)
+		if (index == -1) index = m.Scrolling(MenuLines.main_menu);
+		if (index == 0)
 		{
+			bringinfo.showAcadInfo(a);
+			index = -1;
+		}
+		else if (index == 1)
+		{
+			index = m.Scrolling(MenuLines.group_management);
+			index = -1;
+		}
+		else if (index == 4)
+		{
+			index = m.Scrolling(MenuLines.edit_acad);
 			if (index == 0)
 			{
-				index = -1;
-				system("cls");
-				while (index == -1)
-				{
-					COORDS(0, 0);
-					vector<string> u;
-					u.push_back("back");
-					m.printMenu(8, 0, u);
-					index = m.handling();
-				}
-				system("cls");
+				bringinfo.editAcadName(a);
+				index = 4;
 			}
-			else if (index == 3)
-				exit(0);
+			else
+				index = -1;
 		}
-		
+		else if (index == 8)
+		{
+			bringinfo.raiseSalary(a);
+			index = -1;
+		}
+		else if (index == 9)
+		{
+			bringinfo.lowerSalary(a);
+			index = -1;
+		}
+		else if (index == 10 || index == -2)
+			exit(0);
 	}
 }
 
