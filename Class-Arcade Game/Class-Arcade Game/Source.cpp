@@ -58,7 +58,7 @@ void main()
 	new_sprite.setPosition(20, 20);
 
 
-	RenderWindow window(VideoMode(800, 620), "SFML works!");
+	RenderWindow window(VideoMode(1600, 900), "SFML works!");
 
 	float x = 0, y = 0;
 	double CurrentFrame = 0;
@@ -77,19 +77,19 @@ void main()
 
 		if (sf::Keyboard::isKeyPressed(Keyboard::W))
 		{
-			new_sprite.move(0, -time/6);
-			if (sf::Keyboard::isKeyPressed(Keyboard::W)) CurrentFrame += 0.003*time;
-			if (CurrentFrame > 5) CurrentFrame = 1; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-			new_sprite.setTextureRect(IntRect(0, int(CurrentFrame) * 57, 74, 57));
+			new_sprite.move(0, -time / 12);
+			CurrentFrame += 0.002*time;
+			if (CurrentFrame > 5) CurrentFrame -=5; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
+			new_sprite.setTextureRect(IntRect(0, 6 + int(CurrentFrame) * 55, 74, 55));
 
 		}
 
 		else if (sf::Keyboard::isKeyPressed(Keyboard::S))
 		{
-			new_sprite.move(0, time/ 6);
-			CurrentFrame += 0.005*time;
-			if (CurrentFrame > 5) CurrentFrame = 0; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-			new_sprite.setTextureRect(IntRect(0, int(CurrentFrame) * 57, 74, 57));
+			new_sprite.move(0, time/12);
+			CurrentFrame += 0.002*time;
+			if (CurrentFrame > 5) CurrentFrame -= 5; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
+			new_sprite.setTextureRect(IntRect(296, 6 + int(CurrentFrame) * 55, 74, 55));
 
 		}
 
@@ -111,6 +111,10 @@ void main()
 			if (CurrentFrame > 3)  CurrentFrame -= 3; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
 			new_sprite.setTextureRect(IntRect(0, 0, 74, 57));
 			
+		}
+		else
+		{
+			new_sprite.setTextureRect(IntRect(0, 0, 74, 57));
 		}
 
 
