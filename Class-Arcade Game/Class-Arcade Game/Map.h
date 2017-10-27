@@ -3,8 +3,9 @@
 
 class Map
 {
+	
 	vector<vector<MapCell>> field;
-	Map(int width = 40, int height = 40)
+	Map()
 	{
 		field.resize(height);
 		for (int i = 0; i < height; i++)
@@ -12,21 +13,23 @@ class Map
 			field[i].resize(width);
 		}
 
-		for (int i = 0; i < 40; i++)
+		for (int i = 0; i < height; i++)
 		{
-			for (int j = 0; j < 40; j++)
+			for (int j = 0; j < width; j++)
 			{
-				int code = rand() % 10;
-				if (code < 8)
-					field[i][j] = MapCell::Empty;
-				else if (code < 10)
+				int code = rand() % 55;
+				if (i == 0 || i == height - 1)
 					field[i][j] = MapCell::Wall;
+				else if (j == 0 || j == width - 1 || code < 2)
+					field[i][j] = MapCell::Wall;
+				else 
+					field[i][j] = MapCell::Empty;
 			}
 		}
 	}
 public:
 	static const int width;
-	static int const height;
+	static const int height;
 
 	static Map& get()
 	{
@@ -43,5 +46,5 @@ public:
 	}
 };
 
-const int Map::width = 20;
+const int Map::width = 40;
 const int Map::height = 20;

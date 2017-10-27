@@ -2,9 +2,12 @@
 #include "IMovable.h"
 class IAttacking
 {
+protected:
 	Damage damage;
-	int cooldown;
+	float cooldown;
 public:
-	virtual void attack(Character &target) = 0;
-	virtual void shoot(Character &target) = 0;
+	virtual ~IAttacking() = 0 {}
+	virtual void attack(Character &target) {};
+	virtual void shoot(Character &target) {};
+	virtual void setCooldown(int time) { this->cooldown = time; }
 };
