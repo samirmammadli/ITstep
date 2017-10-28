@@ -1,4 +1,4 @@
-#pragma once
+
 #include "Coin.h"
 
 class Trap : public GameObject, public IInteractive

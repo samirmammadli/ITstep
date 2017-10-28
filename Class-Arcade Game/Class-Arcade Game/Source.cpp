@@ -11,10 +11,24 @@ smart pointers
 
 void main()
 {
+	hideCursor(true);
 	srand(time(0));
-	Player pet("Samir", 200, 5);
-	Game game(pet);
+	Player pet("Samir", 200, 5, 10, 10);
+	Game game(pet, 15, 5);
 	game.DrawMap();
+	while (true)
+	{
+		int key = _getch();
+		if (key == 'w')
+			pet.move(Direction::Up);
+		else if (key == 's')
+			pet.move(Direction::Down);
+		else if (key == 'a')
+			pet.move(Direction::Left);
+		else if (key == 'd')
+			pet.move(Direction::Right);
+		game.DrawMap();
+	}
 	
 }
 

@@ -1,4 +1,4 @@
-#pragma once
+
 #include "Character.h"
 
 class Player : public Character
@@ -23,7 +23,7 @@ class Player : public Character
 		exp = 0;
 	}
 public:
-	Player(string name, int hp, float cooldown = 5, int min = 0, int max = 0, int x = 0, int y = 0) : exp(0), level(0), strength(0), stamina(0), agility(0), exp_to_level(500)
+	Player(string name, int hp, float cooldown = 5, int x = 0, int y = 0, int min = 0, int max = 0) : exp(0), level(0), strength(0), stamina(0), agility(0), exp_to_level(500)
 	{
 		this->name = name;
 		this->state = State::Idle;

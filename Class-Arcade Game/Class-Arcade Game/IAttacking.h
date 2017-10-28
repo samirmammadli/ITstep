@@ -1,4 +1,4 @@
-#pragma once
+
 #include "IMovable.h"
 class IAttacking
 {

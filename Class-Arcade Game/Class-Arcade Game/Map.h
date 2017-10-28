@@ -1,9 +1,7 @@
-#pragma once
 #include "Zombie.h"
 
-class Map
+class Map 
 {
-	
 	vector<vector<MapCell>> field;
 	Map()
 	{
@@ -12,7 +10,6 @@ class Map
 		{
 			field[i].resize(width);
 		}
-
 		for (int i = 0; i < height; i++)
 		{
 			for (int j = 0; j < width; j++)
@@ -46,5 +43,6 @@ public:
 	}
 };
 
-const int Map::width = 40;
-const int Map::height = 20;
+
+const int Map::width = field_width;
+const int Map::height = field_height;
