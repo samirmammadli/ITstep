@@ -1,4 +1,4 @@
-﻿#include "Game.h"
+﻿#include "Classes.h"
 //#include <SFML/Graphics.hpp>
 
 
@@ -11,6 +11,9 @@ smart pointers
 
 void main()
 {
+	double start_time = 0;
+	double timer;
+
 	hideCursor(true);
 	srand(time(0));
 	Player pet("Samir", 200, 5, 10, 10);
@@ -18,16 +21,28 @@ void main()
 	game.DrawMap();
 	while (true)
 	{
-		int key = _getch();
-		if (key == 'w')
-			pet.move(Direction::Up);
-		else if (key == 's')
-			pet.move(Direction::Down);
-		else if (key == 'a')
-			pet.move(Direction::Left);
-		else if (key == 'd')
-			pet.move(Direction::Right);
+
+		COORDS(0, 0);
+		timer = (clock() / 100 - start_time) / 10;
+		cout << timer << "   " << endl;
+		
+		
+		if (timer > 0.5) { start_time = clock() / 100; /*Direction temp = Direction(rand() % 4)*/pet.move(Down); }
+		if (_kbhit())
+		{
+			int key = _getch();
+			if (key == 'w')
+				pet.move(Direction::Up);
+			else if (key == 's')
+				pet.move(Direction::Down);
+			else if (key == 'a')
+				pet.move(Direction::Left);
+			else if (key == 'd')
+				pet.move(Direction::Right);
+			
+		}
 		game.DrawMap();
+		
 	}
 	
 }

@@ -20,49 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Enums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Structures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IMovable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IAttacking.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IInteractive.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Coin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Trap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Zombie.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Skeleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
+    <ClInclude Include="Classes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

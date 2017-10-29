@@ -1,0 +1,252 @@
+#pragma once
+#include <iostream>
+#include <string>
+#include <vector>
+#include <time.h>
+#include <Windows.h>
+#include <conio.h>
+#define COORDS(x, y) 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { short(x), short(y) });
+using namespace std;
+
+enum Direction { Up, Down, Left, Right };
+enum State { Idle, Attack, Defend, Shoot, Dead };
+enum MapCell { Empty, Wall, Hole };
+const int field_width = 40;
+const int field_height = 20;
+class Character;
+class Map;
+
+
+void hideCursor(bool switch_cursor)
+{
+	CONSOLE_CURSOR_INFO info;
+	info.bVisible = !switch_cursor;
+	info.dwSize = 1;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}
+
+
+struct Position { int x, y; };
+struct Damage { int min, max; };
+struct CursorStart { int x, y; };
+
+class IMovable
+{
+protected:
+	Direction direction;
+public:
+	virtual void move(Direction dir) = 0 {};
+};
+
+class IAttacking
+{
+protected:
+	Damage damage;
+	float cooldown;
+public:
+	virtual ~IAttacking() = 0 {}
+	virtual void attack(Character &target) {};
+	virtual void shoot(Character &target) {};
+	virtual void setCooldown(int time) { this->cooldown = time; }
+};
+
+class IInteractive
+{
+public:
+	virtual void interaction(Character &target) = 0; //typeid Player
+};
+
+class GameObject
+{
+protected:
+	Position position;
+public:
+	virtual ~GameObject() = 0 {}
+	virtual void setPosition(int x, int y) { this->position.x = x; this->position.y = y; }
+	virtual Position getPosition() { return this->position; }
+};
+
+class Coin : public GameObject, public IInteractive
+{
+	virtual void interaction(Character & target) override;
+};
+
+class Trap : public GameObject, public IInteractive
+{
+	virtual void interaction(Character & target) override;
+};
+
+
+
+class Map 
+{
+	vector<vector<MapCell>> field;
+	Map()
+	{
+		field.resize(height);
+		for (int i = 0; i < height; i++)
+		{
+			field[i].resize(width);
+		}
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+			{
+				int code = rand() % 55;
+				if (i == 0 || i == height - 1)
+					field[i][j] = MapCell::Wall;
+				else if (j == 0 || j == width - 1 || code < 2)
+					field[i][j] = MapCell::Wall;
+				else 
+					field[i][j] = MapCell::Empty;
+			}
+		}
+	}
+public:
+	static const int width;
+	static const int height;
+
+	static Map& get()
+	{
+		static Map INSTANCE;
+		return INSTANCE;
+	}
+
+	MapCell getCell(int x, int y)
+	{
+		if (x >= 0 && x < width && y >= 0 && y < height)
+			return field[y][x];
+		else
+			return MapCell::Wall;
+	}
+};
+
+
+const int Map::width = field_width;
+const int Map::height = field_height;
+
+
+class Character : public GameObject, public IAttacking, public IMovable
+{
+protected:
+	int hp;
+	State state;
+public:
+	virtual ~Character() = 0 {}
+	virtual void attack(Character &target) override {};
+	virtual void shoot(Character &target) override {};
+	virtual void setHp(int hp) { this->hp = hp; }
+	virtual void setState(State state) { this->state = state; }
+	virtual void move(Direction dir)
+	{
+		Position temp = position;
+		if (dir == Direction::Up)  position.y--;
+		else if (dir == Direction::Down) position.y++;
+		else if (dir == Direction::Left) position.x--;
+		else if (dir == Direction::Right) position.x++;
+
+		if (Map::get().getCell(position.x, position.y) == MapCell::Wall)
+			position = temp;
+	}
+};
+
+class Enemy : public Character
+{
+	static int count;
+public:
+	virtual void scanMap() = 0;
+};
+
+class Zombie : public Enemy
+{
+
+};
+
+class Skeleton : public Enemy
+{
+
+};
+
+class Player : public Character
+{
+	string name;
+	Damage base_dmg;
+	int base_hp;
+	float base_cooldown;
+	int exp;
+	int exp_to_level;
+	int level;
+	int strength;
+	int stamina;
+	int agility;
+	void StatsByLevelUp()
+	{
+		strength += 2 + level / 10 * 2;
+		stamina += 2 + level / 10 * 2;
+		agility += 2 + level / 10 * 2;
+		base_hp += level * 10;
+		exp_to_level *= level;
+		exp = 0;
+	}
+public:
+	Player(string name, int hp, float cooldown = 5, int x = 0, int y = 0, int min = 0, int max = 0) : exp(0), level(0), strength(0), stamina(0), agility(0), exp_to_level(500)
+	{
+		this->name = name;
+		this->state = State::Idle;
+		this->base_hp = hp;
+		this->direction = Direction::Right;
+		this->position.x = x;
+		this->position.y = y;
+		this->base_dmg.min = min;
+		this->base_dmg.max = max;
+		this->base_cooldown = cooldown;
+		AbilitiesAutoChange();
+	}
+	void setParams(int strenght, int endurance, int dexterity)
+	{
+		this->strength = strenght;
+		this->stamina = endurance;
+		this->agility = dexterity;
+	}
+	void AbilitiesAutoChange()
+	{
+		hp = base_hp + stamina * 2;
+		damage.min = base_dmg.min + strength / 2;
+		damage.max = base_dmg.max + strength;
+		cooldown = base_cooldown - agility / 100;
+		if (cooldown < 0) cooldown = 0.05;
+	}
+};
+
+class Game
+{
+	Map& map;
+	Player& player;
+	CursorStart start;
+	vector<GameObject> staticObjects;
+	vector<Enemy> enemies;
+public:
+	Game(Player &p, int x, int y) : map(Map::get()), player(p) { start.x = x; start.y = y; }
+	void  DrawMap()
+	{
+		for (int i = 0; i < map.height; i++)
+		{
+			for (int j = 0; j < map.width; j++)
+			{
+				COORDS(start.x + j, start.y + i);
+				if (map.getCell(j, i) == Wall)
+					cout << '#';
+				else
+					cout << ' ';
+			}
+		}
+		COORDS(start.x + player.getPosition().x, start.y + player.getPosition().y);
+		cout << 'X';
+		for (int i = 0; i < enemies.size(); i++)
+		{
+			COORDS(start.x + enemies[i].getPosition().x, start.y + enemies[i].getPosition().y);
+			cout << 'W';
+		}
+		COORDS(0, start.y + map.height);
+	}
+};

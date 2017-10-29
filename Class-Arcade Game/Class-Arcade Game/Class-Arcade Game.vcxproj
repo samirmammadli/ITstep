@@ -138,21 +138,7 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Character.h" />
-    <ClInclude Include="Coin.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="Enums.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="IAttacking.h" />
-    <ClInclude Include="IInteractive.h" />
-    <ClInclude Include="IMovable.h" />
-    <ClInclude Include="Map.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Skeleton.h" />
-    <ClInclude Include="Structures.h" />
-    <ClInclude Include="Trap.h" />
-    <ClInclude Include="Zombie.h" />
+    <ClInclude Include="Classes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
