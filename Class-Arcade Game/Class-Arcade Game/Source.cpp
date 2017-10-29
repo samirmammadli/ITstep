@@ -17,17 +17,28 @@ void main()
 	hideCursor(true);
 	srand(time(0));
 	Player pet("Samir", 200, 5, 10, 10);
+	Zombie zombak(10, 10);
 	Game game(pet, 15, 5);
+	game.addEnemy(&zombak);
 	game.DrawMap();
+	Direction temp = Direction(rand() % 4);
+	zombak.move(Up);
+	bool MoveTime = false;
 	while (true)
 	{
-
+		timer = clock() / 100 - start_time;
 		COORDS(0, 0);
-		timer = (clock() / 100 - start_time) / 10;
-		cout << timer << "   " << endl;
+		if (timer > 0.8) { start_time = clock() / 100; MoveTime = true; }
+
+		for (int i = 0; i < game.getEnemyCount(); i++)
+		{
+			bool check = true;
+			if (MoveTime) check = game.getEnemy()[i]->move(temp); 
+			if (check == false)
+				temp = Direction(rand() % 4);
+		}
+		MoveTime = false;
 		
-		
-		if (timer > 0.5) { start_time = clock() / 100; /*Direction temp = Direction(rand() % 4)*/pet.move(Down); }
 		if (_kbhit())
 		{
 			int key = _getch();

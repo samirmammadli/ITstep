@@ -14,7 +14,7 @@ enum MapCell { Empty, Wall, Hole };
 const int field_width = 40;
 const int field_height = 20;
 class Character;
-class Map;
+class Player;
 
 
 void hideCursor(bool switch_cursor)
@@ -35,7 +35,7 @@ class IMovable
 protected:
 	Direction direction;
 public:
-	virtual void move(Direction dir) = 0 {};
+	virtual bool move(Direction dir) = 0 {};
 };
 
 class IAttacking
@@ -137,7 +137,7 @@ public:
 	virtual void shoot(Character &target) override {};
 	virtual void setHp(int hp) { this->hp = hp; }
 	virtual void setState(State state) { this->state = state; }
-	virtual void move(Direction dir)
+	virtual bool move(Direction dir)
 	{
 		Position temp = position;
 		if (dir == Direction::Up)  position.y--;
@@ -146,26 +146,13 @@ public:
 		else if (dir == Direction::Right) position.x++;
 
 		if (Map::get().getCell(position.x, position.y) == MapCell::Wall)
-			position = temp;
+		{position = temp; return false;}
+		else
+			return true;
 	}
 };
 
-class Enemy : public Character
-{
-	static int count;
-public:
-	virtual void scanMap() = 0;
-};
 
-class Zombie : public Enemy
-{
-
-};
-
-class Skeleton : public Enemy
-{
-
-};
 
 class Player : public Character
 {
@@ -217,6 +204,42 @@ public:
 		if (cooldown < 0) cooldown = 0.05;
 	}
 };
+class Enemy : public Character
+{
+	int count;
+public:
+	Enemy(int x, int y) { position.x = x; position.y = y; }
+	virtual void scanMap(Player &plr)
+	{
+		int Px = plr.getPosition().x;
+		int Py = plr.getPosition().y;
+		for (int i = 0; i < 5; i++)
+		{
+			for (int j = 0; j < i; j++)
+			{
+				if (position.x - j == Px && position.y - i == Py || position.x + j == Px && position.y - i == Py)
+					count++;
+			}
+		}
+	}
+};
+
+class Zombie : public Enemy
+{
+	static Damage damage;
+	static int cooldown;
+public:
+	Zombie(int x, int y) : Enemy(x, y) {}
+	
+};
+
+class Skeleton : public Enemy
+{
+	static Damage damage;
+	static int cooldown;
+public:
+	Skeleton(int x, int y) : Enemy(x, y) {}
+};
 
 class Game
 {
@@ -224,7 +247,7 @@ class Game
 	Player& player;
 	CursorStart start;
 	vector<GameObject> staticObjects;
-	vector<Enemy> enemies;
+	vector<Enemy*> enemies;
 public:
 	Game(Player &p, int x, int y) : map(Map::get()), player(p) { start.x = x; start.y = y; }
 	void  DrawMap()
@@ -234,19 +257,33 @@ public:
 			for (int j = 0; j < map.width; j++)
 			{
 				COORDS(start.x + j, start.y + i);
-				if (map.getCell(j, i) == Wall)
+				if (i == player.getPosition().y && j == player.getPosition().x)
+				{
+					COORDS(start.x + player.getPosition().x, start.y + player.getPosition().y);
+					cout << 'X';
+				}
+				else if (map.getCell(j, i) == Wall)
 					cout << '#';
 				else
 					cout << ' ';
 			}
 		}
-		COORDS(start.x + player.getPosition().x, start.y + player.getPosition().y);
-		cout << 'X';
+		/*COORDS(start.x + player.getPosition().x, start.y + player.getPosition().y);
+		cout << 'X';*/
 		for (int i = 0; i < enemies.size(); i++)
 		{
-			COORDS(start.x + enemies[i].getPosition().x, start.y + enemies[i].getPosition().y);
+			COORDS(start.x + enemies[i]->getPosition().x, start.y + enemies[i]->getPosition().y);
 			cout << 'W';
 		}
-		COORDS(0, start.y + map.height);
+	    COORDS(0, start.y + map.height);
 	}
+	void addEnemy(Enemy *en)
+	{
+		if (typeid(*en) == typeid(Zombie))
+		enemies.push_back(new Zombie{*(dynamic_cast<Zombie*>(en))});
+		else if (typeid(*en) == typeid(Skeleton))
+			enemies.push_back(new Skeleton{ *(dynamic_cast<Skeleton*>(en)) });
+	}
+	int getEnemyCount() { return enemies.size(); }
+	vector<Enemy*> &getEnemy() { return enemies; }
 };
