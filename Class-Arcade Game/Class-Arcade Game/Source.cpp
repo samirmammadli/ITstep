@@ -18,22 +18,36 @@ void main()
 	srand(time(0));
 	Player pet("Samir", 200, 5, 10, 10);
 	Zombie zombak(10, 10);
+	Zombie zombak1(15, 10);
+	Zombie zombak2(11, 10);
+	Zombie zombak3(11, 10);
 	Game game(pet, 15, 5);
-	game.addEnemy(&zombak);
+	game.addEnemy(zombak);
+	zombak.setPosition(11, 8);
+	game.addEnemy(zombak);
+	zombak.setPosition(22, 9);
+	game.addEnemy(zombak);
+	zombak.setPosition(0, 8);
+	game.addEnemy(zombak);
+	zombak.setPosition(18, 4);
+	game.addEnemy(zombak);
+	zombak.setPosition(10, 10);
 	game.DrawMap();
 	Direction temp = Direction(rand() % 4);
 	zombak.move(Up);
 	bool MoveTime = false;
+
+	cout << zombak.getCount() << endl;
 	while (true)
 	{
 		timer = clock() / 100 - start_time;
 		COORDS(0, 0);
-		if (timer > 0.8) { start_time = clock() / 100; MoveTime = true; }
+		if (timer > 1) { start_time = clock() / 100; MoveTime = true; }
 
 		for (int i = 0; i < game.getEnemyCount(); i++)
 		{
 			bool check = true;
-			if (MoveTime) check = game.getEnemy()[i]->move(temp); 
+			if (MoveTime) check = game.getEnemy()[i].move(temp); 
 			if (check == false)
 				temp = Direction(rand() % 4);
 		}

@@ -206,9 +206,9 @@ public:
 };
 class Enemy : public Character
 {
-	int count;
+	static int count;
 public:
-	Enemy(int x, int y) { position.x = x; position.y = y; }
+	Enemy(int x, int y) { position.x = x; position.y = y; count++; }
 	virtual void scanMap(Player &plr)
 	{
 		int Px = plr.getPosition().x;
@@ -222,7 +222,10 @@ public:
 			}
 		}
 	}
+	int getCount() { return count; }
 };
+
+int Enemy::count = 0;
 
 class Zombie : public Enemy
 {
@@ -244,10 +247,23 @@ public:
 class Game
 {
 	Map& map;
+	char ScreenBuffer[Map::height][Map::width];
 	Player& player;
 	CursorStart start;
 	vector<GameObject> staticObjects;
-	vector<Enemy*> enemies;
+	vector<Enemy> enemies;
+	void Draw()
+	{
+		for (int i = 0; i < map.height; i++)
+		{
+			for (int j = 0; j < map.width; j++)
+			{
+				COORDS(start.x + j, start.y + i);
+				cout << ScreenBuffer[i][j];
+			}
+		}
+		COORDS(0, start.y + map.height);
+	}
 public:
 	Game(Player &p, int x, int y) : map(Map::get()), player(p) { start.x = x; start.y = y; }
 	void  DrawMap()
@@ -256,34 +272,23 @@ public:
 		{
 			for (int j = 0; j < map.width; j++)
 			{
-				COORDS(start.x + j, start.y + i);
-				if (i == player.getPosition().y && j == player.getPosition().x)
-				{
-					COORDS(start.x + player.getPosition().x, start.y + player.getPosition().y);
-					cout << 'X';
-				}
-				else if (map.getCell(j, i) == Wall)
-					cout << '#';
+				if (map.getCell(j, i) == Wall)
+					ScreenBuffer[i][j] = '#';
 				else
-					cout << ' ';
+					ScreenBuffer[i][j] = ' ';
 			}
 		}
-		/*COORDS(start.x + player.getPosition().x, start.y + player.getPosition().y);
-		cout << 'X';*/
+		ScreenBuffer[player.getPosition().y][player.getPosition().x] = 'X';
 		for (int i = 0; i < enemies.size(); i++)
 		{
-			COORDS(start.x + enemies[i]->getPosition().x, start.y + enemies[i]->getPosition().y);
-			cout << 'W';
+			ScreenBuffer[enemies[i].getPosition().y][enemies[i].getPosition().x] = 'W';
 		}
-	    COORDS(0, start.y + map.height);
+		Draw();
 	}
-	void addEnemy(Enemy *en)
+	void addEnemy(Enemy &en)
 	{
-		if (typeid(*en) == typeid(Zombie))
-		enemies.push_back(new Zombie{*(dynamic_cast<Zombie*>(en))});
-		else if (typeid(*en) == typeid(Skeleton))
-			enemies.push_back(new Skeleton{ *(dynamic_cast<Skeleton*>(en)) });
+		enemies.push_back(en);
 	}
 	int getEnemyCount() { return enemies.size(); }
-	vector<Enemy*> &getEnemy() { return enemies; }
+	vector<Enemy> &getEnemy() { return enemies; }
 };
