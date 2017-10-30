@@ -218,9 +218,16 @@ public:
 			for (int j = 0; j < i; j++)
 			{
 				if (position.x - j == Px && position.y - i == Py || position.x + j == Px && position.y - i == Py)
-					count++;
+					0;
 			}
 		}
+	}
+	void ChangePos()
+	{
+		int timer = rand() % 7;
+		if (timer == 1)
+			direction = Direction(rand() % 4);
+		move(direction);
 	}
 	int getCount() { return count; }
 };

@@ -42,17 +42,15 @@ void main()
 	{
 		timer = clock() / 100 - start_time;
 		COORDS(0, 0);
-		if (timer > 1) { start_time = clock() / 100; MoveTime = true; }
+		if (timer > 0.5) { start_time = clock() / 100; MoveTime = true; }
 
 		for (int i = 0; i < game.getEnemyCount(); i++)
 		{
-			bool check = true;
-			if (MoveTime) check = game.getEnemy()[i].move(temp); 
-			if (check == false)
-				temp = Direction(rand() % 4);
+			
+			if (MoveTime) game.getEnemy()[i].ChangePos();
+			
 		}
 		MoveTime = false;
-		
 		if (_kbhit())
 		{
 			int key = _getch();
