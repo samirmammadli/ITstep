@@ -74,25 +74,25 @@ smart pointers
 
 bool checkPosition(string *map, int x, int y)
 {
-	cout << x / 32 << "    " << y /64 << endl;
+	cout << x / 32 << "    " << y / 64 << endl;
 	int x1 = x + 32;
 	int y1 = y + 64;
 	x1 /= 32;
 	y1 /= 32;
 	x /= 32;
 	y /= 32;
-	
+
 	/*if (x < 0 || x >= 25 || y < 0 || y >= 20)
 		return true;*/
-	if (map[y-1][x-1] == '0')
+	if (map[y - 1][x - 1] == '0')
 		return true;
-	if (map[y-1][x1-1] == '0')
+	if (map[y - 1][x1 - 1] == '0')
 		return true;
-	if (map[y1-1][x-1] == '0')
+	if (map[y1 - 1][x - 1] == '0')
 		return true;
-	if (map[y1-1][x1-1] == '0')
+	if (map[y1 - 1][x1 - 1] == '0')
 		return true;
-	
+
 	return false;
 }
 
@@ -100,7 +100,7 @@ void main()
 {
 	double speed = 0;
 	string map[20] = {
-		"000000000000000000000000"
+		"000000000000000000000000",
 		"0                      0",
 		"0                      0",
 		"0                      0",
@@ -127,6 +127,9 @@ void main()
 	int check_y;
 	Clock clock;
 	Texture texture;
+	RectangleShape rect;
+	rect.setFillColor(Color::Green);
+	rect.setSize(Vector2f(24 * 32, 20 * 32));
 	//Texture floor_t;
 	Image image;
 	Image image2;
@@ -134,7 +137,7 @@ void main()
 	Brick.loadFromFile("images\\map.png");
 	Sprite brick;
 	brick.setTexture(Brick);
-	brick.setTextureRect(IntRect(528, 0, 32,32));
+	brick.setTextureRect(IntRect(528, 0, 32, 32));
 	//528
 	image2.loadFromFile("images\\hero_attack.png");
 	//Image floor;
@@ -192,84 +195,53 @@ void main()
 			if (sf::Keyboard::isKeyPressed(Keyboard::W))
 			{
 				new_sprite.move(0, -time / 12);
-				if (!checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
-				{
-					CurrentFrame += 0.003*time;
-					if (CurrentFrame > 6) CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-					new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 64, 32, 64));
-				}
-				else
-					new_sprite.setPosition(check_x, check_y);
-				
+				CurrentFrame += 0.003*time;
+				if (CurrentFrame > 6) CurrentFrame -= 4;
+				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 64, 32, 64));
 			}
-
 			else if (sf::Keyboard::isKeyPressed(Keyboard::S))
 			{
 				new_sprite.move(0, time / 12);
-				if (!checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
-				{
-					CurrentFrame += 0.003*time;
-					if (CurrentFrame > 6) CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-					new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 0, 32, 64));
-				}
-				else
-					new_sprite.setPosition(check_x, check_y);
-
+				CurrentFrame += 0.003*time;
+				if (CurrentFrame > 6) CurrentFrame -= 4;
+				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 0, 32, 64));
 			}
 
 			else if (sf::Keyboard::isKeyPressed(Keyboard::A))
 			{
 				new_sprite.move(-time / 12, 0);
-				
-
-
-				if (!checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
-				{
-					CurrentFrame += 0.003*time;
-					if (CurrentFrame > 6)  CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-
-					new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 128, 32, 64));
-				}
-				else
-					new_sprite.setPosition(check_x, check_y);
-
+				CurrentFrame += 0.003*time;
+				if (CurrentFrame > 6)  CurrentFrame -= 4;
+				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 128, 32, 64));
 			}
-
 			else if (sf::Keyboard::isKeyPressed(Keyboard::D))
 			{
-
 				new_sprite.move(time / 12, 0);
-				
-
-
-				if (!checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
-				{
-					CurrentFrame += 0.003*time;
-					if (CurrentFrame > 6)  CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-					new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 192, 32, 64));
-				}
-				else
-					new_sprite.setPosition(check_x, check_y);
-
-
+				CurrentFrame += 0.003*time;
+				if (CurrentFrame > 6)  CurrentFrame -= 4;
+				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 192, 32, 64));
 				double x = new_sprite.getPosition().x;
 				cout << x / 74 << endl;
-
 			}
-			
 			else
 			{
 				CurrentFrame = 1;
 				new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
 			}
 
-		
+			if (new_sprite.getPosition().x != check_x || new_sprite.getPosition().y != check_y)
+			{
+				if (checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
+					new_sprite.setPosition(check_x, check_y);
+			}
+
 		}
 
 
 
 
 		window.clear();
+		window.draw(rect);
 
 		for (int i = 0; i < 20; i++)
 		{
@@ -280,6 +252,7 @@ void main()
 				window.draw(brick);
 			}
 		}
+
 		window.draw(new_sprite);
 		window.display();
 	}
