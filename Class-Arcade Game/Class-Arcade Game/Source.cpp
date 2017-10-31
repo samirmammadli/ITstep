@@ -71,15 +71,36 @@ smart pointers
 //	
 //}
 
+
+bool checkPosition(string *map, int x, int y)
+{
+	cout << x / 32 << "    " << y /64 << endl;
+	int x1 = x + 32;
+	int y1 = y + 64;
+	x1 /= 32;
+	y1 /= 32;
+	x /= 32;
+	y /= 32;
+	
+	/*if (x < 0 || x >= 25 || y < 0 || y >= 20)
+		return true;*/
+	if (map[y-1][x-1] == '0')
+		return true;
+	if (map[y-1][x1-1] == '0')
+		return true;
+	if (map[y1-1][x-1] == '0')
+		return true;
+	if (map[y1-1][x1-1] == '0')
+		return true;
+	
+	return false;
+}
+
 void main()
 {
-	
+	double speed = 0;
 	string map[20] = {
-		"000000000000000000000000",
-		"000000000000000000000000",
-		"000000000000000000000000",
-		"000000000000000000000000",
-		"000000000000000000000000",
+		"000000000000000000000000"
 		"0                      0",
 		"0                      0",
 		"0                      0",
@@ -92,16 +113,29 @@ void main()
 		"0                      0",
 		"0                      0",
 		"0                      0",
+		"0                      0",
+		"0                      0",
+		"0                      0",
+		"000  0000 000          0",
 		"0                      0",
 		"0                      0",
 		"000000000000000000000000"
 	};
 
+
+	int check_x;
+	int check_y;
 	Clock clock;
 	Texture texture;
 	//Texture floor_t;
 	Image image;
 	Image image2;
+	Texture Brick;
+	Brick.loadFromFile("images\\map.png");
+	Sprite brick;
+	brick.setTexture(Brick);
+	brick.setTextureRect(IntRect(528, 0, 32,32));
+	//528
 	image2.loadFromFile("images\\hero_attack.png");
 	//Image floor;
 	//floor.loadFromFile("images\\5.png");
@@ -116,7 +150,7 @@ void main()
 	//floor_s.setPosition(0, 0);
 	new_sprite.setTexture(texture);
 	new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
-	new_sprite.setPosition(50, 50);
+	new_sprite.setPosition(150, 150);
 	new_sprite.setOrigin(28, 28);
 	bool action = false;
 
@@ -135,16 +169,20 @@ void main()
 		{
 			if (event.type == Event::Closed)
 				window.close();
+			else if (event.type = Event::KeyPressed)
+			{
+				if (event.key.code == sf::Keyboard::P)
+					speed += 0.001;
+
+			}
 		}
-
-
-
-
+		check_x = new_sprite.getPosition().x;
+		check_y = new_sprite.getPosition().y;
 		if (sf::Keyboard::isKeyPressed(Keyboard::Space) || action)
 		{
 			action = true;
 			texture.loadFromImage(image2);
-			CurrentFrame += 0.004*time;
+			CurrentFrame += (0.003 + speed)*time;
 			if (CurrentFrame > 5) { action = false; texture.loadFromImage(image); }// åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
 			new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 64, 0, 64, 64));
 		}
@@ -154,27 +192,46 @@ void main()
 			if (sf::Keyboard::isKeyPressed(Keyboard::W))
 			{
 				new_sprite.move(0, -time / 12);
-				CurrentFrame += 0.003*time;
-				if (CurrentFrame > 6) CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 64, 32, 64));
+				if (!checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
+				{
+					CurrentFrame += 0.003*time;
+					if (CurrentFrame > 6) CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
+					new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 64, 32, 64));
+				}
+				else
+					new_sprite.setPosition(check_x, check_y);
+				
 			}
 
 			else if (sf::Keyboard::isKeyPressed(Keyboard::S))
 			{
 				new_sprite.move(0, time / 12);
-				CurrentFrame += 0.003*time;
-				if (CurrentFrame > 6) CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 0, 32, 64));
+				if (!checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
+				{
+					CurrentFrame += 0.003*time;
+					if (CurrentFrame > 6) CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
+					new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 0, 32, 64));
+				}
+				else
+					new_sprite.setPosition(check_x, check_y);
 
 			}
 
 			else if (sf::Keyboard::isKeyPressed(Keyboard::A))
 			{
 				new_sprite.move(-time / 12, 0);
-				CurrentFrame += 0.003*time;
-				if (CurrentFrame > 6)  CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
+				
 
-				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 128, 32, 64));
+
+				if (!checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
+				{
+					CurrentFrame += 0.003*time;
+					if (CurrentFrame > 6)  CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
+
+					new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 128, 32, 64));
+				}
+				else
+					new_sprite.setPosition(check_x, check_y);
 
 			}
 
@@ -182,19 +239,31 @@ void main()
 			{
 
 				new_sprite.move(time / 12, 0);
-				CurrentFrame += 0.003*time;
-				if (CurrentFrame > 6)  CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 192, 32, 64));
+				
+
+
+				if (!checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
+				{
+					CurrentFrame += 0.003*time;
+					if (CurrentFrame > 6)  CurrentFrame -= 4; // åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
+					new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 192, 32, 64));
+				}
+				else
+					new_sprite.setPosition(check_x, check_y);
+
+
 				double x = new_sprite.getPosition().x;
 				cout << x / 74 << endl;
 
 			}
+			
 			else
 			{
 				CurrentFrame = 1;
 				new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
 			}
 
+		
 		}
 
 
@@ -202,15 +271,15 @@ void main()
 
 		window.clear();
 
-	/*	for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 20; i++)
 		{
 			for (int j = 0; j < 25; j++)
 			{
 				if (map[i][j] == '0')
-					floor_s.setPosition(j * 31, i * 31);
-				window.draw(floor_s);
+					brick.setPosition(j * 32, i * 32);
+				window.draw(brick);
 			}
-		}*/
+		}
 		window.draw(new_sprite);
 		window.display();
 	}

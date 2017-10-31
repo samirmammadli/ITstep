@@ -145,7 +145,9 @@ public:
 		else if (dir == Direction::Left) position.x--;
 		else if (dir == Direction::Right) position.x++;
 
-		if (Map::get().getCell(position.x, position.y) == MapCell::Wall)
+		MapCell cell = Map::get().getCell(position.x, position.y);
+
+		if (cell = MapCell::Wall)
 		{position = temp; return false;}
 		else
 			return true;
