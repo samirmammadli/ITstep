@@ -207,8 +207,9 @@ public:
 class Enemy : public Character
 {
 	static int count;
+	int pos_change_chance;
 public:
-	Enemy(int x, int y) { position.x = x; position.y = y; count++; }
+	Enemy(int x, int y, int chance = 10) : pos_change_chance(chance) { position.x = x; position.y = y; count++; }
 	virtual void scanMap(Player &plr)
 	{
 		int Px = plr.getPosition().x;
@@ -224,10 +225,11 @@ public:
 	}
 	void ChangePos()
 	{
-		int timer = rand() % 7;
-		if (timer == 1)
+		int random = rand() % pos_change_chance;
+		if (random == 1)
 			direction = Direction(rand() % 4);
-		move(direction);
+		if (!move(direction))
+			direction = Direction(rand() % 4);
 	}
 	int getCount() { return count; }
 };
@@ -258,7 +260,7 @@ class Game
 	Player& player;
 	CursorStart start;
 	vector<GameObject> staticObjects;
-	vector<Enemy> enemies;
+	vector<Enemy*> enemies;
 	void Draw()
 	{
 		for (int i = 0; i < map.height; i++)
@@ -288,14 +290,18 @@ public:
 		ScreenBuffer[player.getPosition().y][player.getPosition().x] = 'X';
 		for (int i = 0; i < enemies.size(); i++)
 		{
-			ScreenBuffer[enemies[i].getPosition().y][enemies[i].getPosition().x] = 'W';
+			ScreenBuffer[enemies[i]->getPosition().y][enemies[i]->getPosition().x] = 'W';
 		}
 		Draw();
 	}
-	void addEnemy(Enemy &en)
+	void addEnemy(Enemy *en)
 	{
-		enemies.push_back(en);
+		if (typeid(*en) == typeid(Zombie))
+			enemies.push_back(new Zombie{ *dynamic_cast<Zombie*>(en) });
+		else if (typeid(*en) == typeid(Skeleton))
+			enemies.push_back(new Skeleton{ *dynamic_cast<Skeleton*>(en) });
+
 	}
 	int getEnemyCount() { return enemies.size(); }
-	vector<Enemy> &getEnemy() { return enemies; }
+	vector<Enemy*> &getEnemy() { return enemies; }
 };
