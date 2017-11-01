@@ -1,5 +1,5 @@
-﻿#include "Classes.h"
-#include <SFML/Graphics.hpp>
+﻿#include <SFML/Graphics.hpp>
+#include "Classes.h"
 using namespace sf;
 
 
@@ -76,37 +76,55 @@ const int map_y = 50;
 bool checkPosition(string *map, const Sprite &person)
 {
 	IntRect size = person.getTextureRect();
-	Position pos;
+	ObjectSize pos;
 	pos.x = person.getPosition().x;
 	pos.y = person.getPosition().y;
 	
 	if (pos.x / size.width < 0 || pos.x / 32>= map_x || pos.y / size.height < 0 || pos.y / 64 >= map_y)
 		return true;
 	
-	int x1 = pos.x + size.width * person.getScale().x;
-	int y1 = pos.y + size.height * person.getScale().y;
-	int y2 = pos.y + size.height / 2 * person.getScale().y;
-	x1 /= 32;
-	y1 /= 32;
+	pos.x1 = pos.x + size.width * person.getScale().x;
+	pos.y1 = pos.y + size.height * person.getScale().y;
+	pos.y2 = pos.y + size.height / 2 * person.getScale().y;
+	pos.x1 /= 32;
+	pos.y1 /= 32;
 	pos.x /= 32;
 	pos.y /= 32;
-	y2 /= 32;
+	pos.y2 /= 32;
 
 	
 	if (map[pos.y][pos.x] != ' ')
 		return true;
-	if (map[pos.y][x1] != ' ')
+	if (map[pos.y][pos.x1] != ' ')
 		return true;
-	if (map[y1][pos.x] != ' ')
+	if (map[pos.y1][pos.x] != ' ')
 		return true;
-	if (map[y1][x1] != ' ')
+	if (map[pos.y1][pos.x1] != ' ')
 		return true;
-	if (map[y2][pos.x] != ' ')
+	if (map[pos.y2][pos.x] != ' ')
 		return true;
-	if (map[y2][x1] != ' ')
+	if (map[pos.y2][pos.x1] != ' ')
 		return true;
 
 	return false;
+}
+
+
+//void getCoords(const Sprite &person, ObjectSize &pos)
+//{
+//	IntRect size = person.getTextureRect();
+//	pos.x = person.getPosition().x;
+//	pos.y = person.getPosition().y;
+//	pos.x1 = pos.x + size.width * person.getScale().x;
+//	pos.y1 = pos.y + size.height * person.getScale().y;
+//	pos.y2 = pos.y + size.height / 2 * person.getScale().y;
+//}
+
+bool CheckCollision(const sf::Sprite &hero, const sf::Sprite &enemy)
+{
+	sf::Rect<float> r1 = enemy.getGlobalBounds();
+	sf::Rect<float> r2 = hero.getGlobalBounds();
+	return r1.intersects(r2);;
 }
 
 void ChangePos(Direction &dir)
@@ -122,7 +140,6 @@ void main()
 	int height = VideoMode::getDesktopMode().height;
 	int width = VideoMode::getDesktopMode().width;
 	View view;
-	//view.reset(sf::FloatRect(0, 0, 24*32, 20*32));
 	view.reset(sf::FloatRect(0, 0, width, height));
 
 	
@@ -142,14 +159,14 @@ void main()
 		"|                                                     |",
 		"|                                                     |",
 		"|                                                     |",
-		"|                                                     |",
-		"|                                                     |",
-		"|                                                     |",
-		"|                                                     |",
-		"|                                                     |",
-		"|                                                     |",
-		"|                                                     |",
-		"|                                                     |",
+		"|      ========2                                      |",
+		"|              |                                      |",
+		"|              |                                      |",
+		"|              |           1===                       |",
+		"|              |           |                          |",
+		"|              |           |                          |",
+		"|              |           |                          |",
+		"|              3===========4                          |",
 		"|                                                     |",
 		"|                                                     |",
 		"|                                                     |",
@@ -195,8 +212,8 @@ void main()
 	Sprite scorpion;
 	scorpion.setTexture(Scorp);
 	scorpion.setTextureRect(IntRect(0,32,32,32));
-	scorpion.setPosition(120, 120);
-	scorpion.setScale(2,2);
+	scorpion.setPosition(200, 200);
+	scorpion.setScale(3,3);
 	
 	RectangleShape rect;
 	rect.setTexture(&Grass);
@@ -215,20 +232,27 @@ void main()
 	new_sprite.setTexture(texture);
 	new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
 	new_sprite.setPosition(150, 150);
+	new_sprite.setScale(5, 5);
 	bool action = false;
 
 
 	Direction dir = Direction(rand() % 4);
+	Direction hero_dir = Up;
+	Direction attack_dir = Up;
+	State enemy_state = Idle;
+	float otskok = 0;
 	int check_scorp_x;
 	int check_scorp_y;
 	
-	RenderWindow window(VideoMode::getDesktopMode(), "SFML works!");//, Style::Fullscreen);
-	//RenderWindow window(VideoMode(24*32, 20*32), "SFML works!");
+	RenderWindow window(VideoMode::getDesktopMode(), "SFML works!", Style::Fullscreen);
 	float x = 0, y = 0;
 	float CurrentFrame = 0;
 	float scorpFrame = 0;
+	float AttackFrame = 0;
 	while (window.isOpen())
 	{
+		check_x = new_sprite.getPosition().x;
+		check_y = new_sprite.getPosition().y;
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 		time /= 500;
@@ -241,48 +265,50 @@ void main()
 			{
 				if (event.key.code == sf::Keyboard::P)
 					speed += 0.001;
-
 			}
 		}
-		check_x = new_sprite.getPosition().x;
-		check_y = new_sprite.getPosition().y;
+		
 		if (sf::Keyboard::isKeyPressed(Keyboard::Space) || action)
 		{
 			action = true;
 			texture.loadFromImage(image2);
-			CurrentFrame += (0.003 + speed)*time;
-			if (CurrentFrame > 5) { action = false; texture.loadFromImage(image); }// åñëè ïðèøëè ê òðåòüåìó êàäðó - îòêèäûâàåìñÿ íàçàä.
-			new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 64, 0, 64, 64));
+			AttackFrame += (0.004 + speed)*time;
+			if (AttackFrame > 5) { action = false; texture.loadFromImage(image); AttackFrame= 0;}
+			new_sprite.setTextureRect(IntRect(int(AttackFrame) * 64, 0, 64, 64));
 		}
-		if (!action)
+		else if (!action)
 		{
 
 			if (sf::Keyboard::isKeyPressed(Keyboard::W))
 			{
-				new_sprite.move(0, -time / 12);
-				CurrentFrame += 0.003*time;
+				hero_dir = Up;
+				new_sprite.move(0, -time / 6);
+				CurrentFrame += 0.005*time;
 				if (CurrentFrame > 6) CurrentFrame -= 4;
 				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 64, 32, 64));
 			}
 			else if (sf::Keyboard::isKeyPressed(Keyboard::S))
 			{
-				new_sprite.move(0, time / 12);
-				CurrentFrame += 0.003*time;
+				hero_dir = Down;
+				new_sprite.move(0, time / 6);
+				CurrentFrame += 0.005*time;
 				if (CurrentFrame > 6) CurrentFrame -= 4;
 				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 0, 32, 64));
 			}
 
 			else if (sf::Keyboard::isKeyPressed(Keyboard::A))
 			{
-				new_sprite.move(-time / 12, 0);
-				CurrentFrame += 0.003*time;
+				hero_dir = Left;
+				new_sprite.move(-time / 6, 0);
+				CurrentFrame += 0.008*time;
 				if (CurrentFrame > 6)  CurrentFrame -= 4;
 				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 128, 32, 64));
 			}
 			else if (sf::Keyboard::isKeyPressed(Keyboard::D))
 			{
-				new_sprite.move(time / 12, 0);
-				CurrentFrame += 0.003*time;
+				hero_dir = Right;
+				new_sprite.move(time / 6, 0);
+				CurrentFrame += 0.008*time;
 				if (CurrentFrame > 6)  CurrentFrame -= 4;
 				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 192, 32, 64));
 			}
@@ -304,37 +330,75 @@ void main()
 
 		check_scorp_x = scorpion.getPosition().x;
 		check_scorp_y = scorpion.getPosition().y;
-		ChangePos(dir);
-		if (dir == Up)
+		if (enemy_state != Damaged)
 		{
-			scorpion.move(0, -time / 25);
-			scorpFrame += 0.002*time;
-			if (scorpFrame > 6) scorpFrame -= 6;
-			scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 96, 32, 32));
+			ChangePos(dir);
+			if (dir == Up)
+			{
+				scorpion.move(0, -time / 25);
+				scorpFrame += 0.002*time;
+				if (scorpFrame > 6) scorpFrame -= 6;
+				scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 96, 32, 32));
+
+			}
+			else if (dir == Down)
+			{
+				scorpion.move(0, time / 25);
+				scorpFrame += 0.002*time;
+				if (scorpFrame > 6) scorpFrame -= 6;
+				scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 30, 32, 32));
+			}
+			else if (dir == Left)
+			{
+				scorpion.move(-time / 25, 0);
+				scorpFrame += 0.002*time;
+				if (scorpFrame > 6) scorpFrame -= 6;
+				scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 160, 32, 32));
+
+			}
+			if (dir == Right)
+			{
+				scorpion.move(time / 25, 0);
+				scorpFrame += 0.002*time;
+				if (scorpFrame > 6) scorpFrame -= 6;
+				scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 224, 32, 32));
+			}
+		}
+		else if (enemy_state == Damaged)
+		{
 			
+			otskok += time / 3;
+			scorpion.setColor(Color::Red);
+			if (attack_dir == Up)
+				scorpion.move(0, -time / 3);
+			else if (attack_dir == Down)
+				scorpion.move(0, time / 3);
+			else if (attack_dir == Left)
+				scorpion.move(-time / 3, 0);
+			else if (attack_dir == Right)
+				scorpion.move(time / 3, 0);
+			if (int(otskok) % 5 == 0)
+				scorpion.setColor(Color::Red);
+			else if (int(otskok) % 2 == 0)
+				scorpion.setColor(Color::White);
+			if (otskok > 300)
+			{
+				scorpion.setColor(Color::White);
+				otskok = 0;
+				enemy_state = Idle;
+			}
 		}
-		else if (dir == Down)
+		
+
+		if (CheckCollision(new_sprite, scorpion))
 		{
-			scorpion.move(0, time / 25);
-			scorpFrame += 0.002*time;
-			if (scorpFrame > 6) scorpFrame -= 6;
-			scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 32, 32, 32));
+			enemy_state = Damaged;
+			attack_dir = hero_dir;
 		}
-		else if (dir == Left)
-		{
-			scorpion.move(-time / 25, 0);
-			scorpFrame += 0.002*time;
-			if (scorpFrame > 6) scorpFrame -= 6;
-			scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 160, 32, 32));
-			
-		}
-		if (dir == Right)
-		{
-			scorpion.move(time / 25, 0);
-			scorpFrame += 0.002*time;
-			if (scorpFrame > 6) scorpFrame -= 6;
-			scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 224, 32, 32));
-		}
+
+
+
+
 
 		if (scorpion.getPosition().x != check_scorp_x || scorpion.getPosition().y != check_scorp_y)
 		{
@@ -345,6 +409,9 @@ void main()
 			}		
 		}
 		/////////////////////////////////////////////
+
+
+		
 
 		temp_x = new_sprite.getPosition().x;
 		temp_y = new_sprite.getPosition().y;
@@ -358,9 +425,7 @@ void main()
 			temp_y = map_y * 32 - height / 2;
 
 
-			view.setCenter(temp_x, temp_y);
-
-		
+		view.setCenter(temp_x, temp_y);
 		window.setView(view);
 		
 		window.clear();
@@ -412,7 +477,7 @@ void main()
 				window.draw(brick);
 			}
 		}
-
+		
 		window.draw(scorpion);
 		window.draw(new_sprite);
 		window.display();

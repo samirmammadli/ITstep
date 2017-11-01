@@ -9,7 +9,7 @@
 using namespace std;
 
 enum Direction { Up, Down, Left, Right };
-enum State { Idle, Attack, Defend, Shoot, Dead };
+enum State { Idle, Attack, Defend, Shoot, Dead, Damaged };
 enum MapCell { Empty, Wall, Hole };
 const int field_width = 55;
 const int field_height = 50;
@@ -29,6 +29,7 @@ void hideCursor(bool switch_cursor)
 struct Position { int x, y; };
 struct Damage { int min, max; };
 struct CursorStart { int x, y; };
+struct ObjectSize { int x, y, x1, y1, x2, y2; };
 
 class IMovable
 {
