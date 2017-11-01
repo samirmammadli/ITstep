@@ -1,11 +1,5 @@
-﻿//#include "Classes.h"
+﻿#include "Classes.h"
 #include <SFML/Graphics.hpp>
-
-#include <string>
-#include <vector>
-#include <time.h>
-#include <Windows.h>
-using namespace std;
 using namespace sf;
 
 
@@ -76,32 +70,38 @@ smart pointers
 //	}
 //	
 //}
+const int map_x = 55;
+const int map_y = 50;
 
-
-bool checkPosition(string *map, int x, int y)
+bool checkPosition(string *map, const Sprite &person)
 {
-	if (x / 32 < 0 || x / 32>= 25 || y / 64 < 0 || y  / 64 >= 20)
+	IntRect size = person.getTextureRect();
+	Position pos;
+	pos.x = person.getPosition().x;
+	pos.y = person.getPosition().y;
+	
+	if (pos.x / size.width < 0 || pos.x / 32>= map_x || pos.y / size.height < 0 || pos.y / 64 >= map_y)
 		return true;
-	//cout << x / 32  << "    " << y / 64 << endl;
-	int x1 = x + 32 + 1;
-	int y1 = y + 64 + 1;
-	int y2 = y + 32 + 1;
+	
+	int x1 = pos.x + size.width * person.getScale().x;
+	int y1 = pos.y + size.height * person.getScale().y;
+	int y2 = pos.y + size.height / 2 * person.getScale().y;
 	x1 /= 32;
 	y1 /= 32;
-	x /= 32;
-	y /= 32;
+	pos.x /= 32;
+	pos.y /= 32;
 	y2 /= 32;
 
 	
-	if (map[y][x] != ' ')
+	if (map[pos.y][pos.x] != ' ')
 		return true;
-	if (map[y][x1] != ' ')
+	if (map[pos.y][x1] != ' ')
 		return true;
-	if (map[y1][x] != ' ')
+	if (map[y1][pos.x] != ' ')
 		return true;
 	if (map[y1][x1] != ' ')
 		return true;
-	if (map[y2][x] != ' ')
+	if (map[y2][pos.x] != ' ')
 		return true;
 	if (map[y2][x1] != ' ')
 		return true;
@@ -109,43 +109,98 @@ bool checkPosition(string *map, int x, int y)
 	return false;
 }
 
+void ChangePos(Direction &dir)
+{
+	int random = rand() % 500;
+	if (random == 1)
+		dir = Direction(rand() % 4);
+
+}
+
 void main()
 {
+	int height = VideoMode::getDesktopMode().height;
+	int width = VideoMode::getDesktopMode().width;
+	View view;
+	//view.reset(sf::FloatRect(0, 0, 24*32, 20*32));
+	view.reset(sf::FloatRect(0, 0, width, height));
+
+	
 	double speed = 0;
-	string map[20] = {
-		"1======================2",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"|                      |",
-		"3======================4"
+
+	
+	string map[map_y] = {
+		"1=====================================================2",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"|                                                     |",
+		"3=====================================================4"
 	};
 
-
+	int temp_x;
+	int temp_y;
 	double check_x;
 	double check_y;
 	Texture Grass;
 	Grass.loadFromFile("images\\grass.jpg");
 	Clock clock;
 	Texture texture;
+	Texture Scorp;
+	Scorp.loadFromFile("images\\scorpion.png");
+	Sprite scorpion;
+	scorpion.setTexture(Scorp);
+	scorpion.setTextureRect(IntRect(0,32,32,32));
+	scorpion.setPosition(120, 120);
+	scorpion.setScale(2,2);
+	
 	RectangleShape rect;
 	rect.setTexture(&Grass);
-	rect.setSize(Vector2f(24 * 32, 20 * 32));
-	//Texture floor_t;
+	rect.setSize(Vector2f(512, 512));
 	Image image;
 	Image image2;
 	Texture Brick;
@@ -153,29 +208,25 @@ void main()
 	Sprite brick;
 	brick.setTexture(Brick);
 	brick.setTextureRect(IntRect(528, 0, 32, 32));
-	//528
 	image2.loadFromFile("images\\hero_attack.png");
-	//Image floor;
-	//floor.loadFromFile("images\\5.png");
 	image.loadFromFile("images\\hero_action.png");
-	//image.createMaskFromColor(Color(0, 255, 0));
-	//floor_t.loadFromImage(floor);
 	texture.loadFromImage(image);
 	Sprite new_sprite;
-	//Sprite floor_s;
-	//floor_s.setTexture(floor_t);
-	//floor_s.setTextureRect(IntRect(4, 3, 31, 31));
-	//floor_s.setPosition(0, 0);
 	new_sprite.setTexture(texture);
 	new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
 	new_sprite.setPosition(150, 150);
 	bool action = false;
 
 
-	RenderWindow window(VideoMode(24*32, 20*32), "SFML works!");
-
+	Direction dir = Direction(rand() % 4);
+	int check_scorp_x;
+	int check_scorp_y;
+	
+	RenderWindow window(VideoMode::getDesktopMode(), "SFML works!");//, Style::Fullscreen);
+	//RenderWindow window(VideoMode(24*32, 20*32), "SFML works!");
 	float x = 0, y = 0;
-	double CurrentFrame = 0;
+	float CurrentFrame = 0;
+	float scorpFrame = 0;
 	while (window.isOpen())
 	{
 		float time = clock.getElapsedTime().asMicroseconds();
@@ -243,21 +294,89 @@ void main()
 
 			if (new_sprite.getPosition().x != check_x || new_sprite.getPosition().y != check_y)
 			{
-				if (checkPosition(map, new_sprite.getPosition().x, new_sprite.getPosition().y))
+				if (checkPosition(map, new_sprite))
 					new_sprite.setPosition(check_x, check_y);
 			}
 
 		}
 
+		//Scorpion
 
-
-
-		window.clear();
-		window.draw(rect);
-
-		for (int i = 0; i < 20; i++)
+		check_scorp_x = scorpion.getPosition().x;
+		check_scorp_y = scorpion.getPosition().y;
+		ChangePos(dir);
+		if (dir == Up)
 		{
-			for (int j = 0; j < 25; j++)
+			scorpion.move(0, -time / 25);
+			scorpFrame += 0.002*time;
+			if (scorpFrame > 6) scorpFrame -= 6;
+			scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 96, 32, 32));
+			
+		}
+		else if (dir == Down)
+		{
+			scorpion.move(0, time / 25);
+			scorpFrame += 0.002*time;
+			if (scorpFrame > 6) scorpFrame -= 6;
+			scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 32, 32, 32));
+		}
+		else if (dir == Left)
+		{
+			scorpion.move(-time / 25, 0);
+			scorpFrame += 0.002*time;
+			if (scorpFrame > 6) scorpFrame -= 6;
+			scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 160, 32, 32));
+			
+		}
+		if (dir == Right)
+		{
+			scorpion.move(time / 25, 0);
+			scorpFrame += 0.002*time;
+			if (scorpFrame > 6) scorpFrame -= 6;
+			scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 224, 32, 32));
+		}
+
+		if (scorpion.getPosition().x != check_scorp_x || scorpion.getPosition().y != check_scorp_y)
+		{
+			if (checkPosition(map, scorpion))
+			{
+				scorpion.setPosition(check_scorp_x, check_scorp_y);
+				dir = Direction(rand() % 4);
+			}		
+		}
+		/////////////////////////////////////////////
+
+		temp_x = new_sprite.getPosition().x;
+		temp_y = new_sprite.getPosition().y;
+		if (temp_x < width / 2)
+			temp_x = width / 2;
+		if (temp_y < height / 2)
+			temp_y = height / 2;
+		if (temp_x > map_x * 32 - width / 2)
+			temp_x = map_x * 32 - width / 2;
+		if (temp_y > map_y * 32 - height / 2)
+			temp_y = map_y * 32 - height / 2;
+
+
+			view.setCenter(temp_x, temp_y);
+
+		
+		window.setView(view);
+		
+		window.clear();
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				rect.setPosition(j * 512, i * 512);
+				window.draw(rect);
+			}
+		}
+		
+
+		for (int i = 0; i < map_y; i++)
+		{
+			for (int j = 0; j < map_x; j++)
 			{
 				if (map[i][j] == '1')
 				{
@@ -294,6 +413,7 @@ void main()
 			}
 		}
 
+		window.draw(scorpion);
 		window.draw(new_sprite);
 		window.display();
 	}

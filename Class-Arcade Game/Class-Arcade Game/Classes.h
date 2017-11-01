@@ -11,8 +11,8 @@ using namespace std;
 enum Direction { Up, Down, Left, Right };
 enum State { Idle, Attack, Defend, Shoot, Dead };
 enum MapCell { Empty, Wall, Hole };
-const int field_width = 40;
-const int field_height = 20;
+const int field_width = 55;
+const int field_height = 50;
 class Character;
 class Player;
 
