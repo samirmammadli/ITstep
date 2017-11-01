@@ -79,9 +79,9 @@
       <PreprocessorDefinitions>SFML_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\SFML-2.4.2\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-main.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -93,9 +93,9 @@
       <PreprocessorDefinitions>SFML_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\SFML-2.4.2\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-main.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -111,9 +111,9 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\SFML-2.4.2\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-main.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,9 +129,9 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\SFML-2.4.2\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>"sfml-graphics.lib";"sfml-window.lib";"sfml-main.lib";"sfml-system.lib";"sfml-audio.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

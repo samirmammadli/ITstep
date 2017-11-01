@@ -1,5 +1,11 @@
-﻿#include "Classes.h"
+﻿//#include "Classes.h"
 #include <SFML/Graphics.hpp>
+
+#include <string>
+#include <vector>
+#include <time.h>
+#include <Windows.h>
+using namespace std;
 using namespace sf;
 
 
@@ -74,23 +80,30 @@ smart pointers
 
 bool checkPosition(string *map, int x, int y)
 {
-	cout << x / 32 << "    " << y / 64 << endl;
-	int x1 = x + 32;
-	int y1 = y + 64;
+	if (x / 32 < 0 || x / 32>= 25 || y / 64 < 0 || y  / 64 >= 20)
+		return true;
+	//cout << x / 32  << "    " << y / 64 << endl;
+	int x1 = x + 32 + 1;
+	int y1 = y + 64 + 1;
+	int y2 = y + 32 + 1;
 	x1 /= 32;
 	y1 /= 32;
 	x /= 32;
 	y /= 32;
+	y2 /= 32;
 
-	/*if (x < 0 || x >= 25 || y < 0 || y >= 20)
-		return true;*/
-	if (map[y - 1][x - 1] == '0')
+	
+	if (map[y][x] != ' ')
 		return true;
-	if (map[y - 1][x1 - 1] == '0')
+	if (map[y][x1] != ' ')
 		return true;
-	if (map[y1 - 1][x - 1] == '0')
+	if (map[y1][x] != ' ')
 		return true;
-	if (map[y1 - 1][x1 - 1] == '0')
+	if (map[y1][x1] != ' ')
+		return true;
+	if (map[y2][x] != ' ')
+		return true;
+	if (map[y2][x1] != ' ')
 		return true;
 
 	return false;
@@ -100,35 +113,37 @@ void main()
 {
 	double speed = 0;
 	string map[20] = {
-		"000000000000000000000000",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"0                      0",
-		"000  0000 000          0",
-		"0                      0",
-		"0                      0",
-		"000000000000000000000000"
+		"1======================2",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"|                      |",
+		"3======================4"
 	};
 
 
-	int check_x;
-	int check_y;
+	double check_x;
+	double check_y;
+	Texture Grass;
+	Grass.loadFromFile("images\\grass.jpg");
 	Clock clock;
 	Texture texture;
 	RectangleShape rect;
-	rect.setFillColor(Color::Green);
+	rect.setTexture(&Grass);
 	rect.setSize(Vector2f(24 * 32, 20 * 32));
 	//Texture floor_t;
 	Image image;
@@ -154,11 +169,10 @@ void main()
 	new_sprite.setTexture(texture);
 	new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
 	new_sprite.setPosition(150, 150);
-	new_sprite.setOrigin(28, 28);
 	bool action = false;
 
 
-	RenderWindow window(VideoMode(1366, 768), "SFML works!");
+	RenderWindow window(VideoMode(24*32, 20*32), "SFML works!");
 
 	float x = 0, y = 0;
 	double CurrentFrame = 0;
@@ -220,8 +234,6 @@ void main()
 				CurrentFrame += 0.003*time;
 				if (CurrentFrame > 6)  CurrentFrame -= 4;
 				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 192, 32, 64));
-				double x = new_sprite.getPosition().x;
-				cout << x / 74 << endl;
 			}
 			else
 			{
@@ -247,8 +259,37 @@ void main()
 		{
 			for (int j = 0; j < 25; j++)
 			{
-				if (map[i][j] == '0')
+				if (map[i][j] == '1')
+				{
+					brick.setTextureRect(IntRect(0, 33, 32, 32));
 					brick.setPosition(j * 32, i * 32);
+				}
+				else if (map[i][j] == '=')
+				{
+					brick.setTextureRect(IntRect(8*33, 33, 32, 32));
+					brick.setPosition(j * 32, i * 32);
+				}
+				else if (map[i][j] == '2')
+				{
+					brick.setTextureRect(IntRect(7 * 33, 33, 32, 32));
+					brick.setPosition(j * 32, i * 32);
+				}
+				else if (map[i][j] == '3')
+				{
+					brick.setTextureRect(IntRect(4 * 33, 33, 32, 32));
+					brick.setPosition(j * 32, i * 32);
+				}
+				else if (map[i][j] == '4')
+				{
+					brick.setTextureRect(IntRect(11 * 33, 33, 32, 32));
+					brick.setPosition(j * 32, i * 32);
+				}
+				else if (map[i][j] == '|')
+				{
+					brick.setTextureRect(IntRect(2 * 33, 33, 32, 32));
+					brick.setPosition(j * 32, i * 32);
+				}
+					
 				window.draw(brick);
 			}
 		}
@@ -259,3 +300,6 @@ void main()
 }
 
 //0 0 74 57
+
+
+
