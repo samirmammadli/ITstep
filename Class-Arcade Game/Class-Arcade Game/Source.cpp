@@ -1,8 +1,6 @@
 ﻿#include "Classes_SFML.h"
 
 
-
-
 const int map_x = 55;
 const int map_y = 50;
 
@@ -141,13 +139,13 @@ void FollowHero(const sf::Sprite &hero, sf::Sprite &enemy, float time, Direction
 		{
 			if (x_range > 0) { time *= -1; dir = Left; }
 			else dir = Right;
-			enemy.move(time / 14, 0);
+			enemy.move(time / 17, 0);
 		}
 		else
 		{
 			if (y_range > 0) { time *= -1; dir = Up; }
 			else dir = Down;
-			enemy.move(0, time / 14);
+			enemy.move(0, time / 17);
 		}
 			
 	}
@@ -253,7 +251,7 @@ void main()
 	new_sprite.setTexture(texture);
 	new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
 	new_sprite.setPosition(150, 150);
-	new_sprite.setScale(5, 5);
+	//new_sprite.setScale(5, 5);
 	bool action = false;
 
 
@@ -271,6 +269,18 @@ void main()
 	float CurrentFrame = 0;
 	float scorpFrame = 0;
 	float AttackFrame = 0;
+
+
+
+
+	RectangleShape sword;
+	sword.setSize(Vector2f(32,32));
+
+
+
+
+
+
 	while (window.isOpen())
 	{
 		check_x = new_sprite.getPosition().x;
@@ -357,7 +367,7 @@ void main()
 			}
 
 			
-
+		
 		}
 		if (hero_state == Damaged)
 		{
@@ -484,6 +494,17 @@ void main()
 				window.draw(brick);
 			}
 		}
+
+
+
+		if (hero_dir == Up)
+			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y -32);
+		else if (hero_dir == Down)
+			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y + 64);
+		else if (hero_dir == Left)
+			sword.setPosition(new_sprite.getPosition().x - 32, new_sprite.getPosition().y + 32);
+		else if (hero_dir == Right)
+			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y + 32);
 		
 		window.draw(scorpion);
 		window.draw(new_sprite);
@@ -1008,3 +1029,109 @@ void main()
 
 
 
+//#include <queue>
+//using namespace std;
+//
+///* нахождение пути*/
+//void find_path(int n, int row, int col, char** lab, int** visited, int** path, queue<int>& plan) {
+//	if (!visited[row][col]) {
+//		/* проверяем не вышли ли мы за границы лабиринта, есть ли клетка
+//		в массиве посещенных и можно ли через нее пройти*/
+//		if ((row + 1) < n && (row + 1) >= 0 && !visited[row + 1][col] &&
+//			(lab[row + 1][col] == '.' || lab[row + 1][col] == 'X')) {
+//			path[row + 1][col] = path[row][col] + 1;
+//			plan.push(row + 1);
+//			plan.push(col);
+//		}
+//		if ((row - 1) < n && (row - 1) >= 0 && !visited[row - 1][col] &&
+//			(lab[row - 1][col] == '.' || lab[row - 1][col] == 'X')) {
+//			path[row - 1][col] = path[row][col] + 1;
+//			plan.push(row - 1);
+//			plan.push(col);
+//		}
+//		if ((col + 1) < n && (col + 1) >= 0 && !visited[row][col + 1] &&
+//			(lab[row][col + 1] == '.' || lab[row][col + 1] == 'X')) {
+//			path[row][col + 1] = path[row][col] + 1;
+//			plan.push(row);
+//			plan.push(col + 1);
+//		}
+//		if ((col - 1) < n && (col - 1) >= 0 && !visited[row][col - 1] &&
+//			(lab[row][col - 1] == '.' || lab[row][col - 1] == 'X')) {
+//			path[row][col - 1] = path[row][col] + 1;
+//			plan.push(row);
+//			plan.push(col - 1);
+//		}
+//		visited[row][col] = 1; /* отмечаем клетку в которой побывали */
+//	}
+//}
+//
+//int main() {
+//	int n, x_start, y_start, x_end, y_end, x, y;
+//	queue <int> plan;
+//	cin >> n;
+//	char** lab = new char*[n];
+//	int** visited = new int *[n];
+//	int** path = new int *[n];
+//	for (int i = 0; i<n; i++) {
+//		lab[i] = new char[n];   /* массив для хранения лабиринта */
+//		visited[i] = new int[n]; /* массив для хранения информации о посещении клеток*/
+//		path[i] = new int[n];  /* массив для хранения найденных путей */
+//		for (int j = 0; j<n; j++) {
+//			visited[i][j] = 0;
+//			path[i][j] = -1;
+//			cin >> lab[i][j];
+//			if (lab[i][j] == '@') { /* находим начало пути*/
+//				x_start = i;
+//				y_start = j;
+//				plan.push(i);  /* заносим начальную клетку */
+//				plan.push(j);  /* в план посещения */
+//				path[i][j] = 1;
+//			}
+//			else if (lab[i][j] == 'X') { /* находим конечную точку */
+//				x_end = i;
+//				y_end = j;
+//			}
+//		}
+//	}
+//	while (!plan.empty()) { /* пока очередь посещения клеток непустая*/
+//		x = plan.front();
+//		plan.pop();
+//		y = plan.front();
+//		plan.pop();
+//		find_path(n, x, y, lab, visited, path, plan); /* продолжаем поиск пути*/
+//	}
+//	if (!visited[x_end][y_end]) {
+//		cout << "N" << endl;
+//	}
+//	else {
+//		cout << "Y" << endl;
+//		x = x_end;
+//		y = y_end;
+//		lab[x][y] = '+';
+//		while (path[x][y] != 2) { /* восстановление пути*/
+//			if ((x - 1) >= 0 && (x - 1) < n && (path[x - 1][y] == path[x][y] - 1)) {
+//				x = x - 1;
+//				lab[x][y] = '+';
+//			}
+//			else if ((x + 1) >= 0 && (x + 1) < n && (path[x + 1][y] == path[x][y] - 1)) {
+//				x = x + 1;
+//				lab[x][y] = '+';
+//			}
+//			else if ((y - 1) >= 0 && (y - 1) < n && (path[x][y - 1] == path[x][y] - 1)) {
+//				y = y - 1;
+//				lab[x][y] = '+';
+//			}
+//			else if ((y + 1) >= 0 && (y + 1) < n && (path[x][y + 1] == path[x][y] - 1)) {
+//				y = y + 1;
+//				lab[x][y] = '+';
+//			}
+//		}
+//		for (int i = 0; i < n; i++) {
+//			for (int j = 0; j < n; j++) {
+//				cout << lab[i][j];
+//			}
+//			cout << endl;
+//		}
+//	}
+//	return 0;
+//}
