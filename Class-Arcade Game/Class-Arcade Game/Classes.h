@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,7 +10,7 @@
 using namespace std;
 
 enum Direction { Up, Down, Left, Right };
-enum State { Idle, Attack, Defend, Shoot, Dead, Damaged };
+enum State { Idle, Attack, Defend, Shoot, Dead, Damaged, Follow };
 enum MapCell { Empty, Wall, Hole };
 const int field_width = 55;
 const int field_height = 50;

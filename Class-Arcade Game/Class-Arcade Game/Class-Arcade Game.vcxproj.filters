@@ -23,5 +23,8 @@
     <ClInclude Include="Classes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Classes_SFML.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
