@@ -95,20 +95,10 @@ bool checkPosition( const Sprite &person)
 }
 
 
-//void getCoords(const Sprite &person, ObjectSize &pos)
-//{
-//	IntRect size = person.getTextureRect();
-//	pos.x = person.getPosition().x;
-//	pos.y = person.getPosition().y;
-//	pos.x1 = pos.x + size.width * person.getScale().x;
-//	pos.y1 = pos.y + size.height * person.getScale().y;
-//	pos.y2 = pos.y + size.height / 2 * person.getScale().y;
-//}
-
-bool CheckCollision(const sf::Sprite &hero, const sf::Sprite &enemy)
+bool CheckCollision(const sf::FloatRect &obj1,  sf::FloatRect const &obj2)
 {
-	sf::Rect<float> r1 = enemy.getGlobalBounds();
-	sf::Rect<float> r2 = hero.getGlobalBounds();
+	sf::Rect<float> r1 = obj2;
+	sf::Rect<float> r2 = obj1;
 	return r1.intersects(r2);
 }
 
@@ -299,7 +289,16 @@ void main()
 					speed += 0.001;
 			}
 		}
-		if (CheckCollision(new_sprite, scorpion))
+		if (action)
+		{
+			if (CheckCollision(sword.getGlobalBounds(), scorpion.getGlobalBounds()))
+			{
+				enemy_state = Damaged;
+				attack_dir = enemy_dir;
+			}
+		}
+
+		if (CheckCollision(new_sprite.getGlobalBounds(), scorpion.getGlobalBounds()))
 		{
 			hero_state = Damaged;
 			attack_dir = enemy_dir;
@@ -406,9 +405,13 @@ void main()
 			}
 		}
 		
+		if (enemy_state == Damaged)
+		{
+			ifDamaged(scorpion, hero_dir, time, otskok, enemy_state);
+		}
+		else FollowHero(new_sprite, scorpion, time, enemy_dir); 
+		 ScorpAnimation(scorpion, enemy_dir, scorpFrame, time);
 
-		FollowHero(new_sprite, scorpion, time, enemy_dir);
-		ScorpAnimation(scorpion, enemy_dir, scorpFrame, time);
 		
 
 		
@@ -425,6 +428,9 @@ void main()
 				enemy_dir = Direction(rand() % 4);
 			}		
 		}
+
+
+		
 		/////////////////////////////////////////////
 
 
@@ -498,13 +504,13 @@ void main()
 
 
 		if (hero_dir == Up)
-			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y -32);
+			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y -16);
 		else if (hero_dir == Down)
-			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y + 64);
+			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y + 48);
 		else if (hero_dir == Left)
-			sword.setPosition(new_sprite.getPosition().x - 32, new_sprite.getPosition().y + 32);
+			sword.setPosition(new_sprite.getPosition().x - 16, new_sprite.getPosition().y + 16);
 		else if (hero_dir == Right)
-			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y + 32);
+			sword.setPosition(new_sprite.getPosition().x + 48, new_sprite.getPosition().y + 16);
 		
 		window.draw(scorpion);
 		window.draw(new_sprite);
