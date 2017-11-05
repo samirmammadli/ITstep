@@ -9,8 +9,7 @@ using namespace sf;
 
 enum Direction { Up, Down, Left, Right };
 enum State { Idle, Attack, Dead, Damaged, Follow };
-const int field_width = 55;
-const int field_height = 50;
+
 
 struct Damage { int min, max; };
 struct ObjectSize { int x, y, x1, y1, x2, y2; };
@@ -21,7 +20,7 @@ class LoadResources
 	LoadResources()
 	{
 		Grass.loadFromFile("images\\grass.jpg");
-		StaticObjcets.loadFromFile("images\\map.png");
+		Environment.loadFromFile("images\\map.png");
 		Scorp.loadFromFile("images\\scorpion.png");
 		HeroAttack.loadFromFile("images\\hero_attack.png");
 		Hero.loadFromFile("images\\hero_action.png");
@@ -31,12 +30,76 @@ public:
 	Texture Hero;
 	Texture Scorp;
 	Texture HeroAttack;
-	Texture StaticObjcets;
+	Texture Environment;
 	static LoadResources& Load()
 	{
-		static LoadResources Resources;
-		return Resources;
+		static LoadResources Textures;
+		return Textures;
 	}
+};
+
+class GameMap {
+
+	static string map[];
+	
+public:
+	static const int width;
+	static const int height;
+};
+
+const int GameMap::width = 55;
+const int GameMap::height = 50;
+string GameMap::map[GameMap::height] = {
+	"1=====================================================2",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|      ========2                                      |",
+	"|              |                                      |",
+	"|              |                                      |",
+	"|              |           1===                       |",
+	"|              |           |                          |",
+	"|              |           |                          |",
+	"|              |           |                          |",
+	"|              3===========4                          |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"|                                                     |",
+	"3=====================================================4"
 };
 
 class Character

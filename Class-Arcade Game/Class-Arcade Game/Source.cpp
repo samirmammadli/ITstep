@@ -197,6 +197,9 @@ void ifDamaged(Sprite &charact,const Direction &dir, float &time, float &otskok,
 
 void main()
 {
+
+
+	LoadResources& res = LoadResources::Load();
 	int height = VideoMode::getDesktopMode().height;
 	int width = VideoMode::getDesktopMode().width;
 	View view;
