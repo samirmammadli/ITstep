@@ -511,9 +511,9 @@ void main()
 		else if (hero_dir == Down)
 			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y + 48);
 		else if (hero_dir == Left)
-			sword.setPosition(new_sprite.getPosition().x - 16, new_sprite.getPosition().y + 16);
+			sword.setPosition(new_sprite.getPosition().x - 8, new_sprite.getPosition().y + 16);
 		else if (hero_dir == Right)
-			sword.setPosition(new_sprite.getPosition().x + 48, new_sprite.getPosition().y + 16);
+			sword.setPosition(new_sprite.getPosition().x + 40, new_sprite.getPosition().y + 16);
 		
 		window.draw(scorpion);
 		window.draw(new_sprite);
