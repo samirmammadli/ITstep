@@ -1,75 +1,18 @@
 ﻿#include "Classes_SFML.h"
 
 
-const int map_x = 55;
-const int map_y = 50;
-
-
-string maP[map_y] = {
-	"1=====================================================2",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|      ========2                                      |",
-	"|              |                                      |",
-	"|              |                                      |",
-	"|              |           1===                       |",
-	"|              |           |                          |",
-	"|              |           |                          |",
-	"|              |           |                          |",
-	"|              3===========4                          |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"|                                                     |",
-	"3=====================================================4"
-};
-
 bool checkPosition( const Sprite &person)
 {
 	IntRect size = person.getTextureRect();
 	ObjectSize pos;
-	pos.x = person.getPosition().x;
-	pos.y = person.getPosition().y;
+	pos.x = person.getPosition().x + 3;
+	pos.y = person.getPosition().y + 3;
 	
-	if (pos.x / size.width < 0 || pos.x / 32>= map_x || pos.y / size.height < 0 || pos.y / 64 >= map_y)
+	if (pos.x / size.width < 0 || pos.x / 32>= GameMap::width || pos.y / size.height < 0 || pos.y / 64 >= GameMap::height)
 		return true;
 	
-	pos.x1 = pos.x + size.width * person.getScale().x;
-	pos.y1 = pos.y + size.height * person.getScale().y;
+	pos.x1 = pos.x + size.width * person.getScale().x - 6;
+	pos.y1 = pos.y + size.height * person.getScale().y - 6;
 	pos.y2 = pos.y + size.height / 2 * person.getScale().y;
 	pos.x1 /= 32;
 	pos.y1 /= 32;
@@ -78,17 +21,17 @@ bool checkPosition( const Sprite &person)
 	pos.y2 /= 32;
 
 	
-	if (maP[pos.y][pos.x] != ' ')
+	if (GameMap::map[pos.y][pos.x] != ' ')
 		return true;
-	if (maP[pos.y][pos.x1] != ' ')
+	if (GameMap::map[pos.y][pos.x1] != ' ')
 		return true;
-	if (maP[pos.y1][pos.x] != ' ')
+	if (GameMap::map[pos.y1][pos.x] != ' ')
 		return true;
-	if (maP[pos.y1][pos.x1] != ' ')
+	if (GameMap::map[pos.y1][pos.x1] != ' ')
 		return true;
-	if (maP[pos.y2][pos.x] != ' ')
+	if (GameMap::map[pos.y2][pos.x] != ' ')
 		return true;
-	if (maP[pos.y2][pos.x1] != ' ')
+	if (GameMap::map[pos.y2][pos.x1] != ' ')
 		return true;
 
 	return false;
@@ -197,9 +140,9 @@ void ifDamaged(Sprite &charact,const Direction &dir, float &time, float &otskok,
 
 void main()
 {
+	srand(time(0));
 
-
-	LoadResources& res = LoadResources::Load();
+	LoadTextures& res = LoadTextures::Load();
 	int height = VideoMode::getDesktopMode().height;
 	int width = VideoMode::getDesktopMode().width;
 	View view;
@@ -210,7 +153,6 @@ void main()
 
 	
 	
-
 	int temp_x;
 	int temp_y;
 	double check_x;
@@ -222,9 +164,14 @@ void main()
 	Texture Scorp;
 	Scorp.loadFromFile("images\\scorpion.png");
 	Sprite scorpion;
-	scorpion.setTexture(Scorp);
+	scorpion.setTexture(LoadTextures::Load().Scorp);
 	scorpion.setTextureRect(IntRect(0,32,32,32));
-	scorpion.setPosition(600, 500);
+	do
+	{
+		scorpion.setPosition((rand() % (GameMap::width -2) + 1)* 32, (rand() % (GameMap::height - 2) + 1) * 32);
+	}
+	while (GameMap::map[int(scorpion.getPosition().x / 32)][int(scorpion.getPosition().y) / 32 ] != ' ');
+	//scorpion.setPosition(600, 500);
 	scorpion.setScale(1.5,1.5);
 	
 	RectangleShape rect;
@@ -445,10 +392,10 @@ void main()
 			temp_x = width / 2;
 		if (temp_y < height / 2)
 			temp_y = height / 2;
-		if (temp_x > map_x * 32 - width / 2)
-			temp_x = map_x * 32 - width / 2;
-		if (temp_y > map_y * 32 - height / 2)
-			temp_y = map_y * 32 - height / 2;
+		if (temp_x > GameMap::width * 32 - width / 2)
+			temp_x = GameMap::width * 32 - width / 2;
+		if (temp_y > GameMap::height * 32 - height / 2)
+			temp_y = GameMap::height * 32 - height / 2;
 
 
 		view.setCenter(temp_x, temp_y);
@@ -465,42 +412,15 @@ void main()
 		}
 		
 
-		for (int i = 0; i < map_y; i++)
+		for (int i = 0; i < GameMap::height; i++)
 		{
-			for (int j = 0; j < map_x; j++)
+			for (int j = 0; j < GameMap::width; j++)
 			{
-				if (maP[i][j] == '1')
+				if (GameMap::map[i][j] != ' ')
 				{
-					brick.setTextureRect(IntRect(0, 33, 32, 32));
-					brick.setPosition(j * 32, i * 32);
+					window.draw(StaticObjects::Load().getObj());
+					StaticObjects::Load().getCellObj(GameMap::map[i][j]).setPosition(j * 32, i * 32);
 				}
-				else if (maP[i][j] == '=')
-				{
-					brick.setTextureRect(IntRect(8*33, 33, 32, 32));
-					brick.setPosition(j * 32, i * 32);
-				}
-				else if (maP[i][j] == '2')
-				{
-					brick.setTextureRect(IntRect(7 * 33, 33, 32, 32));
-					brick.setPosition(j * 32, i * 32);
-				}
-				else if (maP[i][j] == '3')
-				{
-					brick.setTextureRect(IntRect(4 * 33, 33, 32, 32));
-					brick.setPosition(j * 32, i * 32);
-				}
-				else if (maP[i][j] == '4')
-				{
-					brick.setTextureRect(IntRect(11 * 33, 33, 32, 32));
-					brick.setPosition(j * 32, i * 32);
-				}
-				else if (maP[i][j] == '|')
-				{
-					brick.setTextureRect(IntRect(2 * 33, 33, 32, 32));
-					brick.setPosition(j * 32, i * 32);
-				}
-					
-				window.draw(brick);
 			}
 		}
 
