@@ -1,20 +1,29 @@
 #include <windows.h>
 #include <tchar.h>
 #include <string>
+#include <vector>
 using namespace std;
 
 #define wStr(param) to_wstring(param)
 #define wArr(param) to_wstring(param).c_str()
 
-
+vector<HWND> windows;
+HWND Prog = NULL;
+TCHAR buffer[201] = L"Notepad";
+LPRECT siZe;
+bool timeR = false;
+int x = 0, y = 0;
 
 // прототип оконной процедуры
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 // Имя класса окна
 TCHAR szClassWindow[] = TEXT("WinAPI App");
 
+
+
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nCmdShow)
 {
+	siZe = new RECT;
 	HWND hWnd;
 	MSG lpMsg;
 	WNDCLASSEX wcl;
@@ -81,29 +90,64 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 {
-	int x, y;
 	wstring result;
 	switch (uMessage)
 	{
-	case WM_KEYDOWN:
-		result += wParam;
-		if (wParam == VK_RETURN)
+	case WM_CREATE:
+	{
+		
 		{
-			MessageBox(NULL, wArr(wParam), L"Key Code", MB_OK);
+			HWND moveWindow = CreateWindow(L"BUTTON", L"Move Window", WS_VISIBLE | WS_CHILD, 10, 10, 130, 20, hWnd, NULL, NULL, NULL);
+			HWND closeWindow = CreateWindow(L"BUTTON", L"Close Window", WS_VISIBLE | WS_CHILD, 10, 50, 130, 20, hWnd, NULL, NULL, NULL);
+			HWND changeText = CreateWindow(L"BUTTON", L"Change Text", WS_VISIBLE | WS_CHILD, 10, 90, 130, 20, hWnd, NULL, NULL, NULL);
+			HWND Text = CreateWindow(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 10, 140, 150, 20, hWnd, NULL, NULL, NULL);
+			HWND findWindow = CreateWindow(L"BUTTON", L"Find Window", WS_VISIBLE | WS_CHILD, 175, 140, 130, 20, hWnd, NULL, NULL, NULL);
+			windows.push_back(moveWindow);
+			windows.push_back(closeWindow);
+			windows.push_back(changeText);
+			windows.push_back(Text);
+			windows.push_back(findWindow);
 		}
 		break;
-	/*case WM_CHAR:
-		result += wParam;
-		MessageBox(NULL, result.c_str(), L"Key Code", MB_OK);
-		break;*/
-	case WM_MOUSEMOVE:
-		x = LOWORD(lParam);
-		y = HIWORD(lParam);
-		result += L"x: " + wStr(x) + L" y: " + wStr(y);
-		SetWindowText(hWnd, result.c_str());
+	}
+
+	case WM_COMMAND:
+	{
+		
+		if ((HWND)lParam == windows[0])
+		{
+			if (!timeR) {SetTimer(hWnd, 123, 10, NULL); timeR = true;}
+			else { KillTimer(hWnd, 123); timeR = false; }
+		}
+		else if ((HWND)lParam == windows[1])
+		{
+			SendMessage(Prog, WM_CLOSE, NULL, NULL);
+		}
+		else if ((HWND)lParam == windows[2])
+		{
+			0;
+		}
+		else if ((HWND)lParam == windows[3])
+		{
+			0;
+		}
+		else if ((HWND)lParam == windows[4])
+		{
+			GetWindowText(windows[3], buffer, 200);
+			Prog = FindWindow(buffer, NULL);
+		}
 		break;
-	case WM_LBUTTONDOWN:
-		MessageBox(NULL, L"Здорова!", L"Заголовок!", MB_OK);
+
+		/*TCHAR buffer[201];
+		HWND hNotepad = FindWindow(L"Notepad", NULL);
+		HWND hEdit = FindWindowEx(hNotepad, NULL, L"Edit", NULL);
+		SendMessage(hEdit, WM_GETTEXT, 200, LPARAM(buffer));
+		MessageBox(NULL, buffer, L"Text", MB_OK);
+		break;*/
+	}
+	case WM_TIMER:
+		if (Prog != NULL) GetWindowRect(Prog, siZe);
+		if (Prog != NULL) MoveWindow(Prog, ++x, y, siZe->right - siZe->left, siZe->bottom - siZe->top, TRUE);
 		break;
 	case WM_DESTROY: // сообщение о завершении программы
 		PostQuitMessage(0); // посылка сообщения WM_QUIT
