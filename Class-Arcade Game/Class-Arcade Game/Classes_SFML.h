@@ -170,7 +170,7 @@ protected:
 	float cooldown;
 	Damage damage;
 	State state;
-	Sprite Obj;
+	Sprite character;
 	Direction direction;
 public:
 	virtual ~Character() =0 {}
@@ -178,24 +178,30 @@ public:
 	virtual void setState(State state) { this->state = state; }
 	virtual void move(Direction dir, float dist)
 	{
-		if (dir == Direction::Up) Obj.move(0,dist * -1);
-		else if (dir == Direction::Down) Obj.move(0, dist);
-		else if (dir == Direction::Left) Obj.move(dist * -1, 0);
-		else if (dir == Direction::Right) Obj.move(dist, 0);
+		if (dir == Direction::Up) character.move(0,dist * -1);
+		else if (dir == Direction::Down) character.move(0, dist);
+		else if (dir == Direction::Left) character.move(dist * -1, 0);
+		else if (dir == Direction::Right) character.move(dist, 0);
+	}
+	bool CheckCollision(const sf::FloatRect &obj)
+	{
+		sf::Rect<float> r1 = character.getGlobalBounds();
+		sf::Rect<float> r2 = obj;
+		return r1.intersects(r2);
 	}
 	bool checkWall()
 	{
-		IntRect size = Obj.getTextureRect();
+		IntRect size = character.getTextureRect();
 		ObjectSize pos;
-		pos.x = Obj.getPosition().x;
-		pos.y = Obj.getPosition().y;
+		pos.x = character.getPosition().x;
+		pos.y = character.getPosition().y;
 
 		if (pos.x / size.width < 0 || pos.x / 32 >= GameMap::width || pos.y / size.height < 0 || pos.y / 64 >= GameMap::height)
 			return true;
 
-		pos.x1 = pos.x + size.width * Obj.getScale().x;
-		pos.y1 = pos.y + size.height * Obj.getScale().y;
-		pos.y2 = pos.y + size.height / 2 * Obj.getScale().y;
+		pos.x1 = pos.x + size.width * character.getScale().x;
+		pos.y1 = pos.y + size.height * character.getScale().y;
+		pos.y2 = pos.y + size.height / 2 * character.getScale().y;
 		pos.x1 /= 32;
 		pos.y1 /= 32;
 		pos.x /= 32;
@@ -269,12 +275,12 @@ class Player : public Character
 public:
 	Player(string name, int hp, float cooldown = 5, int x = 0, int y = 0, int min = 0, int max = 0) : exp(0), level(0), strength(0), stamina(0), agility(0), exp_to_level(500)
 	{
-		Obj.setTexture(LoadTextures::Load().Hero);
+		character.setTexture(LoadTextures::Load().Hero);
 		this->name = name;
 		this->state = State::Idle;
 		this->base_hp = hp;
 		this->direction = Direction::Right;
-		this->Obj.setPosition(x,y);
+		this->character.setPosition(x,y);
 		this->base_dmg.min = min;
 		this->base_dmg.max = max;
 		this->base_cooldown = cooldown;

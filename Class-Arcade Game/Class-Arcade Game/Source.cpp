@@ -1,7 +1,7 @@
 ﻿#include "Classes_SFML.h"
 
 
-bool checkPosition( const Sprite &person)
+bool checkPosition( const Sprite &person) //Ready
 {
 	IntRect size = person.getTextureRect();
 	ObjectSize pos;
@@ -38,7 +38,7 @@ bool checkPosition( const Sprite &person)
 }
 
 
-bool CheckCollision(const sf::FloatRect &obj1,  sf::FloatRect const &obj2)
+bool CheckCollision(const sf::FloatRect &obj1,  sf::FloatRect const &obj2) //Ready
 {
 	sf::Rect<float> r1 = obj2;
 	sf::Rect<float> r2 = obj1;
