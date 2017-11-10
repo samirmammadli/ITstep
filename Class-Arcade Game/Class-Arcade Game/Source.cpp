@@ -147,6 +147,7 @@ void main()
 	int width = VideoMode::getDesktopMode().width;
 	View view;
 	view.reset(sf::FloatRect(0, 0, width, height));
+	//view.setViewport(FloatRect(0, 0, 1, 0.85f));
 
 	
 	double speed = 0;
@@ -193,6 +194,9 @@ void main()
 	new_sprite.setPosition(150, 150);
 	//new_sprite.setScale(5, 5);
 	bool action = false;
+	RectangleShape StatusBar;
+	StatusBar.setSize(Vector2f(500, 200));
+	StatusBar.setPosition(0, 0);
 
 
 	Direction enemy_dir = Direction(rand() % 4);
@@ -397,9 +401,11 @@ void main()
 		if (temp_y > GameMap::height * 32 - height / 2)
 			temp_y = GameMap::height * 32 - height / 2;
 
-
+	
 		view.setCenter(temp_x, temp_y);
 		window.setView(view);
+		
+		
 		
 		window.clear();
 		for (int i = 0; i < 4; i++)
@@ -435,9 +441,11 @@ void main()
 		else if (hero_dir == Right)
 			sword.setPosition(new_sprite.getPosition().x + 40, new_sprite.getPosition().y + 16);
 		
+		window.draw(StatusBar);
 		window.draw(scorpion);
 		window.draw(new_sprite);
 		window.display();
+		
 	}
 }
 

@@ -351,14 +351,14 @@ public:
 
 class Game
 {
-	Sprite &hero;
-	vector<Sprite*> enemies;
+	Player hero;
+	vector<Enemy*> enemies;
 	static RenderWindow window;
 	Clock clock;
 	int height;
 	int width;
 	float gTime;
-	Game(Sprite &hero) : hero(hero)
+	Game(Player &hero) : hero(hero)
 	{
 		height = VideoMode::getDesktopMode().height;
 		width = VideoMode::getDesktopMode().width;
@@ -374,22 +374,15 @@ public:
 			clock.restart();
 			gTime /= 500;
 			if (sf::Keyboard::isKeyPressed(Keyboard::W))
-			{
 				hero.move(Up, gTime);
-			}
 			else if (sf::Keyboard::isKeyPressed(Keyboard::S))
-			{
 				hero.move(Down, gTime);
-			}
-
 			else if (sf::Keyboard::isKeyPressed(Keyboard::A))
-			{
 				hero.move(Left, gTime);
-			}
 			else if (sf::Keyboard::isKeyPressed(Keyboard::D))
-			{
 				hero.move(Right, gTime);
-			}
+
+			hero.moveAnimation();
 		}	
 	}
 };
