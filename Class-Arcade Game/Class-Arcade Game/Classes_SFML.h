@@ -168,28 +168,33 @@ class Character
 protected:
 	int hp;
 	float cooldown;
+	float animationSpeed;
+	float currentFrame;
+	float moveSpeed;
 	Damage damage;
 	State state;
 	Sprite character;
 	Direction direction;
 public:
+	static float timeTick;
 	virtual ~Character() =0 {}
 	virtual void setHp(int hp) { this->hp = hp; }
 	virtual void setState(State state) { this->state = state; }
 	virtual void move(Direction dir, float dist)
 	{
-		if (dir == Direction::Up) character.move(0,dist * -1);
-		else if (dir == Direction::Down) character.move(0, dist);
-		else if (dir == Direction::Left) character.move(dist * -1, 0);
-		else if (dir == Direction::Right) character.move(dist, 0);
+		if (dir == Direction::Up) character.move(0, timeTick / moveSpeed * -1);
+		else if (dir == Direction::Down) character.move(0, timeTick / moveSpeed);
+		else if (dir == Direction::Left) character.move(timeTick / moveSpeed * -1, 0);
+		else if (dir == Direction::Right) character.move(timeTick / moveSpeed, 0);
 	}
-	bool CheckCollision(const sf::FloatRect &obj)
+
+	bool checkCharacerCollision(const sf::FloatRect &obj)
 	{
 		sf::Rect<float> r1 = character.getGlobalBounds();
 		sf::Rect<float> r2 = obj;
 		return r1.intersects(r2);
 	}
-	bool checkWall()
+	bool checkWallÑollision()
 	{
 		IntRect size = character.getTextureRect();
 		ObjectSize pos;
@@ -225,14 +230,14 @@ public:
 		return false;
 	}
 };
-
+float Character::timeTick = 0;
 
 class Enemy : public Character
 {
 	static int count;
 	int pos_change_chance;
 public:
-	Enemy(int chance = 500) : pos_change_chance(chance) { count++; }
+	Enemy(int chance = 500) : pos_change_chance(chance) { ++count; }
 	void setRandPos()
 	{
 		direction = Direction(rand() % 4);
@@ -242,6 +247,11 @@ public:
 		int random = rand() % pos_change_chance;
 		if (random == 1)
 			setRandPos();
+	}
+	void setPositionChangeÑhance(int value)
+	{
+		if (value >=0 && value < 1000)
+		pos_change_chance = value;
 	}
 	int const &getCount() { return count; }
 };
@@ -276,6 +286,7 @@ public:
 	Player(string name, int hp, float cooldown = 5, int x = 0, int y = 0, int min = 0, int max = 0) : exp(0), level(0), strength(0), stamina(0), agility(0), exp_to_level(500)
 	{
 		character.setTexture(LoadTextures::Load().Hero);
+		animationSpeed = 0.005;
 		this->name = name;
 		this->state = State::Idle;
 		this->base_hp = hp;
@@ -300,4 +311,87 @@ public:
 		cooldown = base_cooldown - agility / 100;
 		if (cooldown < 0) cooldown = 0.05;
 	}
+	void moveAnimation()
+	{
+		if (direction == Up)
+		{
+			currentFrame += animationSpeed*timeTick;
+			if (currentFrame > 6) currentFrame -= 4;
+			character.setTextureRect(IntRect(int(currentFrame) * 32, 64, 32, 64));
+		}
+		else if (direction == Down)
+		{
+			currentFrame += animationSpeed*timeTick;
+			if (currentFrame > 6) currentFrame -= 4;
+			character.setTextureRect(IntRect(int(currentFrame) * 32, 0, 32, 64));
+		}
+
+		else if (direction == Left)
+		{
+			currentFrame += animationSpeed*timeTick;
+			if (currentFrame > 6) currentFrame -= 4;
+			character.setTextureRect(IntRect(int(currentFrame) * 32, 128, 32, 64));
+		}
+		else if (direction == Right)
+		{
+			currentFrame += animationSpeed*timeTick;
+			if (currentFrame > 6) currentFrame -= 4;
+			character.setTextureRect(IntRect(int(currentFrame) * 32, 192, 32, 64));
+		}
+		else 
+		{
+			currentFrame = 1;
+			if (direction == Down) character.setTextureRect(IntRect(0, 0, 32, 64));
+			else if (direction == Up) character.setTextureRect(IntRect(0, 64, 32, 64));
+			else if (direction == Right) character.setTextureRect(IntRect(0, 192, 32, 64));
+			else if (direction == Left) character.setTextureRect(IntRect(0, 128, 32, 64));
+		}
+	}
 };
+
+class Game
+{
+	Sprite &hero;
+	vector<Sprite*> enemies;
+	static RenderWindow window;
+	Clock clock;
+	int height;
+	int width;
+	float gTime;
+	Game(Sprite &hero) : hero(hero)
+	{
+		height = VideoMode::getDesktopMode().height;
+		width = VideoMode::getDesktopMode().width;
+	}
+public:
+	void game()
+	{
+		srand(time(0));
+
+		while (window.isOpen())
+		{
+			gTime = clock.getElapsedTime().asMicroseconds();
+			clock.restart();
+			gTime /= 500;
+			if (sf::Keyboard::isKeyPressed(Keyboard::W))
+			{
+				hero.move(Up, gTime);
+			}
+			else if (sf::Keyboard::isKeyPressed(Keyboard::S))
+			{
+				hero.move(Down, gTime);
+			}
+
+			else if (sf::Keyboard::isKeyPressed(Keyboard::A))
+			{
+				hero.move(Left, gTime);
+			}
+			else if (sf::Keyboard::isKeyPressed(Keyboard::D))
+			{
+				hero.move(Right, gTime);
+			}
+		}	
+	}
+};
+
+RenderWindow Game::window(VideoMode::getDesktopMode(), "Game", Style::Fullscreen);

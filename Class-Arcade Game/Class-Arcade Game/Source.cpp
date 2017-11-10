@@ -204,7 +204,7 @@ void main()
 	int check_scorp_x;
 	int check_scorp_y;
 	
-	RenderWindow window(VideoMode::getDesktopMode(), "SFML works!", Style::Fullscreen);
+	RenderWindow window(VideoMode::getDesktopMode(), "Game", Style::Fullscreen);
 	float x = 0, y = 0;
 	float CurrentFrame = 0;
 	float scorpFrame = 0;
