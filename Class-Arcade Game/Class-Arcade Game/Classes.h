@@ -10,7 +10,7 @@
 using namespace std;
 
 enum Direction { Up, Down, Left, Right };
-enum State { Idle, Attack, Defend, Shoot, Dead, Damaged, Follow };
+enum State { Idle, Attack, Defend, Shoot, Dead, Injured, Follow };
 enum MapCell { Empty, Wall, Hole };
 const int field_width = 55;
 const int field_height = 50;
@@ -257,7 +257,7 @@ public:
 	Skeleton(int x, int y) : Enemy(x, y) {}
 };
 
-class Game
+class AssembledGame
 {
 	Map& map;
 	char ScreenBuffer[Map::height][Map::width];
@@ -278,7 +278,7 @@ class Game
 		COORDS(0, start.y + map.height);
 	}
 public:
-	Game(Player &p, int x, int y) : map(Map::get()), player(p) { start.x = x; start.y = y; }
+	AssembledGame(Player &p, int x, int y) : map(Map::get()), player(p) { start.x = x; start.y = y; }
 	void  DrawMap()
 	{
 		for (int i = 0; i < map.height; i++)

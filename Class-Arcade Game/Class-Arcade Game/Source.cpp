@@ -138,316 +138,349 @@ void ifDamaged(Sprite &charact,const Direction &dir, float &time, float &otskok,
 	}
 }
 
+
+
+
 void main()
 {
-	srand(time(0));
+	Player p("Samir", 500);
+	p.setMoveSpeed(6);
+	p.getSprite().setPosition(300, 300);
+	p.setState(Idle);
 
-	LoadTextures& res = LoadTextures::Load();
-	int height = VideoMode::getDesktopMode().height;
-	int width = VideoMode::getDesktopMode().width;
-	View view;
-	view.reset(sf::FloatRect(0, 0, width, height));
-	//view.setViewport(FloatRect(0, 0, 1, 0.85f));
-
-	
-	double speed = 0;
-
-	
-	
-	int temp_x;
-	int temp_y;
-	double check_x;
-	double check_y;
-	Texture Grass;
-	Grass.loadFromFile("images\\grass.jpg");
-	Clock clock;
-	Texture texture;
-	Texture Scorp;
-	Scorp.loadFromFile("images\\scorpion.png");
-	Sprite scorpion;
-	scorpion.setTexture(LoadTextures::Load().Scorp);
-	scorpion.setTextureRect(IntRect(0,32,32,32));
-	do
-	{
-		scorpion.setPosition((rand() % (GameMap::width -2) + 1)* 32, (rand() % (GameMap::height - 2) + 1) * 32);
-	}
-	while (GameMap::map[int(scorpion.getPosition().x / 32)][int(scorpion.getPosition().y) / 32 ] != ' ');
-	//scorpion.setPosition(600, 500);
-	scorpion.setScale(1.5,1.5);
-	
-	RectangleShape rect;
-	rect.setTexture(&Grass);
-	rect.setSize(Vector2f(512, 512));
-	Image image;
-	Image image2;
-	Texture Brick;
-	Brick.loadFromFile("images\\map.png");
-	Sprite brick;
-	brick.setTexture(Brick);
-	brick.setTextureRect(IntRect(528, 0, 32, 32));
-	image2.loadFromFile("images\\hero_attack.png");
-	image.loadFromFile("images\\hero_action.png");
-	texture.loadFromImage(image);
-	Sprite new_sprite;
-	new_sprite.setTexture(texture);
-	new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
-	new_sprite.setPosition(150, 150);
-	//new_sprite.setScale(5, 5);
-	bool action = false;
-	RectangleShape StatusBar;
-	StatusBar.setSize(Vector2f(500, 200));
-	StatusBar.setPosition(0, 0);
-
-
-	Direction enemy_dir = Direction(rand() % 4);
-	Direction hero_dir = Up;
-	Direction attack_dir = Up;
-	State enemy_state = Idle;
-	State hero_state = Idle;
-	float otskok = 0;
-	int check_scorp_x;
-	int check_scorp_y;
-	
-	RenderWindow window(VideoMode::getDesktopMode(), "Game", Style::Fullscreen);
-	float x = 0, y = 0;
-	float CurrentFrame = 0;
-	float scorpFrame = 0;
-	float AttackFrame = 0;
-
-
-
-
-	RectangleShape sword;
-	sword.setSize(Vector2f(32,32));
-
-
-
-
-
-
-	while (window.isOpen())
-	{
-		check_x = new_sprite.getPosition().x;
-		check_y = new_sprite.getPosition().y;
-		float time = clock.getElapsedTime().asMicroseconds();
-		clock.restart();
-		time /= 500;
-		Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == Event::Closed)
-				window.close();
-			else if (event.type = Event::KeyPressed)
-			{
-				if (event.key.code == sf::Keyboard::P)
-					speed += 0.001;
-			}
-		}
-		if (action)
-		{
-			if (CheckCollision(sword.getGlobalBounds(), scorpion.getGlobalBounds()))
-			{
-				enemy_state = Damaged;
-				attack_dir = enemy_dir;
-			}
-		}
-
-		if (CheckCollision(new_sprite.getGlobalBounds(), scorpion.getGlobalBounds()))
-		{
-			hero_state = Damaged;
-			attack_dir = enemy_dir;
-		}
-		
-		if (sf::Keyboard::isKeyPressed(Keyboard::Space) || action)
-		{
-			action = true;
-			texture.loadFromImage(image2);
-			AttackFrame += (0.004 + speed)*time;
-			if (hero_dir == Left)
-			{
-				if (AttackFrame > 5) { action = false; texture.loadFromImage(image); AttackFrame = 0; }
-				new_sprite.setTextureRect(IntRect(int(AttackFrame) * 64+64, 0, -64, 64));
-			}
-			else
-			{
-			if (AttackFrame > 5) { action = false; texture.loadFromImage(image); AttackFrame= 0;}
-			new_sprite.setTextureRect(IntRect(int(AttackFrame) * 64, 0, 64, 64));
-			}
-		}
-		else if (!action)
-		{
-
-			if (sf::Keyboard::isKeyPressed(Keyboard::W))
-			{
-				hero_dir = Up;
-				new_sprite.move(0, -time / 6);
-				CurrentFrame += 0.005*time;
-				if (CurrentFrame > 6) CurrentFrame -= 4;
-				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 64, 32, 64));
-			}
-			else if (sf::Keyboard::isKeyPressed(Keyboard::S))
-			{
-				hero_dir = Down;
-				new_sprite.move(0, time / 6);
-				CurrentFrame += 0.005*time;
-				if (CurrentFrame > 6) CurrentFrame -= 4;
-				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 0, 32, 64));
-			}
-
-			else if (sf::Keyboard::isKeyPressed(Keyboard::A))
-			{
-				hero_dir = Left;
-				new_sprite.move(-time / 6, 0);
-				CurrentFrame += 0.008*time;
-				if (CurrentFrame > 6)  CurrentFrame -= 4;
-				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 128, 32, 64));
-			}
-			else if (sf::Keyboard::isKeyPressed(Keyboard::D))
-			{
-				hero_dir = Right;
-				new_sprite.move(time / 6, 0);
-				CurrentFrame += 0.008*time;
-				if (CurrentFrame > 6)  CurrentFrame -= 4;
-				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 192, 32, 64));
-			}
-			else
-			{
-				CurrentFrame = 1;
-				if (hero_dir == Down) new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
-				else if (hero_dir == Up) new_sprite.setTextureRect(IntRect(0, 64, 32, 64));
-				else if (hero_dir == Right) new_sprite.setTextureRect(IntRect(0, 192, 32, 64));
-				else if (hero_dir == Left) new_sprite.setTextureRect(IntRect(0, 128, 32, 64));
-			}
-
-			
-		
-		}
-		if (hero_state == Damaged)
-		{
-			ifDamaged(new_sprite, enemy_dir, time, otskok, hero_state);
-		}
-
-		if (new_sprite.getPosition().x != check_x || new_sprite.getPosition().y != check_y)
-		{
-			if (checkPosition(new_sprite))
-				new_sprite.setPosition(check_x, check_y);
-		}
-		//Scorpion
-
-		check_scorp_x = scorpion.getPosition().x;
-		check_scorp_y = scorpion.getPosition().y;
-		if (enemy_state != Damaged && enemy_state != Follow)
-		{
-			ChangePos(enemy_dir);
-			if (enemy_dir == Up)
-			{
-				scorpion.move(0, -time / 25);
-				
-			}
-			else if (enemy_dir == Down)
-			{
-				scorpion.move(0, time / 25);
-			}
-			else if (enemy_dir == Left)
-			{
-				scorpion.move(-time / 25, 0);
-
-			}
-			if (enemy_dir == Right)
-			{
-				scorpion.move(time / 25, 0);
-			}
-		}
-		
-		if (enemy_state == Damaged)
-		{
-			ifDamaged(scorpion, hero_dir, time, otskok, enemy_state);
-		}
-		else FollowHero(new_sprite, scorpion, time, enemy_dir); 
-		 ScorpAnimation(scorpion, enemy_dir, scorpFrame, time);
-
-		
-
-		
-
-
-
-
-
-		if (scorpion.getPosition().x != check_scorp_x || scorpion.getPosition().y != check_scorp_y)
-		{
-			if (checkPosition(scorpion))
-			{
-				scorpion.setPosition(check_scorp_x, check_scorp_y);
-				enemy_dir = Direction(rand() % 4);
-			}		
-		}
-
-
-		
-		/////////////////////////////////////////////
-
-
-		
-
-		temp_x = new_sprite.getPosition().x;
-		temp_y = new_sprite.getPosition().y;
-		if (temp_x < width / 2)
-			temp_x = width / 2;
-		if (temp_y < height / 2)
-			temp_y = height / 2;
-		if (temp_x > GameMap::width * 32 - width / 2)
-			temp_x = GameMap::width * 32 - width / 2;
-		if (temp_y > GameMap::height * 32 - height / 2)
-			temp_y = GameMap::height * 32 - height / 2;
-
-	
-		view.setCenter(temp_x, temp_y);
-		window.setView(view);
-		
-		
-		
-		window.clear();
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				rect.setPosition(j * 512, i * 512);
-				window.draw(rect);
-			}
-		}
-		
-
-		for (int i = 0; i < GameMap::height; i++)
-		{
-			for (int j = 0; j < GameMap::width; j++)
-			{
-				if (GameMap::map[i][j] != ' ')
-				{
-					window.draw(StaticObjects::Load().getObj());
-					StaticObjects::Load().getCellObj(GameMap::map[i][j]).setPosition(j * 32, i * 32);
-				}
-			}
-		}
-
-
-
-		if (hero_dir == Up)
-			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y -16);
-		else if (hero_dir == Down)
-			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y + 48);
-		else if (hero_dir == Left)
-			sword.setPosition(new_sprite.getPosition().x - 8, new_sprite.getPosition().y + 16);
-		else if (hero_dir == Right)
-			sword.setPosition(new_sprite.getPosition().x + 40, new_sprite.getPosition().y + 16);
-		
-		window.draw(StatusBar);
-		window.draw(scorpion);
-		window.draw(new_sprite);
-		window.display();
-		
-	}
+	AssembledGame::getGame().addHero(p);
+	AssembledGame::getGame().game();
 }
+
+
+
+//void main()
+//{
+//	srand(time(0));
+//
+//	LoadTextures& res = LoadTextures::Load();
+//	int height = VideoMode::getDesktopMode().height;
+//	int width = VideoMode::getDesktopMode().width;
+//	View view;
+//	//view.setViewport(FloatRect(0, 0, 1, 0.55f));
+//	view.reset(sf::FloatRect(0, 0, width, height));
+//
+//	
+//	double speed = 0;
+//
+//	
+//	
+//	int temp_x;
+//	int temp_y;
+//	double check_x;
+//	double check_y;
+//	Texture Grass;
+//	Grass.loadFromFile("images\\grass.jpg");
+//	Clock clock;
+//	Texture texture;
+//	Texture Scorp;
+//	Scorp.loadFromFile("images\\scorpion.png");
+//	Sprite scorpion;
+//	scorpion.setTexture(LoadTextures::Load().Scorp);
+//	scorpion.setTextureRect(IntRect(0,32,32,32));
+//	do
+//	{
+//		scorpion.setPosition((rand() % (GameMap::width -2) + 1)* 32, (rand() % (GameMap::height - 2) + 1) * 32);
+//	}
+//	while (GameMap::map[int(scorpion.getPosition().x / 32)][int(scorpion.getPosition().y) / 32 ] != ' ');
+//	//scorpion.setPosition(600, 500);
+//	scorpion.setScale(1.5,1.5);
+//	
+//	RectangleShape rect;
+//	rect.setTexture(&Grass);
+//	rect.setSize(Vector2f(512, 512));
+//	Image image;
+//	Image image2;
+//	Texture Brick;
+//	Brick.loadFromFile("images\\map.png");
+//	Sprite brick;
+//	brick.setTexture(Brick);
+//	brick.setTextureRect(IntRect(528, 0, 32, 32));
+//	image2.loadFromFile("images\\hero_attack.png");
+//	image.loadFromFile("images\\hero_action.png");
+//	texture.loadFromImage(image);
+//	Sprite new_sprite;
+//	new_sprite.setTexture(texture);
+//	new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
+//	new_sprite.setPosition(150, 150);
+//	//new_sprite.setScale(5, 5);
+//	bool action = false;
+//	RectangleShape StatusBar;
+//	StatusBar.setSize(Vector2f(500, 200));
+//	StatusBar.setPosition(0, 800);
+//
+//
+//	Direction enemy_dir = Direction(rand() % 4);
+//	Direction hero_dir = Up;
+//	Direction attack_dir = Up;
+//	State enemy_state = Idle;
+//	State hero_state = Idle;
+//	float otskok = 0;
+//	int check_scorp_x;
+//	int check_scorp_y;
+//	
+//	RenderWindow window(VideoMode::getDesktopMode(), "Game", Style::Fullscreen);
+//	float x = 0, y = 0;
+//	float CurrentFrame = 0;
+//	float scorpFrame = 0;
+//	float AttackFrame = 0;
+//
+//
+//
+//
+//	RectangleShape sword;
+//	sword.setSize(Vector2f(32,32));
+//
+//
+//
+//	Player p("Samir", 500);
+//	p.setMoveSpeed(6);
+//
+//	AssembledGame::getGame().addHero(p);
+//	AssembledGame::getGame().game();
+//
+//	while (window.isOpen())
+//	{
+//		check_x = new_sprite.getPosition().x;
+//		check_y = new_sprite.getPosition().y;
+//		float time = clock.getElapsedTime().asMicroseconds();
+//		clock.restart();
+//		time /= 500;
+//		Character::timeTick = time;
+//		p.setState(Idle);
+//		Event event;
+//		while (window.pollEvent(event))
+//		{
+//			if (event.type == Event::Closed)
+//				window.close();
+//			else if (event.type = Event::KeyPressed)
+//			{
+//				if (event.key.code == sf::Keyboard::P)
+//					speed += 0.001;
+//			}
+//		}
+//		if (action)
+//		{
+//			if (CheckCollision(sword.getGlobalBounds(), scorpion.getGlobalBounds()))
+//			{
+//				enemy_state = Damaged;
+//				attack_dir = enemy_dir;
+//			}
+//		}
+//
+//		if (CheckCollision(new_sprite.getGlobalBounds(), scorpion.getGlobalBounds()))
+//		{
+//			hero_state = Damaged;
+//			attack_dir = enemy_dir;
+//		}
+//		
+//		if (sf::Keyboard::isKeyPressed(Keyboard::Space) || action)
+//		{
+//			action = true;
+//			texture.loadFromImage(image2);
+//			AttackFrame += (0.004 + speed)*time;
+//			if (hero_dir == Left)
+//			{
+//				if (AttackFrame > 5) { action = false; texture.loadFromImage(image); AttackFrame = 0; }
+//				new_sprite.setTextureRect(IntRect(int(AttackFrame) * 64+64, 0, -64, 64));
+//			}
+//			else
+//			{
+//			if (AttackFrame > 5) { action = false; texture.loadFromImage(image); AttackFrame= 0;}
+//			new_sprite.setTextureRect(IntRect(int(AttackFrame) * 64, 0, 64, 64));
+//			}
+//		}
+//		else if (!action)
+//		{
+//
+//			if (sf::Keyboard::isKeyPressed(Keyboard::W))
+//			{
+//
+//				p.move(Up);
+//	
+//
+//				hero_dir = Up;
+//				new_sprite.move(0, -time / 6);
+//				CurrentFrame += 0.005*time;
+//				if (CurrentFrame > 6) CurrentFrame -= 4;
+//				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 64, 32, 64));
+//			}
+//			else if (sf::Keyboard::isKeyPressed(Keyboard::S))
+//			{
+//				p.move(Down);
+//				hero_dir = Down;
+//				new_sprite.move(0, time / 6);
+//				CurrentFrame += 0.005*time;
+//				if (CurrentFrame > 6) CurrentFrame -= 4;
+//				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 0, 32, 64));
+//			}
+//
+//			else if (sf::Keyboard::isKeyPressed(Keyboard::A))
+//			{
+//				p.move(Left);
+//				hero_dir = Left;
+//				new_sprite.move(-time / 6, 0);
+//				CurrentFrame += 0.008*time;
+//				if (CurrentFrame > 6)  CurrentFrame -= 4;
+//				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 128, 32, 64));
+//			}
+//			else if (sf::Keyboard::isKeyPressed(Keyboard::D))
+//			{
+//
+//				p.move(Right);
+//			
+//				
+//
+//				hero_dir = Right;
+//				new_sprite.move(time / 6, 0);
+//				CurrentFrame += 0.008*time;
+//				if (CurrentFrame > 6)  CurrentFrame -= 4;
+//				new_sprite.setTextureRect(IntRect(int(CurrentFrame) * 32, 192, 32, 64));
+//			}
+//			else
+//			{
+//				CurrentFrame = 1;
+//				if (hero_dir == Down) new_sprite.setTextureRect(IntRect(0, 0, 32, 64));
+//				else if (hero_dir == Up) new_sprite.setTextureRect(IntRect(0, 64, 32, 64));
+//				else if (hero_dir == Right) new_sprite.setTextureRect(IntRect(0, 192, 32, 64));
+//				else if (hero_dir == Left) new_sprite.setTextureRect(IntRect(0, 128, 32, 64));
+//			}
+//			p.moveAnimation();
+//			
+//		
+//		}
+//		if (hero_state == Damaged)
+//		{
+//			ifDamaged(new_sprite, enemy_dir, time, otskok, hero_state);
+//		}
+//
+//		if (new_sprite.getPosition().x != check_x || new_sprite.getPosition().y != check_y)
+//		{
+//			if (checkPosition(new_sprite))
+//				new_sprite.setPosition(check_x, check_y);
+//		}
+//		//Scorpion
+//
+//		check_scorp_x = scorpion.getPosition().x;
+//		check_scorp_y = scorpion.getPosition().y;
+//		if (enemy_state != Damaged && enemy_state != Follow)
+//		{
+//			ChangePos(enemy_dir);
+//			if (enemy_dir == Up)
+//			{
+//				scorpion.move(0, -time / 25);
+//				
+//			}
+//			else if (enemy_dir == Down)
+//			{
+//				scorpion.move(0, time / 25);
+//			}
+//			else if (enemy_dir == Left)
+//			{
+//				scorpion.move(-time / 25, 0);
+//
+//			}
+//			if (enemy_dir == Right)
+//			{
+//				scorpion.move(time / 25, 0);
+//			}
+//		}
+//		
+//		if (enemy_state == Damaged)
+//		{
+//			ifDamaged(scorpion, hero_dir, time, otskok, enemy_state);
+//		}
+//		else FollowHero(new_sprite, scorpion, time, enemy_dir); 
+//		 ScorpAnimation(scorpion, enemy_dir, scorpFrame, time);
+//
+//		
+//
+//		
+//
+//
+//
+//
+//
+//		if (scorpion.getPosition().x != check_scorp_x || scorpion.getPosition().y != check_scorp_y)
+//		{
+//			if (checkPosition(scorpion))
+//			{
+//				scorpion.setPosition(check_scorp_x, check_scorp_y);
+//				enemy_dir = Direction(rand() % 4);
+//			}		
+//		}
+//
+//
+//		
+//		/////////////////////////////////////////////
+//
+//
+//		
+//
+//		temp_x = new_sprite.getPosition().x;
+//		temp_y = new_sprite.getPosition().y;
+//		if (temp_x < width / 2)
+//			temp_x = width / 2;
+//		if (temp_y < height / 2)
+//			temp_y = height / 2;
+//		if (temp_x > GameMap::width * 32 - width / 2)
+//			temp_x = GameMap::width * 32 - width / 2;
+//		if (temp_y > GameMap::height * 32 - height / 2 +200)
+//			temp_y = GameMap::height * 32 - height / 2 + 200;
+//
+//	
+//		view.setCenter(temp_x, temp_y);
+//		window.setView(view);
+//		
+//		
+//		
+//		window.clear();
+//		for (int i = 0; i < 4; i++)
+//		{
+//			for (int j = 0; j < 4; j++)
+//			{
+//				rect.setPosition(j * 512, i * 512);
+//				window.draw(rect);
+//			}
+//		}
+//		
+//
+//		for (int i = 0; i < GameMap::height; i++)
+//		{
+//			for (int j = 0; j < GameMap::width; j++)
+//			{
+//				if (GameMap::map[i][j] != ' ')
+//				{
+//					window.draw(StaticObjects::Load().getObj());
+//					StaticObjects::Load().getCellObj(GameMap::map[i][j]).setPosition(j * 32, i * 32);
+//				}
+//			}
+//		}
+//
+//
+//
+//		if (hero_dir == Up)
+//			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y -16);
+//		else if (hero_dir == Down)
+//			sword.setPosition(new_sprite.getPosition().x, new_sprite.getPosition().y + 48);
+//		else if (hero_dir == Left)
+//			sword.setPosition(new_sprite.getPosition().x - 8, new_sprite.getPosition().y + 16);
+//		else if (hero_dir == Right)
+//			sword.setPosition(new_sprite.getPosition().x + 40, new_sprite.getPosition().y + 16);
+//		
+//		window.draw(StatusBar);
+//		window.draw(scorpion);
+//		window.draw(new_sprite);
+//		window.draw(p.getSprite());
+//		window.display();
+//		
+//	}
+//}
 
 //0 0 74 57
 

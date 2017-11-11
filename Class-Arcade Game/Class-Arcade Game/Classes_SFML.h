@@ -8,12 +8,22 @@ using namespace std;
 using namespace sf;
 
 enum Direction { Up, Down, Left, Right };
-enum State { Idle, Attack, Dead, Damaged, Follow };
+enum State { Idle, Attack, Dead, Injured, Follow, Move };
 
 
 struct Damage { int min, max; };
 struct ObjectSize { int x, y, x1, y1, x2, y2; };
 struct ObjSize { int x, y; };
+struct HeroCharacteristic {
+	int base_hp = 0;
+	float base_cooldown = 0;
+	int exp = 0;
+	int exp_to_level = 0;
+	int level = 0;
+	int strength = 0;
+	int stamina = 0;
+	int agility = 0;
+};
 
 
 class LoadTextures
@@ -82,6 +92,11 @@ public:
 			obj.setTextureRect(IntRect(2 * 33, 33, 32, 32));
 			return obj;
 		}
+		else if (Cell == ' ')
+		{
+			obj.setTextureRect(IntRect(12 * 33, 17 * 33, 32, 32));
+			return obj;
+		}
 		else
 		{
 			obj.setColor(Color::Transparent);
@@ -99,6 +114,7 @@ public:
 	static string* map;
 	static const int width;
 	static const int height;
+	static GameMap& getMap() { static GameMap INSTANCE; return INSTANCE; }
 	static char getCell(int x, int y)
 	{
 		if (x >= 0 && x < width && y >= 0 && y < height)
@@ -167,6 +183,7 @@ class Character
 {
 protected:
 	int hp;
+	static float reboundRange;
 	float cooldown;
 	float animationSpeed;
 	float currentFrame;
@@ -180,8 +197,20 @@ public:
 	virtual ~Character() =0 {}
 	virtual void setHp(int hp) { this->hp = hp; }
 	virtual void setState(State state) { this->state = state; }
-	virtual void move(Direction dir, float dist)
+	virtual void setMoveSpeed(float speed) { this->moveSpeed = speed; }
+	virtual void setDirection(Direction dir) { this->direction = dir; }
+	virtual float getCooldown() { return this->cooldown; }
+	virtual float getAnimationSpeed() { return this->animationSpeed; }
+	virtual float getCurrentFrame() { return this->currentFrame; }
+	virtual float getMoveSpeed() { return this->moveSpeed; }
+	virtual State getState() { return this->state; }
+	virtual Sprite& getSprite() { return character; }
+	virtual Direction getDirection() { return this->direction; }
+	virtual Damage getDamage() { return this->damage; }
+	void setCurrentFrame(int frame) { this->currentFrame = frame; }
+	virtual void move(Direction dir)
 	{
+		direction = dir;
 		if (dir == Direction::Up) character.move(0, timeTick / moveSpeed * -1);
 		else if (dir == Direction::Down) character.move(0, timeTick / moveSpeed);
 		else if (dir == Direction::Left) character.move(timeTick / moveSpeed * -1, 0);
@@ -198,14 +227,14 @@ public:
 	{
 		IntRect size = character.getTextureRect();
 		ObjectSize pos;
-		pos.x = character.getPosition().x;
-		pos.y = character.getPosition().y;
+		pos.x = character.getPosition().x + 3;
+		pos.y = character.getPosition().y + 3;
 
 		if (pos.x / size.width < 0 || pos.x / 32 >= GameMap::width || pos.y / size.height < 0 || pos.y / 64 >= GameMap::height)
 			return true;
 
-		pos.x1 = pos.x + size.width * character.getScale().x;
-		pos.y1 = pos.y + size.height * character.getScale().y;
+		pos.x1 = pos.x + size.width * character.getScale().x - 6;
+		pos.y1 = pos.y + size.height * character.getScale().y - 6;
 		pos.y2 = pos.y + size.height / 2 * character.getScale().y;
 		pos.x1 /= 32;
 		pos.y1 /= 32;
@@ -229,8 +258,10 @@ public:
 
 		return false;
 	}
+	
 };
 float Character::timeTick = 0;
+float Character::reboundRange = 0;
 
 class Enemy : public Character
 {
@@ -258,61 +289,71 @@ public:
 
 int Enemy::count = 0;
 
-
+class Scorpion : public Enemy
+{
+	Scorpion() : Enemy::Enemy() {}
+};
 
 class Player : public Character
 {
 	string name;
 	Damage base_dmg;
-
-	int base_hp;
-	float base_cooldown;
-	int exp;
-	int exp_to_level;
-	int level;
-	int strength;
-	int stamina;
-	int agility;
+	RectangleShape sword;
+	HeroCharacteristic stats;
+	
 	void StatsByLevelUp()
 	{
-		strength += 2 + level / 10 * 2;
-		stamina += 2 + level / 10 * 2;
-		agility += 2 + level / 10 * 2;
-		base_hp += level * 10;
-		exp_to_level *= level;
-		exp = 0;
+		stats.strength += 2 + stats.level / 10 * 2;
+		stats.stamina += 2 + stats.level / 10 * 2;
+		stats.agility += 2 + stats.level / 10 * 2;
+		stats.base_hp += stats.level * 10;
+		stats.exp_to_level *= stats.level;
+		stats.exp = 0;
 	}
 public:
-	Player(string name, int hp, float cooldown = 5, int x = 0, int y = 0, int min = 0, int max = 0) : exp(0), level(0), strength(0), stamina(0), agility(0), exp_to_level(500)
+	Player(string name, int hp, float cooldown = 0.005, int x = 0, int y = 0, int min = 0, int max = 0) : Character::Character()
 	{
 		character.setTexture(LoadTextures::Load().Hero);
+		character.setTextureRect(IntRect(0, 0, 32, 64));
 		animationSpeed = 0.005;
+		sword.setSize(Vector2f(32, 32));
 		this->name = name;
 		this->state = State::Idle;
-		this->base_hp = hp;
+		this->stats.base_hp = hp;
 		this->direction = Direction::Right;
 		this->character.setPosition(x,y);
 		this->base_dmg.min = min;
 		this->base_dmg.max = max;
-		this->base_cooldown = cooldown;
+		this->stats.base_cooldown = cooldown;
+		this->reboundRange = 0;
 		AbilitiesAutoChange();
 	}
 	void setParams(int strenght, int endurance, int dexterity)
 	{
-		this->strength = strenght;
-		this->stamina = endurance;
-		this->agility = dexterity;
+		this->stats.strength = strenght;
+		this->stats.stamina = endurance;
+		this->stats.agility = dexterity;
 	}
 	void AbilitiesAutoChange()
 	{
-		hp = base_hp + stamina * 2;
-		damage.min = base_dmg.min + strength / 2;
-		damage.max = base_dmg.max + strength;
-		cooldown = base_cooldown - agility / 100;
+		hp = stats.base_hp + stats.stamina * 2;
+		damage.min = base_dmg.min + stats.strength / 2;
+		damage.max = base_dmg.max + stats.strength;
+		cooldown = stats.base_cooldown - stats.agility / 100;
 		if (cooldown < 0) cooldown = 0.05;
+	}
+	RectangleShape& getSword() { return sword; }
+	void idleAnimation()
+	{
+		currentFrame = 1;
+		if (direction == Down) character.setTextureRect(IntRect(0, 0, 32, 64));
+		else if (direction == Up) character.setTextureRect(IntRect(0, 64, 32, 64));
+		else if (direction == Right) character.setTextureRect(IntRect(0, 192, 32, 64));
+		else if (direction == Left) character.setTextureRect(IntRect(0, 128, 32, 64));
 	}
 	void moveAnimation()
 	{
+
 		if (direction == Up)
 		{
 			currentFrame += animationSpeed*timeTick;
@@ -338,53 +379,207 @@ public:
 			if (currentFrame > 6) currentFrame -= 4;
 			character.setTextureRect(IntRect(int(currentFrame) * 32, 192, 32, 64));
 		}
-		else 
+	}
+	void attackAnimation()
+	{
+		currentFrame += animationSpeed *timeTick + cooldown;
+		if (currentFrame > 5) { state = Idle; loadDefaultTexture(); return;}
+		
+		if (direction == Left)	
+			character.setTextureRect(IntRect(int(currentFrame) * 64 + 64, 0, -64, 64));
+		else
+			character.setTextureRect(IntRect(int(currentFrame) * 64, 0, 64, 64));
+	}
+	void injureAnimation()
+	{
+		reboundRange += timeTick;
+		if (direction == Up)
+			character.move(0, -timeTick / 3);
+		else if (direction == Down)
+			character.move(0, timeTick / 3);
+		else if (direction == Left)
+			character.move(-timeTick / 3, 0);
+		else if (direction == Right)
+			character.move(timeTick / 3, 0);
+		if (int(reboundRange) % 5 == 0)
+			character.setColor(Color::Red);
+		else if (int(reboundRange) % 2 == 0)
+			character.setColor(Color::White);
+		if (reboundRange > 600)
 		{
-			currentFrame = 1;
-			if (direction == Down) character.setTextureRect(IntRect(0, 0, 32, 64));
-			else if (direction == Up) character.setTextureRect(IntRect(0, 64, 32, 64));
-			else if (direction == Right) character.setTextureRect(IntRect(0, 192, 32, 64));
-			else if (direction == Left) character.setTextureRect(IntRect(0, 128, 32, 64));
+			character.setColor(Color::White);
+			reboundRange = 0;
+			state = Idle;
 		}
+	}
+	void loadAttackTexture()
+	{
+		character.setTexture(LoadTextures::Load().HeroAttack);
+	}
+	void loadDefaultTexture()
+	{
+		character.setTexture(LoadTextures::Load().Hero);
 	}
 };
 
-class Game
+class AssembledGame
 {
-	Player hero;
+	Player* hero;
 	vector<Enemy*> enemies;
 	static RenderWindow window;
+	View view;
+	GameMap& map;
 	Clock clock;
 	int height;
 	int width;
-	float gTime;
-	Game(Player &hero) : hero(hero)
+	AssembledGame() : map(GameMap::getMap())
 	{
+		hero = nullptr;
 		height = VideoMode::getDesktopMode().height;
 		width = VideoMode::getDesktopMode().width;
+		view.reset(sf::FloatRect(0, 0, width, height));
 	}
 public:
+	void addHero(Player &player) { hero = new Player{ player }; }
+	void addEnemy(Enemy enemy)
+	{
+
+		enemies.push_back(new Enemy{ enemy });
+	}
+	void updateTime()
+	{
+		Character::timeTick = clock.getElapsedTime().asMicroseconds();
+		Character::timeTick /= 500;
+		clock.restart();
+	}
+	static AssembledGame& getGame() { static AssembledGame gameStart; return gameStart; }
+
+	void heroCamTracing()
+	{
+		float temp_x = hero->getSprite().getPosition().x;
+		float temp_y = hero->getSprite().getPosition().y;
+		if (temp_x < width / 2)
+			temp_x = width / 2;
+		if (temp_y < height / 2)
+			temp_y = height / 2;
+		if (temp_x > map.width * 32 - width / 2)
+			temp_x = map.width * 32 - width / 2;
+		if (temp_y > map.height * 32 - height / 2)
+			temp_y = map.height * 32 - height / 2;
+
+		view.setCenter(temp_x, temp_y);
+		window.setView(view);
+	}
 	void game()
 	{
 		srand(time(0));
 
+// ************************************************************* Events ******************************************************
+
 		while (window.isOpen())
 		{
-			gTime = clock.getElapsedTime().asMicroseconds();
-			clock.restart();
-			gTime /= 500;
-			if (sf::Keyboard::isKeyPressed(Keyboard::W))
-				hero.move(Up, gTime);
-			else if (sf::Keyboard::isKeyPressed(Keyboard::S))
-				hero.move(Down, gTime);
-			else if (sf::Keyboard::isKeyPressed(Keyboard::A))
-				hero.move(Left, gTime);
-			else if (sf::Keyboard::isKeyPressed(Keyboard::D))
-				hero.move(Right, gTime);
+			//Set Game Glock
+			updateTime();
+			
+			//Events
+			Event event;
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed)
+					window.close();
+			}
 
-			hero.moveAnimation();
+
+// ************************************************* Hero move control ***************************************************
+			
+			Vector2f hero_position_buffer = hero->getSprite().getPosition();
+			if (hero->getState() == Idle || hero->getState() == Move)
+			{
+				
+				hero->setState(Move);
+
+				if (sf::Keyboard::isKeyPressed(Keyboard::W))
+					hero->move(Up);
+				else if (sf::Keyboard::isKeyPressed(Keyboard::S))
+					hero->move(Down);
+				else if (sf::Keyboard::isKeyPressed(Keyboard::A))
+					hero->move(Left);
+				else if (sf::Keyboard::isKeyPressed(Keyboard::D))
+					hero->move(Right);
+				else 
+					hero->setState(Idle);
+
+
+				if (sf::Keyboard::isKeyPressed(Keyboard::Space))
+				{
+					hero->setCurrentFrame(0);
+					hero->setState(Attack);
+					hero->loadAttackTexture();
+				}
+
+				if (sf::Keyboard::isKeyPressed(Keyboard::U)) hero->setState(Injured);
+			}
+
+// ******************************************************* Hero Action animation ************************************************************
+
+			//Hero move animation
+			if (hero->getState() == Move) hero->moveAnimation();
+
+			//Hero Idle animation
+			if (hero->getState() == Idle) hero->idleAnimation();
+
+			//Hero Attack animation
+			if (hero->getState() == Attack) hero->attackAnimation();
+
+			//Hero Injured animation
+			if (hero->getState() == Injured) hero->injureAnimation();
+
+// ******************************************************* Check Collision ************************************************************
+			//Check Wall Collision
+			if (hero->checkWallÑollision()) hero->getSprite().setPosition(hero_position_buffer);
+
+// ************************************ Set Hero Sword Position ***************************************************
+		
+			if (hero->getDirection() == Up)
+				hero->getSword().setPosition(hero->getSprite().getPosition().x, hero->getSprite().getPosition().y - 16);
+			else if (hero->getDirection() == Down)
+				hero->getSword().setPosition(hero->getSprite().getPosition().x, hero->getSprite().getPosition().y + 48);
+			else if (hero->getDirection() == Left)
+				hero->getSword().setPosition(hero->getSprite().getPosition().x - 8, hero->getSprite().getPosition().y + 16);
+			else if (hero->getDirection() == Right)
+				hero->getSword().setPosition(hero->getSprite().getPosition().x + 40, hero->getSprite().getPosition().y + 16);
+			
+			
+
+// ********************************************* Hero Camera Tracing ************************************************
+			heroCamTracing();
+//  ************************************** Drawing *******************************************************
+
+
+			
+			
+
+
+			//Clear Window
+			window.clear();
+
+			//Draw Cells
+			for (int i = 0; i < map.height; i++)
+			{
+				for (int j = 0; j < map.width; j++)
+				{
+					window.draw(StaticObjects::Load().getObj());
+					StaticObjects::Load().getCellObj(map.map[i][j]).setPosition(j * 32, i * 32);
+				}
+			}
+			//Draw Hero
+			window.draw(hero->getSprite());
+			//Display
+			window.display();
+//**********************************************************************************************************
+
 		}	
 	}
 };
 
-RenderWindow Game::window(VideoMode::getDesktopMode(), "Game", Style::Fullscreen);
+RenderWindow AssembledGame::window(VideoMode::getDesktopMode(), "Game", Style::Fullscreen);
