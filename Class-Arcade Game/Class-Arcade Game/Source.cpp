@@ -87,22 +87,23 @@ void main()
 	p.getSprite().setPosition(300, 300);
 	p.setAction(Idle);
 	p.setState(Normal);
+	p.setDmg(15, 850);
 
-	AssembledGame::getGame().addHero(p);
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().addScorpion();
-	AssembledGame::getGame().game();
+	AssembledGame::get().addHero(p);
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().addScorpion();
+	AssembledGame::get().game();
 }
 
 

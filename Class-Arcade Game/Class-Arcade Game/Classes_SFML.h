@@ -36,6 +36,8 @@ class LoadTextures
 		Scorp.loadFromFile("images\\scorpion.png");
 		HeroAttack.loadFromFile("images\\hero_attack.png");
 		Hero.loadFromFile("images\\hero_action.png");
+		LifeBar.loadFromFile("images\\life_bar.png");
+		HeroLifeBar.loadFromFile("images\\player_bar.png");
 	}
 public:
 	Texture Grass;
@@ -43,6 +45,8 @@ public:
 	Texture Scorp;
 	Texture HeroAttack;
 	Texture Environment;
+	Texture LifeBar;
+	Texture HeroLifeBar;
 	static LoadTextures& Load()
 	{
 		static LoadTextures Textures;
@@ -180,10 +184,27 @@ string* GameMap::map = new string[GameMap::height]{
 	"3=====================================================4"
 };
 
+
+class HealthBarImage
+{
+	
+public:
+	Sprite lifeFrame;
+	Sprite lifeBar;
+	HealthBarImage()
+	{
+		lifeFrame.setTexture(LoadTextures::Load().HeroLifeBar);
+		lifeBar.setTexture(LoadTextures::Load().HeroLifeBar);
+		lifeFrame.setTextureRect(IntRect(0, 36 * 2, 180, 36));
+		lifeBar.setTextureRect(IntRect(12, 146, 147, 18));
+	}
+};
+
 class Character
 {
 protected:
-	int hp;
+	float hp;
+	float max_hp;
 	static float reboundRange;
 	Direction reboundDir;
 	float cooldown;
@@ -199,6 +220,8 @@ public:
 	static float timeTick;
 	virtual ~Character() =0 {}
 	virtual void setHp(int hp) { this->hp = hp; }
+	virtual void reduceHpBy(int value) { this->hp -= value; if (hp < 0) hp = 0; }
+	virtual void increaseHpBy(int value) { this->hp += value; }
 	virtual void setReboundDir(Direction dir) { this->reboundDir = dir; }
 	virtual void setState(State state) { this->state = state; }
 	virtual void setAction(Action action) { this->action = action; }
@@ -208,6 +231,7 @@ public:
 	virtual float getAnimationSpeed() { return this->animationSpeed; }
 	virtual float getCurrentFrame() { return this->currentFrame; }
 	virtual float getMoveSpeed() { return this->moveSpeed; }
+	virtual float getHp() { return this->hp; }
 	virtual bool CheckCollision(const sf::FloatRect &obj)
 	{
 		return character.getGlobalBounds().intersects(obj);
@@ -309,12 +333,41 @@ class Enemy : public Character
 protected:
 	static int count;
 	int pos_change_chance;
+	Sprite lifebar;
 public:
 	virtual ~Enemy() = 0 {}
-	Enemy(int chance = 1000) : pos_change_chance(chance) { ++count; }
+	Enemy(int chance = 1000) : pos_change_chance(chance)
+	{
+		++count;
+		lifebar.setTexture(LoadTextures::Load().LifeBar);
+		lifebar.setTextureRect(IntRect(0, 0, 32, 4));
+	}
+	virtual Sprite getHpSprite() { return lifebar; }
 	void setRandDir()
 	{
 		direction = Direction(rand() % 4);
+	}
+	virtual void setHpBarPos()
+	{
+		lifebar.setPosition(character.getPosition());
+	}
+	virtual void reduceHpBy(int value) override
+	{
+		Character::reduceHpBy(value);
+		float temp = hp * float(100 / max_hp);
+		temp = getObjScaledWidth() / 100 * temp;
+		lifebar.setTextureRect(IntRect(0, 0, getObjScaledWidth() / 100 * temp, 4));
+
+	}
+	virtual void setHpBarSize()
+	{
+		IntRect temp = character.getTextureRect();
+		lifebar.setTextureRect(IntRect(0, 0, getObjScaledWidth(), 4));
+	}
+	virtual float getObjScaledWidth()
+	{
+		IntRect temp = character.getTextureRect();
+		return character.getScale().x * temp.width;
 	}
 	void updateDirection()
 	{
@@ -348,6 +401,9 @@ public:
 		character.setTextureRect(IntRect(0, 32, 32, 32));
 		moveSpeed = 12;
 		animationSpeed = 0.005;
+		currentFrame = 0;
+		hp = 1000;
+		max_hp = hp;
 	}
 	void moveAnimation()
 	{
@@ -412,6 +468,18 @@ public:
 		this->stats.base_cooldown = cooldown;
 		this->reboundRange = 0;
 		AbilitiesAutoChange();
+	}
+	void setDmg(int min, int max )
+	{
+		if (max > min)
+		{
+			this->base_dmg.min = min;
+			this->base_dmg.max = max;
+		}
+	}
+	int getDmgToEnemie()
+	{
+		return rand() % (base_dmg.max - base_dmg.min) + base_dmg.min;
 	}
 	void setParams(int strenght, int endurance, int dexterity)
 	{
@@ -494,14 +562,18 @@ class AssembledGame
 	View view;
 	GameMap& map;
 	Clock clock;
+	HealthBarImage heroBar;
 	int height;
 	int width;
+	bool enemy_damaged;
 	AssembledGame() : map(GameMap::getMap())
 	{
 		hero = nullptr;
+		enemy_damaged = false;
 		height = VideoMode::getDesktopMode().height;
 		width = VideoMode::getDesktopMode().width;
 		view.reset(sf::FloatRect(0, 0, width, height));
+		heroBar.lifeFrame.setPosition(150, 150);
 	}
 public:
 	void addHero(Player &player) { hero = new Player{ player }; }
@@ -522,7 +594,7 @@ public:
 		Character::timeTick /= 500;
 		clock.restart();
 	}
-	static AssembledGame& getGame() { static AssembledGame gameStart; return gameStart; }
+	static AssembledGame& get() { static AssembledGame gameStart; return gameStart; }
 
 	void heroCamTracing()
 	{
@@ -530,11 +602,11 @@ public:
 		float temp_y = hero->getSprite().getPosition().y;
 		if (temp_x < width / 2)
 			temp_x = width / 2;
-		if (temp_y < height / 2)
-			temp_y = height / 2;
+		if (temp_y < height / 2 - 100)
+			temp_y = height / 2 - 100;
 		if (temp_x > map.width * 32 - width / 2)
 			temp_x = map.width * 32 - width / 2;
-		if (temp_y > map.height * 32 - height / 2)
+		if (temp_y > map.height * 32 - height / 2 )
 			temp_y = map.height * 32 - height / 2;
 
 		view.setCenter(temp_x, temp_y);
@@ -543,6 +615,10 @@ public:
 	void game()
 	{
 		srand(time(0));
+		for (int i = 0; i < enemies.size(); i++)
+		{
+			enemies[i]->setHpBarSize();
+		}
 
 // ************************************************************* Events ******************************************************
 
@@ -601,7 +677,7 @@ public:
 				enemy_pos_buffer.push_back(enemies[i]->getSprite().getPosition());
 
 				//Enemies move
-				if (enemies[i]->getAction() == Move)
+				if (enemies[i]->getAction() == Move && enemies[i]->getState() == Normal)
 				{
 					enemies[i]->updateDirection();
 					enemies[i]->move();
@@ -621,13 +697,19 @@ public:
 				{
 					if (enemies[i]->checkCharacerCollision(hero->getSword().getGlobalBounds()))
 					{
-						enemies[i]->setState(Injured);
-						enemies[i]->setReboundDir(hero->getDirection());
+						if (enemies[i]->getState() != Injured)
+						{
+							enemies[i]->setState(Injured);
+							enemies[i]->setReboundDir(hero->getDirection());
+							enemies[i]->reduceHpBy(hero->getDmgToEnemie());
+						}
 					}
 				}
 				//Enemie Injured act
 				if (enemies[i]->getState() == Injured) enemies[i]->injureReaction();
 
+
+				enemies[i]->setHpBarPos();
 
 				//Enemies Wall Collision check
 				if (enemies[i]->checkWall—ollision())
@@ -700,13 +782,20 @@ public:
 			for (int i = 0; i < enemies.size(); i++)
 			{
 				window.draw(enemies[i]->getSprite());
+				window.draw(enemies[i]->getHpSprite());
 			}
+
+			heroBar.lifeFrame.setPosition(view.getCenter().x - width /2, view.getCenter().y - height / 2);
+			heroBar.lifeBar.setPosition(heroBar.lifeFrame.getPosition().x + 28, heroBar.lifeFrame.getPosition().y + 8);
+			window.draw(heroBar.lifeBar);
+			window.draw(heroBar.lifeFrame);
 			//Display
 			window.display();
+			
 //**********************************************************************************************************
 
 		}	
 	}
 };
 
-RenderWindow AssembledGame::window(VideoMode::getDesktopMode(), "Game", Style::Fullscreen);
+RenderWindow AssembledGame::window(VideoMode::getDesktopMode(), "Game");//, Style::Fullscreen);
