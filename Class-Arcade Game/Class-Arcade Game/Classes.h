@@ -10,7 +10,7 @@
 using namespace std;
 
 enum Direction { Up, Down, Left, Right };
-enum State { Idle, Attack, Defend, Shoot, Dead, Injured, Follow };
+enum Action { Idle, Attack, Defend, Shoot, Dead, Injured, Follow };
 enum MapCell { Empty, Wall, Hole };
 const int field_width = 55;
 const int field_height = 50;
@@ -132,13 +132,13 @@ class Character : public GameObject, public IAttacking, public IMovable
 {
 protected:
 	int hp;
-	State state;
+	Action action;
 public:
 	virtual ~Character() = 0 {}
 	virtual void attack(Character &target) override {};
 	virtual void shoot(Character &target) override {};
 	virtual void setHp(int hp) { this->hp = hp; }
-	virtual void setState(State state) { this->state = state; }
+	virtual void setState(Action state) { this->action = state; }
 	virtual bool move(Direction dir)
 	{
 		Position temp = position;
@@ -183,7 +183,7 @@ public:
 	Player(string name, int hp, float cooldown = 5, int x = 0, int y = 0, int min = 0, int max = 0) : exp(0), level(0), strength(0), stamina(0), agility(0), exp_to_level(500)
 	{
 		this->name = name;
-		this->state = State::Idle;
+		this->action = Action::Idle;
 		this->base_hp = hp;
 		this->direction = Direction::Right;
 		this->position.x = x;

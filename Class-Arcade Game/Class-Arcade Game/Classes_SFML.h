@@ -8,10 +8,11 @@ using namespace std;
 using namespace sf;
 
 enum Direction { Up, Down, Left, Right };
-enum State { Idle, Attack, Dead, Injured, Follow, Move };
+enum Action { Idle, Attack, Follow, Move };
+enum State { Dead, Injured, Normal };
 
 
-struct Damage { int min, max; };
+struct Damage { int min = 0, max = 0; };
 struct ObjectSize { int x, y, x1, y1, x2, y2; };
 struct ObjSize { int x, y; };
 struct HeroCharacteristic {
@@ -184,11 +185,13 @@ class Character
 protected:
 	int hp;
 	static float reboundRange;
+	Direction reboundDir;
 	float cooldown;
 	float animationSpeed;
 	float currentFrame;
 	float moveSpeed;
 	Damage damage;
+	Action action;
 	State state;
 	Sprite character;
 	Direction direction;
@@ -196,25 +199,31 @@ public:
 	static float timeTick;
 	virtual ~Character() =0 {}
 	virtual void setHp(int hp) { this->hp = hp; }
+	virtual void setReboundDir(Direction dir) { this->reboundDir = dir; }
 	virtual void setState(State state) { this->state = state; }
+	virtual void setAction(Action action) { this->action = action; }
 	virtual void setMoveSpeed(float speed) { this->moveSpeed = speed; }
 	virtual void setDirection(Direction dir) { this->direction = dir; }
 	virtual float getCooldown() { return this->cooldown; }
 	virtual float getAnimationSpeed() { return this->animationSpeed; }
 	virtual float getCurrentFrame() { return this->currentFrame; }
 	virtual float getMoveSpeed() { return this->moveSpeed; }
+	virtual bool CheckCollision(const sf::FloatRect &obj)
+	{
+		return character.getGlobalBounds().intersects(obj);
+	}
+	virtual Action getAction() { return this->action; }
 	virtual State getState() { return this->state; }
 	virtual Sprite& getSprite() { return character; }
 	virtual Direction getDirection() { return this->direction; }
 	virtual Damage getDamage() { return this->damage; }
 	void setCurrentFrame(int frame) { this->currentFrame = frame; }
-	virtual void move(Direction dir)
+	virtual void move()
 	{
-		direction = dir;
-		if (dir == Direction::Up) character.move(0, timeTick / moveSpeed * -1);
-		else if (dir == Direction::Down) character.move(0, timeTick / moveSpeed);
-		else if (dir == Direction::Left) character.move(timeTick / moveSpeed * -1, 0);
-		else if (dir == Direction::Right) character.move(timeTick / moveSpeed, 0);
+		if (direction == Direction::Up) character.move(0, timeTick / moveSpeed * -1);
+		else if (direction == Direction::Down) character.move(0, timeTick / moveSpeed);
+		else if (direction == Direction::Left) character.move(timeTick / moveSpeed * -1, 0);
+		else if (direction == Direction::Right) character.move(timeTick / moveSpeed, 0);
 	}
 
 	bool checkCharacerCollision(const sf::FloatRect &obj)
@@ -223,18 +232,27 @@ public:
 		sf::Rect<float> r2 = obj;
 		return r1.intersects(r2);
 	}
-	bool checkWall—ollision()
+	bool checkWall—ollision(bool firstDrawing = false)
 	{
 		IntRect size = character.getTextureRect();
 		ObjectSize pos;
-		pos.x = character.getPosition().x + 3;
-		pos.y = character.getPosition().y + 3;
+		pos.x = character.getPosition().x;
+		pos.y = character.getPosition().y;
 
 		if (pos.x / size.width < 0 || pos.x / 32 >= GameMap::width || pos.y / size.height < 0 || pos.y / 64 >= GameMap::height)
 			return true;
 
-		pos.x1 = pos.x + size.width * character.getScale().x - 6;
-		pos.y1 = pos.y + size.height * character.getScale().y - 6;
+		pos.x1 = pos.x + size.width * character.getScale().x;
+		pos.y1 = pos.y + size.height * character.getScale().y;
+
+		if (!firstDrawing)
+		{
+			pos.x += 3;
+			pos.y += 3;
+			pos.x1 -= 6;
+			pos.y1 -= 6;
+		}
+
 		pos.y2 = pos.y + size.height / 2 * character.getScale().y;
 		pos.x1 /= 32;
 		pos.y1 /= 32;
@@ -258,6 +276,29 @@ public:
 
 		return false;
 	}
+
+	virtual void injureReaction()
+	{
+		reboundRange += timeTick;
+		if (reboundDir == Up)
+			character.move(0, -timeTick / 3);
+		else if (reboundDir == Down)
+			character.move(0, timeTick / 3);
+		else if (reboundDir == Left)
+			character.move(-timeTick / 3, 0);
+		else if (reboundDir == Right)
+			character.move(timeTick / 3, 0);
+		if (int(reboundRange) % 5 == 0)
+			character.setColor(Color::Red);
+		else if (int(reboundRange) % 2 == 0)
+			character.setColor(Color::White);
+		if (reboundRange > 600)
+		{
+			character.setColor(Color::White);
+			reboundRange = 0;
+			state = Normal;
+		}
+	}
 	
 };
 float Character::timeTick = 0;
@@ -265,24 +306,33 @@ float Character::reboundRange = 0;
 
 class Enemy : public Character
 {
+protected:
 	static int count;
 	int pos_change_chance;
 public:
-	Enemy(int chance = 500) : pos_change_chance(chance) { ++count; }
-	void setRandPos()
+	virtual ~Enemy() = 0 {}
+	Enemy(int chance = 1000) : pos_change_chance(chance) { ++count; }
+	void setRandDir()
 	{
 		direction = Direction(rand() % 4);
 	}
-	void updatePosition()
+	void updateDirection()
 	{
 		int random = rand() % pos_change_chance;
 		if (random == 1)
-			setRandPos();
+			setRandDir();
 	}
-	void setPositionChange—hance(int value)
+	void setDirectionChange—hance(int value)
 	{
 		if (value >=0 && value < 1000)
 		pos_change_chance = value;
+	}
+	void setRandomPosition()
+	{
+		do
+		{
+			character.setPosition(rand() % GameMap::width  * 32, rand() % GameMap::height  * 32);
+		} while (checkWall—ollision(true));
 	}
 	int const &getCount() { return count; }
 };
@@ -291,7 +341,42 @@ int Enemy::count = 0;
 
 class Scorpion : public Enemy
 {
-	Scorpion() : Enemy::Enemy() {}
+public:
+	Scorpion() : Enemy::Enemy()
+	{
+		character.setTexture(LoadTextures::Load().Scorp);
+		character.setTextureRect(IntRect(0, 32, 32, 32));
+		moveSpeed = 12;
+		animationSpeed = 0.005;
+	}
+	void moveAnimation()
+	{
+		if (direction == Up)
+		{
+			currentFrame += animationSpeed*timeTick;;
+			if (currentFrame > 6) currentFrame -= 6;
+			character.setTextureRect(IntRect(int(currentFrame) * 32, 96, 32, 32));
+		}
+		else if (direction == Down)
+		{
+			currentFrame += animationSpeed*timeTick;;
+			if (currentFrame > 6) currentFrame -= 6;
+			character.setTextureRect(IntRect(int(currentFrame) * 32, 30, 32, 32));
+		}
+		else if (direction == Left)
+		{
+			currentFrame += animationSpeed*timeTick;
+			if (currentFrame > 6) currentFrame -= 6;
+			character.setTextureRect(IntRect(int(currentFrame) * 32, 160, 32, 32));
+
+		}
+		if (direction == Right)
+		{
+			currentFrame += animationSpeed*timeTick;
+			if (currentFrame > 6) currentFrame -= 6;
+			character.setTextureRect(IntRect(int(currentFrame) * 32, 224, 32, 32));
+		}
+	}
 };
 
 class Player : public Character
@@ -318,7 +403,7 @@ public:
 		animationSpeed = 0.005;
 		sword.setSize(Vector2f(32, 32));
 		this->name = name;
-		this->state = State::Idle;
+		this->action = Action::Idle;
 		this->stats.base_hp = hp;
 		this->direction = Direction::Right;
 		this->character.setPosition(x,y);
@@ -383,35 +468,14 @@ public:
 	void attackAnimation()
 	{
 		currentFrame += animationSpeed *timeTick + cooldown;
-		if (currentFrame > 5) { state = Idle; loadDefaultTexture(); return;}
+		if (currentFrame > 5) { action = Idle; loadDefaultTexture(); return;}
 		
 		if (direction == Left)	
 			character.setTextureRect(IntRect(int(currentFrame) * 64 + 64, 0, -64, 64));
 		else
 			character.setTextureRect(IntRect(int(currentFrame) * 64, 0, 64, 64));
 	}
-	void injureAnimation()
-	{
-		reboundRange += timeTick;
-		if (direction == Up)
-			character.move(0, -timeTick / 3);
-		else if (direction == Down)
-			character.move(0, timeTick / 3);
-		else if (direction == Left)
-			character.move(-timeTick / 3, 0);
-		else if (direction == Right)
-			character.move(timeTick / 3, 0);
-		if (int(reboundRange) % 5 == 0)
-			character.setColor(Color::Red);
-		else if (int(reboundRange) % 2 == 0)
-			character.setColor(Color::White);
-		if (reboundRange > 600)
-		{
-			character.setColor(Color::White);
-			reboundRange = 0;
-			state = Idle;
-		}
-	}
+	
 	void loadAttackTexture()
 	{
 		character.setTexture(LoadTextures::Load().HeroAttack);
@@ -441,10 +505,16 @@ class AssembledGame
 	}
 public:
 	void addHero(Player &player) { hero = new Player{ player }; }
-	void addEnemy(Enemy enemy)
+	void addScorpion()
 	{
+		enemies.push_back(new Scorpion);
 
-		enemies.push_back(new Enemy{ enemy });
+		enemies.back()->setRandomPosition();
+		enemies.back()->getSprite().setScale(1.5, 1.5);
+		enemies.back()->setDirection(Right);
+		enemies.back()->setAction(Move);
+		enemies.back()->setMoveSpeed(12);
+		enemies.back()->setState(Normal);
 	}
 	void updateTime()
 	{
@@ -493,50 +563,100 @@ public:
 // ************************************************* Hero move control ***************************************************
 			
 			Vector2f hero_position_buffer = hero->getSprite().getPosition();
-			if (hero->getState() == Idle || hero->getState() == Move)
+			if (hero->getAction() == Idle || hero->getAction() == Move)
 			{
 				
-				hero->setState(Move);
+				hero->setAction(Move);
 
 				if (sf::Keyboard::isKeyPressed(Keyboard::W))
-					hero->move(Up);
+					hero->setDirection(Up);
 				else if (sf::Keyboard::isKeyPressed(Keyboard::S))
-					hero->move(Down);
+					hero->setDirection(Down);
 				else if (sf::Keyboard::isKeyPressed(Keyboard::A))
-					hero->move(Left);
+					hero->setDirection(Left);
 				else if (sf::Keyboard::isKeyPressed(Keyboard::D))
-					hero->move(Right);
+					hero->setDirection(Right);
 				else 
-					hero->setState(Idle);
+					hero->setAction(Idle);
 
+				hero->getAction() == Move ? hero->move() : 0;
 
 				if (sf::Keyboard::isKeyPressed(Keyboard::Space))
 				{
 					hero->setCurrentFrame(0);
-					hero->setState(Attack);
+					hero->setAction(Attack);
 					hero->loadAttackTexture();
 				}
-
-				if (sf::Keyboard::isKeyPressed(Keyboard::U)) hero->setState(Injured);
 			}
 
-// ******************************************************* Hero Action animation ************************************************************
+
+
+// ************************************************************ Enemy  ****************************************************************
+
+			
+			vector<Vector2f> enemy_pos_buffer;
+			
+			for (int i = 0; i < enemies.size(); i++)
+			{
+				enemy_pos_buffer.push_back(enemies[i]->getSprite().getPosition());
+
+				//Enemies move
+				if (enemies[i]->getAction() == Move)
+				{
+					enemies[i]->updateDirection();
+					enemies[i]->move();
+				}
+				
+				//Enemies move animation
+				dynamic_cast<Scorpion*>(enemies[i])->moveAnimation();
+
+				//Enemies and Hero collision check
+				if (enemies[i]->checkCharacerCollision(hero->getSprite().getGlobalBounds()))
+				{
+					hero->setState(Injured);
+					hero->setReboundDir(enemies[i]->getDirection());
+				}
+				//Enemies and Sword collision Check
+				if (hero->getAction() == Attack)
+				{
+					if (enemies[i]->checkCharacerCollision(hero->getSword().getGlobalBounds()))
+					{
+						enemies[i]->setState(Injured);
+						enemies[i]->setReboundDir(hero->getDirection());
+					}
+				}
+				//Enemie Injured act
+				if (enemies[i]->getState() == Injured) enemies[i]->injureReaction();
+
+
+				//Enemies Wall Collision check
+				if (enemies[i]->checkWall—ollision())
+				{
+					enemies[i]->getSprite().setPosition(enemy_pos_buffer[i]);
+					enemies[i]->setRandDir();
+				}
+			}
+
+
+			
+
+// ******************************************************* Character Action animation ************************************************************
 
 			//Hero move animation
-			if (hero->getState() == Move) hero->moveAnimation();
+			if (hero->getAction() == Move) hero->moveAnimation();
 
 			//Hero Idle animation
-			if (hero->getState() == Idle) hero->idleAnimation();
+			if (hero->getAction() == Idle) hero->idleAnimation();
 
 			//Hero Attack animation
-			if (hero->getState() == Attack) hero->attackAnimation();
+			if (hero->getAction() == Attack) hero->attackAnimation();
 
-			//Hero Injured animation
-			if (hero->getState() == Injured) hero->injureAnimation();
 
-// ******************************************************* Check Collision ************************************************************
-			//Check Wall Collision
-			if (hero->checkWall—ollision()) hero->getSprite().setPosition(hero_position_buffer);
+// ******************************************************* Character State reaction ************************************************************
+			//Hero Injured act
+			if (hero->getState() == Injured) hero->injureReaction();
+
+
 
 // ************************************ Set Hero Sword Position ***************************************************
 		
@@ -549,11 +669,12 @@ public:
 			else if (hero->getDirection() == Right)
 				hero->getSword().setPosition(hero->getSprite().getPosition().x + 40, hero->getSprite().getPosition().y + 16);
 			
-			
+// ************************************  Check Hero Wall Collision ******************************************************
+			if (hero->checkWall—ollision()) hero->getSprite().setPosition(hero_position_buffer);
 
 // ********************************************* Hero Camera Tracing ************************************************
 			heroCamTracing();
-//  ************************************** Drawing *******************************************************
+//  ************************************** Drawing ******************************************************************
 
 
 			
@@ -574,6 +695,12 @@ public:
 			}
 			//Draw Hero
 			window.draw(hero->getSprite());
+
+			//Draw Enemies
+			for (int i = 0; i < enemies.size(); i++)
+			{
+				window.draw(enemies[i]->getSprite());
+			}
 			//Display
 			window.display();
 //**********************************************************************************************************

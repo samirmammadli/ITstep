@@ -1,41 +1,6 @@
 ﻿#include "Classes_SFML.h"
 
 
-bool checkPosition( const Sprite &person) //Ready
-{
-	IntRect size = person.getTextureRect();
-	ObjectSize pos;
-	pos.x = person.getPosition().x + 3;
-	pos.y = person.getPosition().y + 3;
-	
-	if (pos.x / size.width < 0 || pos.x / 32>= GameMap::width || pos.y / size.height < 0 || pos.y / 64 >= GameMap::height)
-		return true;
-	
-	pos.x1 = pos.x + size.width * person.getScale().x - 6;
-	pos.y1 = pos.y + size.height * person.getScale().y - 6;
-	pos.y2 = pos.y + size.height / 2 * person.getScale().y;
-	pos.x1 /= 32;
-	pos.y1 /= 32;
-	pos.x /= 32;
-	pos.y /= 32;
-	pos.y2 /= 32;
-
-	
-	if (GameMap::map[pos.y][pos.x] != ' ')
-		return true;
-	if (GameMap::map[pos.y][pos.x1] != ' ')
-		return true;
-	if (GameMap::map[pos.y1][pos.x] != ' ')
-		return true;
-	if (GameMap::map[pos.y1][pos.x1] != ' ')
-		return true;
-	if (GameMap::map[pos.y2][pos.x] != ' ')
-		return true;
-	if (GameMap::map[pos.y2][pos.x1] != ' ')
-		return true;
-
-	return false;
-}
 
 
 bool CheckCollision(const sf::FloatRect &obj1,  sf::FloatRect const &obj2) //Ready
@@ -85,37 +50,9 @@ void FollowHero(const sf::Sprite &hero, sf::Sprite &enemy, float time, Direction
 
 }
 
-void ScorpAnimation(Sprite &scorpion,const Direction &dir, float &scorpFrame, float time)
-{
-	if (dir == Up)
-	{
-		scorpFrame += 0.002*time;
-		if (scorpFrame > 6) scorpFrame -= 6;
-		scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 96, 32, 32));
-	}
-	else if (dir == Down)
-	{
-		scorpFrame += 0.002*time;
-		if (scorpFrame > 6) scorpFrame -= 6;
-		scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 30, 32, 32));
-	}
-	else if (dir == Left)
-	{
-		scorpFrame += 0.002*time;
-		if (scorpFrame > 6) scorpFrame -= 6;
-		scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 160, 32, 32));
-
-	}
-	if (dir == Right)
-	{
-		scorpFrame += 0.002*time;
-		if (scorpFrame > 6) scorpFrame -= 6;
-		scorpion.setTextureRect(IntRect(int(scorpFrame) * 32, 224, 32, 32));
-	}
-}
 
 
-void ifDamaged(Sprite &charact,const Direction &dir, float &time, float &otskok, State &state)
+void ifDamaged(Sprite &charact,const Direction &dir, float &time, float &otskok, Action &state)
 {
 	otskok += time / 3;
 	if (dir == Up)
@@ -143,12 +80,28 @@ void ifDamaged(Sprite &charact,const Direction &dir, float &time, float &otskok,
 
 void main()
 {
+	srand(time(0));
+
 	Player p("Samir", 500);
 	p.setMoveSpeed(6);
 	p.getSprite().setPosition(300, 300);
-	p.setState(Idle);
+	p.setAction(Idle);
+	p.setState(Normal);
 
 	AssembledGame::getGame().addHero(p);
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
+	AssembledGame::getGame().addScorpion();
 	AssembledGame::getGame().game();
 }
 
