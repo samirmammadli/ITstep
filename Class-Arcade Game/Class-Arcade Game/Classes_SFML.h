@@ -38,6 +38,9 @@ class LoadTextures
 		Hero.loadFromFile("images\\hero_action.png");
 		LifeBar.loadFromFile("images\\life_bar.png");
 		HeroLifeBar.loadFromFile("images\\player_bar.png");
+		font.loadFromFile("fonts\\Arcade.ttf");
+		Frame.loadFromFile("images\\frame.png");
+		Head.loadFromFile("images\\head.png");
 	}
 public:
 	Texture Grass;
@@ -47,10 +50,33 @@ public:
 	Texture Environment;
 	Texture LifeBar;
 	Texture HeroLifeBar;
+	Texture Frame;
+	Texture Head;
+	Font font;
+	
 	static LoadTextures& Load()
 	{
 		static LoadTextures Textures;
 		return Textures;
+	}
+};
+
+class gameText
+{
+
+public:
+	Text level;
+	Text strenght;
+	Text stamina;
+	Text agility;
+	Text expierence;
+	gameText()
+	{
+		level.setFont(LoadTextures::Load().font);
+		strenght.setFont(LoadTextures::Load().font);
+		stamina.setFont(LoadTextures::Load().font);
+		agility.setFont(LoadTextures::Load().font);
+		expierence.setFont(LoadTextures::Load().font);
 	}
 };
 
@@ -195,7 +221,7 @@ public:
 	{
 		lifeFrame.setTexture(LoadTextures::Load().HeroLifeBar);
 		lifeBar.setTexture(LoadTextures::Load().HeroLifeBar);
-		lifeFrame.setTextureRect(IntRect(0, 36 * 2, 180, 36));
+		lifeFrame.setTextureRect(IntRect(0, 36 * 3, 180, 36));
 		lifeBar.setTextureRect(IntRect(12, 146, 147, 18));
 	}
 };
@@ -232,6 +258,18 @@ public:
 	virtual float getCurrentFrame() { return this->currentFrame; }
 	virtual float getMoveSpeed() { return this->moveSpeed; }
 	virtual float getHp() { return this->hp; }
+	virtual void setDmg(int min, int max)
+	{
+		if (max > min)
+		{
+			this->damage.min = min;
+			this->damage.max = max;
+		}
+	}
+	virtual int getDmgToEnemie()
+	{
+		return rand() % (damage.max - damage.min) + damage.min;
+	}
 	virtual bool CheckCollision(const sf::FloatRect &obj)
 	{
 		return character.getGlobalBounds().intersects(obj);
@@ -357,7 +395,6 @@ public:
 		float temp = hp * float(100 / max_hp);
 		temp = getObjScaledWidth() / 100 * temp;
 		lifebar.setTextureRect(IntRect(0, 0, getObjScaledWidth() / 100 * temp, 4));
-
 	}
 	virtual void setHpBarSize()
 	{
@@ -441,7 +478,7 @@ class Player : public Character
 	Damage base_dmg;
 	RectangleShape sword;
 	HeroCharacteristic stats;
-	
+	float bar_width;
 	void StatsByLevelUp()
 	{
 		stats.strength += 2 + stats.level / 10 * 2;
@@ -452,10 +489,12 @@ class Player : public Character
 		stats.exp = 0;
 	}
 public:
+	HealthBarImage heroBar;
 	Player(string name, int hp, float cooldown = 0.005, int x = 0, int y = 0, int min = 0, int max = 0) : Character::Character()
 	{
 		character.setTexture(LoadTextures::Load().Hero);
 		character.setTextureRect(IntRect(0, 0, 32, 64));
+		heroBar.lifeFrame.setPosition(150, 150);
 		animationSpeed = 0.005;
 		sword.setSize(Vector2f(32, 32));
 		this->name = name;
@@ -467,9 +506,12 @@ public:
 		this->base_dmg.max = max;
 		this->stats.base_cooldown = cooldown;
 		this->reboundRange = 0;
+		this->bar_width = heroBar.lifeBar.getTextureRect().width;
+		max_hp = hp;
 		AbilitiesAutoChange();
 	}
-	void setDmg(int min, int max )
+	int getLevel() { return stats.level; }
+	void setDmg(int min, int max ) override
 	{
 		if (max > min)
 		{
@@ -477,7 +519,13 @@ public:
 			this->base_dmg.max = max;
 		}
 	}
-	int getDmgToEnemie()
+	virtual void reduceHpBy(int value) override
+	{
+		Character::reduceHpBy(value);
+		float temp = hp * float(100 / max_hp);
+		heroBar.lifeBar.setTextureRect(IntRect(12, 146, bar_width / 100 * temp, 18));
+	}
+	int getDmgToEnemie() override
 	{
 		return rand() % (base_dmg.max - base_dmg.min) + base_dmg.min;
 	}
@@ -558,22 +606,29 @@ class AssembledGame
 {
 	Player* hero;
 	vector<Enemy*> enemies;
+	Sprite head;
 	static RenderWindow window;
+	gameText text;
 	View view;
 	GameMap& map;
 	Clock clock;
-	HealthBarImage heroBar;
+	RectangleShape status_frame;
 	int height;
 	int width;
 	bool enemy_damaged;
+	float frame_x;
+	float frame_y;
 	AssembledGame() : map(GameMap::getMap())
 	{
 		hero = nullptr;
 		enemy_damaged = false;
 		height = VideoMode::getDesktopMode().height;
 		width = VideoMode::getDesktopMode().width;
+		head.setTexture(LoadTextures::Load().Head);
 		view.reset(sf::FloatRect(0, 0, width, height));
-		heroBar.lifeFrame.setPosition(150, 150);
+		status_frame.setTexture(&LoadTextures::Load().Frame);
+		status_frame.setSize(Vector2f( width, 100));
+		
 	}
 public:
 	void addHero(Player &player) { hero = new Player{ player }; }
@@ -587,6 +642,14 @@ public:
 		enemies.back()->setAction(Move);
 		enemies.back()->setMoveSpeed(12);
 		enemies.back()->setState(Normal);
+		enemies.back()->setDmg(0, 150);
+	}
+	void setText()
+	{
+		text.level.setString("Level: " + to_string(hero->getLevel()));
+		text.level.setPosition(frame_x + 70, frame_y + 50);
+		text.level.setFillColor(Color::Green);
+		text.level.setCharacterSize(24);
 	}
 	void updateTime()
 	{
@@ -606,7 +669,7 @@ public:
 			temp_y = height / 2 - 100;
 		if (temp_x > map.width * 32 - width / 2)
 			temp_x = map.width * 32 - width / 2;
-		if (temp_y > map.height * 32 - height / 2 )
+		if (temp_y > map.height * 32 - height / 2)
 			temp_y = map.height * 32 - height / 2;
 
 		view.setCenter(temp_x, temp_y);
@@ -689,8 +752,12 @@ public:
 				//Enemies and Hero collision check
 				if (enemies[i]->checkCharacerCollision(hero->getSprite().getGlobalBounds()))
 				{
-					hero->setState(Injured);
-					hero->setReboundDir(enemies[i]->getDirection());
+					if (hero->getState() != Injured)
+					{
+						hero->setState(Injured);
+						hero->setReboundDir(enemies[i]->getDirection());
+						hero->reduceHpBy(enemies[i]->getDmgToEnemie());
+					}
 				}
 				//Enemies and Sword collision Check
 				if (hero->getAction() == Attack)
@@ -785,17 +852,31 @@ public:
 				window.draw(enemies[i]->getHpSprite());
 			}
 
-			heroBar.lifeFrame.setPosition(view.getCenter().x - width /2, view.getCenter().y - height / 2);
-			heroBar.lifeBar.setPosition(heroBar.lifeFrame.getPosition().x + 28, heroBar.lifeFrame.getPosition().y + 8);
-			window.draw(heroBar.lifeBar);
-			window.draw(heroBar.lifeFrame);
-			//Display
-			window.display();
-			
-//**********************************************************************************************************
+// *************************************************** Frame Options **************************************************************************
 
+			frame_x = view.getCenter().x - width / 2;
+			frame_y = view.getCenter().y - height / 2;
+
+			status_frame.setPosition(frame_x, frame_y-1);
+			hero->heroBar.lifeFrame.setPosition(frame_x + 20, frame_y + 10);
+			hero->heroBar.lifeBar.setPosition(frame_x + 48, frame_y + 18);
+
+			head.setPosition(frame_x + 14, frame_y + 45);
+			window.draw(status_frame);
+			window.draw(hero->heroBar.lifeBar);
+			window.draw(hero->heroBar.lifeFrame);
+			window.draw(head);
+
+// ****************************************************** Text *****************************************************************************
+			setText();
+			
+			window.draw(text.level);
+			
+//**************************************************** Display *********************************************************************************
+
+			window.display();
 		}	
 	}
 };
 
-RenderWindow AssembledGame::window(VideoMode::getDesktopMode(), "Game");//, Style::Fullscreen);
+RenderWindow AssembledGame::window(VideoMode::getDesktopMode(), "Scorpion Dungeon", Style::Fullscreen);
