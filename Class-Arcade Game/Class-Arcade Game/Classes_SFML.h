@@ -27,11 +27,10 @@ struct HeroCharacteristic {
 };
 
 
-class LoadTextures
+class LoadData
 {
-	LoadTextures()
+	LoadData()
 	{
-		Grass.loadFromFile("images\\grass.jpg");
 		Environment.loadFromFile("images\\map.png");
 		Scorp.loadFromFile("images\\scorpion.png");
 		HeroAttack.loadFromFile("images\\hero_attack.png");
@@ -43,7 +42,6 @@ class LoadTextures
 		Head.loadFromFile("images\\head.png");
 	}
 public:
-	Texture Grass;
 	Texture Hero;
 	Texture Scorp;
 	Texture HeroAttack;
@@ -54,9 +52,9 @@ public:
 	Texture Head;
 	Font font;
 	
-	static LoadTextures& Load()
+	static LoadData& Load()
 	{
-		static LoadTextures Textures;
+		static LoadData Textures;
 		return Textures;
 	}
 };
@@ -70,20 +68,22 @@ public:
 	Text stamina;
 	Text agility;
 	Text expierence;
+	Text enemies_count;
 	gameText()
 	{
-		level.setFont(LoadTextures::Load().font);
-		strenght.setFont(LoadTextures::Load().font);
-		stamina.setFont(LoadTextures::Load().font);
-		agility.setFont(LoadTextures::Load().font);
-		expierence.setFont(LoadTextures::Load().font);
+		level.setFont(LoadData::Load().font);
+		strenght.setFont(LoadData::Load().font);
+		stamina.setFont(LoadData::Load().font);
+		agility.setFont(LoadData::Load().font);
+		expierence.setFont(LoadData::Load().font);
+		enemies_count.setFont(LoadData::Load().font);
 	}
 };
 
 class StaticObjects
 {
 	Sprite obj;
-	StaticObjects() { obj.setTexture(LoadTextures::Load().Environment); }
+	StaticObjects() { obj.setTexture(LoadData::Load().Environment); }
 public:
 	static StaticObjects& Load()
 	{
@@ -219,8 +219,8 @@ public:
 	Sprite lifeBar;
 	HealthBarImage()
 	{
-		lifeFrame.setTexture(LoadTextures::Load().HeroLifeBar);
-		lifeBar.setTexture(LoadTextures::Load().HeroLifeBar);
+		lifeFrame.setTexture(LoadData::Load().HeroLifeBar);
+		lifeBar.setTexture(LoadData::Load().HeroLifeBar);
 		lifeFrame.setTextureRect(IntRect(0, 36 * 3, 180, 36));
 		lifeBar.setTextureRect(IntRect(12, 146, 147, 18));
 	}
@@ -369,21 +369,29 @@ float Character::reboundRange = 0;
 class Enemy : public Character
 {
 protected:
+	Text show_damage;
 	static int count;
 	int pos_change_chance;
 	Sprite lifebar;
 public:
-	virtual ~Enemy() = 0 {}
+	virtual ~Enemy() = 0 { --count; }
 	Enemy(int chance = 1000) : pos_change_chance(chance)
 	{
+		show_damage.setFont(LoadData::Load().font);
+		show_damage.setFillColor(Color::Red);
+		show_damage.setCharacterSize(30);
 		++count;
-		lifebar.setTexture(LoadTextures::Load().LifeBar);
+		lifebar.setTexture(LoadData::Load().LifeBar);
 		lifebar.setTextureRect(IntRect(0, 0, 32, 4));
 	}
 	virtual Sprite getHpSprite() { return lifebar; }
 	void setRandDir()
 	{
 		direction = Direction(rand() % 4);
+	}
+	virtual const Text& getTakenDmgText()
+	{
+		return show_damage;
 	}
 	virtual void setHpBarPos()
 	{
@@ -394,7 +402,9 @@ public:
 		Character::reduceHpBy(value);
 		float temp = hp * float(100 / max_hp);
 		temp = getObjScaledWidth() / 100 * temp;
-		lifebar.setTextureRect(IntRect(0, 0, getObjScaledWidth() / 100 * temp, 4));
+		lifebar.setTextureRect(IntRect(0, 0, temp, 4));
+		show_damage.setString("-" + to_string(value));
+		show_damage.setPosition(character.getPosition());
 	}
 	virtual void setHpBarSize()
 	{
@@ -424,29 +434,48 @@ public:
 			character.setPosition(rand() % GameMap::width  * 32, rand() % GameMap::height  * 32);
 		} while (checkWallÑollision(true));
 	}
-	int const &getCount() { return count; }
+	static int const &getCount() { return count; }
 };
 
 int Enemy::count = 0;
 
 class Scorpion : public Enemy
 {
+	int exp_min;
+	int exp_max;
 public:
 	Scorpion() : Enemy::Enemy()
 	{
-		character.setTexture(LoadTextures::Load().Scorp);
+		character.setTexture(LoadData::Load().Scorp);
 		character.setTextureRect(IntRect(0, 32, 32, 32));
 		moveSpeed = 12;
 		animationSpeed = 0.005;
 		currentFrame = 0;
 		hp = 1000;
 		max_hp = hp;
+		exp_min = 90;
+		exp_max = 160;
+	}
+	void displayDmg()
+	{
+		show_damage.move(0, -0.03*timeTick);
+	}
+	int giveExp(int level)
+	{
+		int min = exp_min;
+		int max = exp_max;
+		if (level > 0)
+		{
+			int min = exp_min *= level;
+			int max = exp_max *= level;
+		}
+		return rand() % (max - min) + min;
 	}
 	void moveAnimation()
 	{
 		if (direction == Up)
 		{
-			currentFrame += animationSpeed*timeTick;;
+			currentFrame += animationSpeed*timeTick;
 			if (currentFrame > 6) currentFrame -= 6;
 			character.setTextureRect(IntRect(int(currentFrame) * 32, 96, 32, 32));
 		}
@@ -481,18 +510,20 @@ class Player : public Character
 	float bar_width;
 	void StatsByLevelUp()
 	{
-		stats.strength += 2 + stats.level / 10 * 2;
+		stats.exp -= stats.exp_to_level;
+
+		stats.strength += 2 + stats.level * 2;
 		stats.stamina += 2 + stats.level / 10 * 2;
 		stats.agility += 2 + stats.level / 10 * 2;
 		stats.base_hp += stats.level * 10;
-		stats.exp_to_level *= stats.level;
-		stats.exp = 0;
+		stats.exp_to_level = stats.level * 500;
+		AbilitiesAutoChange();
 	}
 public:
 	HealthBarImage heroBar;
 	Player(string name, int hp, float cooldown = 0.005, int x = 0, int y = 0, int min = 0, int max = 0) : Character::Character()
 	{
-		character.setTexture(LoadTextures::Load().Hero);
+		character.setTexture(LoadData::Load().Hero);
 		character.setTextureRect(IntRect(0, 0, 32, 64));
 		heroBar.lifeFrame.setPosition(150, 150);
 		animationSpeed = 0.005;
@@ -504,12 +535,16 @@ public:
 		this->character.setPosition(x,y);
 		this->base_dmg.min = min;
 		this->base_dmg.max = max;
+		this->damage.min = min;
+		this->damage.max = max;
 		this->stats.base_cooldown = cooldown;
 		this->reboundRange = 0;
 		this->bar_width = heroBar.lifeBar.getTextureRect().width;
-		max_hp = hp;
+		this->max_hp = hp;
+		this->stats.exp_to_level = 500;
 		AbilitiesAutoChange();
 	}
+	HeroCharacteristic getStats() { return stats; }
 	int getLevel() { return stats.level; }
 	void setDmg(int min, int max ) override
 	{
@@ -522,12 +557,17 @@ public:
 	virtual void reduceHpBy(int value) override
 	{
 		Character::reduceHpBy(value);
+		hpBarDisplay();
+		
+	}
+	virtual void hpBarDisplay()
+	{
 		float temp = hp * float(100 / max_hp);
 		heroBar.lifeBar.setTextureRect(IntRect(12, 146, bar_width / 100 * temp, 18));
 	}
 	int getDmgToEnemie() override
 	{
-		return rand() % (base_dmg.max - base_dmg.min) + base_dmg.min;
+		return rand() % (damage.max - damage.min) + damage.min;
 	}
 	void setParams(int strenght, int endurance, int dexterity)
 	{
@@ -537,11 +577,13 @@ public:
 	}
 	void AbilitiesAutoChange()
 	{
-		hp = stats.base_hp + stats.stamina * 2;
+		max_hp = stats.base_hp + stats.stamina * 2;
+		hp = max_hp;
 		damage.min = base_dmg.min + stats.strength / 2;
-		damage.max = base_dmg.max + stats.strength;
+		damage.max = base_dmg.max + stats.strength / 2;
 		cooldown = stats.base_cooldown - stats.agility / 100;
 		if (cooldown < 0) cooldown = 0.05;
+		hpBarDisplay();
 	}
 	RectangleShape& getSword() { return sword; }
 	void idleAnimation()
@@ -551,6 +593,15 @@ public:
 		else if (direction == Up) character.setTextureRect(IntRect(0, 64, 32, 64));
 		else if (direction == Right) character.setTextureRect(IntRect(0, 192, 32, 64));
 		else if (direction == Left) character.setTextureRect(IntRect(0, 128, 32, 64));
+	}
+	void increaseXP(int xp)
+	{
+		this->stats.exp += xp;
+		if (stats.exp >= stats.exp_to_level)
+		{
+			stats.level++;
+			StatsByLevelUp();
+		}
 	}
 	void moveAnimation()
 	{
@@ -594,11 +645,11 @@ public:
 	
 	void loadAttackTexture()
 	{
-		character.setTexture(LoadTextures::Load().HeroAttack);
+		character.setTexture(LoadData::Load().HeroAttack);
 	}
 	void loadDefaultTexture()
 	{
-		character.setTexture(LoadTextures::Load().Hero);
+		character.setTexture(LoadData::Load().Hero);
 	}
 };
 
@@ -624,25 +675,27 @@ class AssembledGame
 		enemy_damaged = false;
 		height = VideoMode::getDesktopMode().height;
 		width = VideoMode::getDesktopMode().width;
-		head.setTexture(LoadTextures::Load().Head);
+		head.setTexture(LoadData::Load().Head);
 		view.reset(sf::FloatRect(0, 0, width, height));
-		status_frame.setTexture(&LoadTextures::Load().Frame);
+		status_frame.setTexture(&LoadData::Load().Frame);
 		status_frame.setSize(Vector2f( width, 100));
 		
 	}
 public:
 	void addHero(Player &player) { hero = new Player{ player }; }
-	void addScorpion()
+	void addScorpion(int value )
 	{
-		enemies.push_back(new Scorpion);
-
-		enemies.back()->setRandomPosition();
-		enemies.back()->getSprite().setScale(1.5, 1.5);
-		enemies.back()->setDirection(Right);
-		enemies.back()->setAction(Move);
-		enemies.back()->setMoveSpeed(12);
-		enemies.back()->setState(Normal);
-		enemies.back()->setDmg(0, 150);
+		for (int i = 0; i < value; i++)
+		{
+			enemies.push_back(new Scorpion);
+			enemies.back()->setRandomPosition();
+			enemies.back()->getSprite().setScale(1.5, 1.5);
+			enemies.back()->setDirection(Right);
+			enemies.back()->setAction(Move);
+			enemies.back()->setMoveSpeed(12);
+			enemies.back()->setState(Normal);
+			enemies.back()->setDmg(0, 150);
+		}
 	}
 	void setText()
 	{
@@ -650,6 +703,32 @@ public:
 		text.level.setPosition(frame_x + 70, frame_y + 50);
 		text.level.setFillColor(Color::Green);
 		text.level.setCharacterSize(24);
+
+		text.agility.setString("Agility: " + to_string(hero->getStats().agility));
+		text.agility.setPosition(frame_x + 210, frame_y + 14);
+		text.agility.setFillColor(Color::Cyan);
+		text.agility.setCharacterSize(24);
+
+		text.strenght.setString("Strenght: " + to_string(hero->getStats().strength));
+		text.strenght.setPosition(frame_x + 380, frame_y + 14);
+		text.strenght.setFillColor(Color::Cyan);
+		text.strenght.setCharacterSize(24);
+
+		text.stamina.setString("Stamina: " + to_string(hero->getStats().stamina));
+		text.stamina.setPosition(frame_x + 210, frame_y + 50);
+		text.stamina.setFillColor(Color::Cyan);
+		text.stamina.setCharacterSize(24);
+
+		text.expierence.setString("Expierence: " + to_string(hero->getStats().exp));
+		text.expierence.setPosition(frame_x + 380, frame_y + 50);
+		text.expierence.setFillColor(Color::Cyan);
+		text.expierence.setCharacterSize(24);
+
+		text.enemies_count.setString("Enemies: " + to_string(Enemy::getCount()));
+		text.enemies_count.setPosition(frame_x + 575, frame_y + 50);
+		text.enemies_count.setFillColor(Color(220,20,60));
+		text.enemies_count.setCharacterSize(24);
+
 	}
 	void updateTime()
 	{
@@ -677,6 +756,7 @@ public:
 	}
 	void game()
 	{
+		hero->AbilitiesAutoChange();
 		srand(time(0));
 		for (int i = 0; i < enemies.size(); i++)
 		{
@@ -687,6 +767,9 @@ public:
 
 		while (window.isOpen())
 		{
+			//Clear Window
+			window.clear();
+
 			//Set Game Glock
 			updateTime();
 			
@@ -773,7 +856,11 @@ public:
 					}
 				}
 				//Enemie Injured act
-				if (enemies[i]->getState() == Injured) enemies[i]->injureReaction();
+				if (enemies[i]->getState() == Injured)
+				{
+					enemies[i]->injureReaction();
+					dynamic_cast<Scorpion*>(enemies[i])->displayDmg();
+				}
 
 
 				enemies[i]->setHpBarPos();
@@ -783,6 +870,12 @@ public:
 				{
 					enemies[i]->getSprite().setPosition(enemy_pos_buffer[i]);
 					enemies[i]->setRandDir();
+				}
+				if (enemies[i]->getState() != Injured && enemies[i]->getHp() <= 0)
+				{
+					hero->increaseXP(dynamic_cast<Scorpion*>(enemies[i])->giveExp(hero->getLevel()));
+					delete enemies[i];
+					enemies.erase(enemies.begin() + i);
 				}
 			}
 
@@ -814,9 +907,9 @@ public:
 			else if (hero->getDirection() == Down)
 				hero->getSword().setPosition(hero->getSprite().getPosition().x, hero->getSprite().getPosition().y + 48);
 			else if (hero->getDirection() == Left)
-				hero->getSword().setPosition(hero->getSprite().getPosition().x - 8, hero->getSprite().getPosition().y + 16);
+				hero->getSword().setPosition(hero->getSprite().getPosition().x - 18, hero->getSprite().getPosition().y + 16);
 			else if (hero->getDirection() == Right)
-				hero->getSword().setPosition(hero->getSprite().getPosition().x + 40, hero->getSprite().getPosition().y + 16);
+				hero->getSword().setPosition(hero->getSprite().getPosition().x + 50, hero->getSprite().getPosition().y + 16);
 			
 // ************************************  Check Hero Wall Collision ******************************************************
 			if (hero->checkWallÑollision()) hero->getSprite().setPosition(hero_position_buffer);
@@ -830,8 +923,7 @@ public:
 			
 
 
-			//Clear Window
-			window.clear();
+			
 
 			//Draw Cells
 			for (int i = 0; i < map.height; i++)
@@ -848,6 +940,10 @@ public:
 			//Draw Enemies
 			for (int i = 0; i < enemies.size(); i++)
 			{
+				if (enemies[i]->getState() == Injured)
+				{
+					window.draw(enemies[i]->getTakenDmgText());
+				}
 				window.draw(enemies[i]->getSprite());
 				window.draw(enemies[i]->getHpSprite());
 			}
@@ -862,6 +958,7 @@ public:
 			hero->heroBar.lifeBar.setPosition(frame_x + 48, frame_y + 18);
 
 			head.setPosition(frame_x + 14, frame_y + 45);
+
 			window.draw(status_frame);
 			window.draw(hero->heroBar.lifeBar);
 			window.draw(hero->heroBar.lifeFrame);
@@ -871,6 +968,11 @@ public:
 			setText();
 			
 			window.draw(text.level);
+			window.draw(text.agility);
+			window.draw(text.strenght);
+			window.draw(text.stamina);
+			window.draw(text.expierence);
+			window.draw(text.enemies_count);
 			
 //**************************************************** Display *********************************************************************************
 
