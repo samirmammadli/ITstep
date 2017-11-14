@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <exception>
 using namespace std;
 
 
@@ -26,7 +27,7 @@ public:
 	//Пустая ли строка
 	bool empty();
 	//Вернуть char массив
-	char* c_str();
+	const char* const c_str();
 	//Обменять значения двух строк
 	void Swap(MyString &str);
 	//Вставить подстроку по индексу

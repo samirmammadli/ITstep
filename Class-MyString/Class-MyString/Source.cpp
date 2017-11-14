@@ -13,8 +13,12 @@ void main()
 	MyString str7 = "People";
 	MyString str8 = "test";
 
-	cout << "Find \"Mamma\" in \"Samir Mammadli\":   " << str1.find("Mamma") << endl;
-	str1.replace(1, 4, str8);
+	cout << "Find \"Mamma\" in \"Samir Mammadli\":   " << str1.find("Samir Mammadli\0") << endl;
+	try { str1.replace(1, 4, str8); }
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+	}
 	cout << "Repalce \"Samir Mammadli\" to \"test\", start: 1, finish 4: " << str1 << endl;
 
 	str5.insert(6, "People ");
@@ -54,7 +58,60 @@ void main()
 	else
 		cout << "Not match\n";
 
-	cout << str1[2] << endl;
 	str1[2] = 'u';
 	cout << str1[2] << endl;
+
+	cout << str1.c_str() << endl;
+	cout << str1 << endl;
+
+	str1 = "Hello World!\n";
+
+	try
+	{
+		str1.erase(0, 6);
+		cout << str1 << endl;
+	}
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+	}
+
+
+
+	//Error
+	try
+	{
+		str1.erase(0, 8);
+		cout << str1 << endl;
+	}
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+	}
+
+
+	//Error
+	try
+	{
+		cout << str1[22] << endl;
+	}
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+	}
+
+	//Error
+	try
+	{
+		str1.insert(0, "Test Test Test");
+		cout << str1 << endl;
+	}
+	catch (exception& e)
+	{
+		cout << e.what() << endl;
+	}
+
+
+	
+	
 }

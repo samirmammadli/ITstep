@@ -45,7 +45,7 @@ int MyString::Length() const
 //Очистить строку
 void MyString::clear()
 {
-	delete this->symbols;
+	delete[] this->symbols;
 	this->length = 1;
 	this->symbols = new char{ '\0' };
 }
@@ -60,7 +60,7 @@ bool MyString::empty()
 }
 
 //Вернуть char массив
-char* MyString::c_str()
+const char* const MyString::c_str()
 {
 	return symbols;
 }
@@ -97,6 +97,11 @@ void MyString::insert(int index, const MyString &str)
 		delete[] this->symbols;
 		this->symbols = temp;
 	}
+	else
+	{
+		exception e("Incorrect index!\n");
+		throw(e);
+	}
 }
 
 //Удалить символы
@@ -108,6 +113,12 @@ void MyString::erase(int start, int count)
 		{
 			symbols[i] = symbols[i + count];
 		}
+		this->length = strlen(symbols) + 1;
+	}
+	else
+	{
+		exception e("Incorrect start or index!\n");
+		throw(e);
 	}
 }
 
@@ -122,6 +133,11 @@ void MyString::replace(int start, int finish, const MyString &str)
 			this->symbols[i] = str.symbols[j++];
 		}
 	}
+	else
+	{
+		exception e("Incorrect Indexex!\n");
+			throw(e);
+	}
 }
 
 //Найти подстроку в строке и вернуть ее индекс
@@ -129,15 +145,16 @@ int MyString::find(const MyString &str)
 {
 	int j;
 	int StrLen = str.Length();
-	if (StrLen <= this->length - 1)
+	if (StrLen < this->length)
 	{
 		for (int i = 0; i < this->length - 1; i++)
 		{
 			for (j = 0; j < StrLen; j++)
 			{
+				if (i + j >= this->length - 1) return -1;
 				if (this->symbols[i + j] != str.symbols[j]) break;
 			}
-			if (j == StrLen) return i;
+			if (j == StrLen && j != 0) return i;
 		}
 	}
 	return -1;
@@ -241,6 +258,10 @@ MyString MyString::operator+ (const MyString &str)
 //Перегрузка оператора[]
 char& MyString::operator[] (int index)
 {
+	exception e("Incorrect Index!\n");
+	
+	if (index >= this->length)
+		throw(e);
 	return this->symbols[index];
 }
 
