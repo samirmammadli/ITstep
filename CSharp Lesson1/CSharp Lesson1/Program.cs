@@ -5,12 +5,21 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CSharp_Lesson1
 {
-    class Program
+    internal struct User
     {
+        private string Name;
+        private string Surname;
+        private string Password;
+        private string Phone;
+        private int Age;
+    }
+
+    class Program
+    { 
+        private int[] u;
         private static string Name;
         private static string Surname;
         private static int Age;
@@ -37,7 +46,8 @@ namespace CSharp_Lesson1
             Console.WriteLine("Input Name:");
             Name = Console.ReadLine();
         }
-        static void SetSurname()
+
+        public static void SetSurname()
         {
             Console.WriteLine("Input Surname:");
             Surname = Console.ReadLine();
@@ -49,6 +59,9 @@ namespace CSharp_Lesson1
         }
         static void Main(string[] args)
         {
+            var u = new List<int>();
+
+           var g = u.LongCount();
             while (true)
             {
                 ProgramMenu();
