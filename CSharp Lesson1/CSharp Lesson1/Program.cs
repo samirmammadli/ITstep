@@ -8,77 +8,121 @@ using System.Threading.Tasks;
 
 namespace CSharp_Lesson1
 {
-    internal struct User
+    public struct User
     {
         private string Name;
         private string Surname;
-        private string Password;
+        private string Username;
+        private StringBuilder Password;
         private string Phone;
         private int Age;
-    }
+        private int Key;
 
-    class Program
-    { 
-        private int[] u;
-        private static string Name;
-        private static string Surname;
-        private static int Age;
-        private static int Choose = 0;
-
-        static void ProgramMenu()
+        public User(int a = 0)
+        {
+            Username = "";
+            Password = new StringBuilder(10);
+            Name = "";
+            Surname = "";
+            Phone = "";
+            Age = 0;
+            Key = 0;
+        }
+        public void PrintFirstMenu()
         {
             Console.WriteLine("1. Sign Up");
             Console.WriteLine("2. Log In");
             Console.WriteLine("3. Exit");
         }
-
-        static void GetKey()
+        public void SetName()
         {
-            int.TryParse(Console.ReadLine(), out Choose);
-        }
-        static string GeneratePassword(int length)
-        {
-            return "Password";
-        }
-
-        static void SetName()
-        {
-            Console.WriteLine("Input Name:");
+            Console.Write("Input Name:  ");
             Name = Console.ReadLine();
         }
-
-        public static void SetSurname()
+        public void SetPhone()
         {
-            Console.WriteLine("Input Surname:");
+            Console.Write("Input Phone:  ");
+            Phone = Console.ReadLine();
+        }
+        public void SetSurname()
+        {
+            Console.Write("Input Surname:   ");
             Surname = Console.ReadLine();
         }
-        static void SetAge()
+        public void SetAge()
         {
-            Console.WriteLine("Input Age:");
-            int.TryParse(Console.ReadLine(),out Age);
+            Console.Write("Input Age:   ");
+            int.TryParse(Console.ReadLine(), out Age);
         }
-        static void Main(string[] args)
-        {
-            var u = new List<int>();
 
-           var g = u.LongCount();
-            while (true)
+        private void SetUsernameAndPassword()
+        {
+            if (Name.Length < 6)
+                Username = Name + '_';
+            else
+                Username = Name.Substring(0, 5) + '_';
+
+            if (Surname.Length > 1)
+                Username += Surname.Substring(0, 2).ToLower() + '_';
+            else
+                Username += Surname.ToLower() + '_';
+
+            Username += Age;
+        }
+
+        public void MainMenu()
+        {
+            while (Key != 3)
             {
-                ProgramMenu();
-                GetKey();
-                if (Choose == 1)
+                Console.Clear();
+                PrintFirstMenu();
+                int.TryParse(Console.ReadLine(), out Key);
+                if (Key == 1)
                 {
                     Console.Clear();
                     SetName();
                     SetSurname();
+                    SetPhone();
                     SetAge();
-                    Console.Clear();
+                    SetUsernameAndPassword();
+
+                    Console.WriteLine(Username);
+                    Console.Write("Press any key...");
+                    Console.ReadKey();
                 }
-                else if (Choose == 3)
+                else if (Key == 2)
+                {
                     Environment.Exit(0);
+                }
             }
+            
+        }
 
 
+    }
+
+    class Program
+    { 
+        
+
+        //static void GetKey()
+        //{
+        //    int.TryParse(Console.ReadLine(), out Choose);
+        //}
+        //static string GeneratePassword(int length)
+        //{
+        //    return "Password";
+        //}
+
+       
+
+      
+        static void Main(string[] args)
+        {
+
+            User useR = new User();
+
+            useR.MainMenu();
            
 
 
