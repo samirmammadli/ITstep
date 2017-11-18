@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 namespace DZ1
 {
+    
     static class Program
     {
         /// <summary>
