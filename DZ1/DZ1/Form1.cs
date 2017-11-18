@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,8 +20,11 @@ namespace DZ1
 
         public Form1()
         {
+            _users = new List<User>();
             _isLogged = false;
             InitializeComponent();
+            if (File.Exists("data.dat"))
+            LoadFile();
         }
 
         private void ClearRegLine()
@@ -44,18 +49,18 @@ namespace DZ1
         private void MainLinesVisible(bool state)
         {
             this.label1.Visible = state;
-            this.label2.Visible = state;
-            this.label3.Visible = state;
+            this.lbLogin.Visible = state;
+            this.lbPassword.Visible = state;
             this.label4.Visible = state;
-            this.textBox1.Visible = state;
-            this.textBox2.Visible = state;
-            this.button1.Visible = state;
-            this.button2.Visible = state;
+            this.tbLogin.Visible = state;
+            this.tbPassword.Visible = state;
+            this.btLogin.Visible = state;
+            this.btRegistration.Visible = state;
         }
 
         private void NewUserRegistratiron()
         {
-            int temp;
+            int temp = 0;
             _users.Add(new User());
             _users.Last().Name = tbName.Text;
             _users.Last().Surname = tbSurname.Text;
@@ -68,7 +73,7 @@ namespace DZ1
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btRegistration_Click(object sender, EventArgs e)
         {
             MainLinesVisible(false);
             RegWindowVisible(true);
@@ -84,7 +89,7 @@ namespace DZ1
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btLogin_Click(object sender, EventArgs e)
         {
            
         }
@@ -158,9 +163,10 @@ namespace DZ1
 
             if (linesFilled)
             {
+                NewUserRegistratiron();
                 RegWindowVisible(false);
                 MainLinesVisible(true);
-                MessageBox.Show("Succes!");
+                MessageBox.Show("Your Login: " + _users.Last().Username + '\n' + "Yor Password: " + _users.Last().Pass);
                 ClearRegLine();
             }
             else
@@ -168,17 +174,17 @@ namespace DZ1
 
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void lbLogin_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void label3_Click(object sender, EventArgs e)
+        private void lbPassword_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void tbLogin_TextChanged(object sender, EventArgs e)
         {
 
         }
@@ -198,6 +204,37 @@ namespace DZ1
             RegWindowVisible(false);
             MainLinesVisible(true);
             ClearRegLine();
+        }
+
+        private void SaveFile()
+        {
+            FileStream stream = new FileStream("data.dat", FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+            var formatter = new BinaryFormatter();
+            formatter.Serialize(stream, _users);
+            stream.Close();
+        }
+
+        private void LoadFile()
+        {
+            FileStream stream = new FileStream("data.dat", FileMode.Open, FileAccess.Read);
+            var formatter = new BinaryFormatter();
+            _users = (List<User>)formatter.Deserialize(stream);
+            stream.Close();
+        }
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+           SaveFile();
+            //string[] temp = new string[5];
+            //File.WriteAllText("data.txt", "");
+            //foreach (var user in _users)
+            //{
+            //    temp[0] = user.Name;
+            //    temp[1] = user.Surname;
+            //    temp[2] = user.Age.ToString();
+            //    temp[3] = user.Username;
+            //    temp[4] = user.Pass;
+            //    File.AppendAllLines("data.txt", temp);
+            //}
         }
     }
 }

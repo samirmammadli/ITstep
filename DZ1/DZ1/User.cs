@@ -8,29 +8,35 @@ using System.Threading.Tasks;
 
 namespace DZ1
 {
+    [Serializable]
     class User
     {
         private string _name;
         private string _surname;
         private string _username;
-        private StringBuilder _password;
+        private string _password;
         private int _age;
-        private int _key;
+        private Random rnd;
 
         public User()
         {
+            rnd = new Random();
             _username = "";
-            _password = new StringBuilder(10);
+            _password = "";
             _name = "";
             _surname = "";
             _age = 0;
-            _key = 0;
         }
         public string Name
         {
             set => _name = value;
             get => _name;
         }
+
+        public string Pass { get => _password; }
+
+        public string Username { get => _username; }
+
         public string Surname
         {
             set => _surname = value;
@@ -55,6 +61,13 @@ namespace DZ1
                 _username += _surname.ToLower() + '_';
 
             _username += _age;
+
+            for (int i = 0; i < 10; i++)
+            {
+                //47   123
+                char temp = Convert.ToChar(rnd.Next(47, 123));
+                _password += temp;
+            }
         }
     }
 }

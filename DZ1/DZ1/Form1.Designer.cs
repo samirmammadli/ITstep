@@ -29,16 +29,16 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btLogin = new System.Windows.Forms.Button();
+            this.btRegistration = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.DisplayMessagesBox = new System.Windows.Forms.TextBox();
             this.ChatBox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.lbLogin = new System.Windows.Forms.Label();
+            this.lbPassword = new System.Windows.Forms.Label();
+            this.tbLogin = new System.Windows.Forms.TextBox();
+            this.tbPassword = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.btRegister = new System.Windows.Forms.Button();
@@ -52,25 +52,25 @@
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // btLogin
             // 
-            this.button1.Location = new System.Drawing.Point(667, 105);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(108, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Log In";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btLogin.Location = new System.Drawing.Point(667, 105);
+            this.btLogin.Name = "btLogin";
+            this.btLogin.Size = new System.Drawing.Size(108, 23);
+            this.btLogin.TabIndex = 0;
+            this.btLogin.Text = "Log In";
+            this.btLogin.UseVisualStyleBackColor = true;
+            this.btLogin.Click += new System.EventHandler(this.btLogin_Click);
             // 
-            // button2
+            // btRegistration
             // 
-            this.button2.Location = new System.Drawing.Point(667, 164);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(108, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Registration";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btRegistration.Location = new System.Drawing.Point(667, 164);
+            this.btRegistration.Name = "btRegistration";
+            this.btRegistration.Size = new System.Drawing.Size(108, 23);
+            this.btRegistration.TabIndex = 1;
+            this.btRegistration.Text = "Registration";
+            this.btRegistration.UseVisualStyleBackColor = true;
+            this.btRegistration.Click += new System.EventHandler(this.btRegistration_Click);
             // 
             // label1
             // 
@@ -119,43 +119,43 @@
             this.ChatBox.TextChanged += new System.EventHandler(this.ChatBox_TextChanged);
             this.ChatBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ChatBox_KeyDown);
             // 
-            // label2
+            // lbLogin
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(595, 50);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 16);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Login";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
+            this.lbLogin.AutoSize = true;
+            this.lbLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbLogin.Location = new System.Drawing.Point(595, 50);
+            this.lbLogin.Name = "lbLogin";
+            this.lbLogin.Size = new System.Drawing.Size(41, 16);
+            this.lbLogin.TabIndex = 6;
+            this.lbLogin.Text = "Login";
+            this.lbLogin.Click += new System.EventHandler(this.lbLogin_Click);
             // 
-            // label3
+            // lbPassword
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(595, 79);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 16);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Password";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
+            this.lbPassword.AutoSize = true;
+            this.lbPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbPassword.Location = new System.Drawing.Point(595, 79);
+            this.lbPassword.Name = "lbPassword";
+            this.lbPassword.Size = new System.Drawing.Size(68, 16);
+            this.lbPassword.TabIndex = 7;
+            this.lbPassword.Text = "Password";
+            this.lbPassword.Click += new System.EventHandler(this.lbPassword_Click);
             // 
-            // textBox1
+            // tbLogin
             // 
-            this.textBox1.Location = new System.Drawing.Point(667, 49);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(215, 20);
-            this.textBox1.TabIndex = 8;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.tbLogin.Location = new System.Drawing.Point(667, 49);
+            this.tbLogin.Name = "tbLogin";
+            this.tbLogin.Size = new System.Drawing.Size(215, 20);
+            this.tbLogin.TabIndex = 8;
+            this.tbLogin.TextChanged += new System.EventHandler(this.tbLogin_TextChanged);
             // 
-            // textBox2
+            // tbPassword
             // 
-            this.textBox2.Location = new System.Drawing.Point(667, 79);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(215, 20);
-            this.textBox2.TabIndex = 9;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            this.tbPassword.Location = new System.Drawing.Point(667, 79);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.Size = new System.Drawing.Size(215, 20);
+            this.tbPassword.TabIndex = 9;
+            this.tbPassword.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label4
             // 
@@ -286,20 +286,21 @@
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.tbPassword);
+            this.Controls.Add(this.tbLogin);
+            this.Controls.Add(this.lbPassword);
+            this.Controls.Add(this.lbLogin);
             this.Controls.Add(this.ChatBox);
             this.Controls.Add(this.DisplayMessagesBox);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btRegistration);
+            this.Controls.Add(this.btLogin);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Дешевая Версия mIRC";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
             this.ResumeLayout(false);
@@ -309,17 +310,17 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btLogin;
+        private System.Windows.Forms.Button btRegistration;
         private System.Windows.Forms.Label label1;
         private System.IO.FileSystemWatcher fileSystemWatcher1;
         private System.Windows.Forms.TextBox DisplayMessagesBox;
         private System.Windows.Forms.TextBox ChatBox;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox tbPassword;
+        private System.Windows.Forms.TextBox tbLogin;
+        private System.Windows.Forms.Label lbPassword;
+        private System.Windows.Forms.Label lbLogin;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btRegister;
         private System.Windows.Forms.TextBox tbAge;
