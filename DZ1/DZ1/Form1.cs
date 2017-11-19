@@ -110,8 +110,8 @@ namespace DZ1
         {
             if (e.KeyCode == Keys.Return)
             {
-                DisplayMessagesBox.Text += _users[_usernumber].Name + ":" + ChatBox.Text;
-                DisplayMessagesBox.Text += Environment.NewLine;
+                DisplayMessagesBox.Text += _users[_usernumber].Name + ":  " + ChatBox.Text;
+                //DisplayMessagesBox.Text += Environment.NewLine;
                 ChatBox.Text = "";
             }
         }
