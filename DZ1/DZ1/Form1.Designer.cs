@@ -29,10 +29,16 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            this.lbAge = new System.Windows.Forms.Label();
+            this.lbSurname = new System.Windows.Forms.Label();
+            this.lbName = new System.Windows.Forms.Label();
+            this.tbCancelFill = new System.Windows.Forms.Button();
+            this.tbName = new System.Windows.Forms.TextBox();
+            this.btRegister = new System.Windows.Forms.Button();
+            this.tbSurname = new System.Windows.Forms.TextBox();
+            this.tbAge = new System.Windows.Forms.TextBox();
             this.btLogin = new System.Windows.Forms.Button();
-            this.btRegistration = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.DisplayMessagesBox = new System.Windows.Forms.TextBox();
             this.ChatBox = new System.Windows.Forms.TextBox();
             this.lbLogin = new System.Windows.Forms.Label();
@@ -40,21 +46,97 @@
             this.tbLogin = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.btRegister = new System.Windows.Forms.Button();
-            this.tbAge = new System.Windows.Forms.TextBox();
-            this.tbSurname = new System.Windows.Forms.TextBox();
-            this.tbName = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.tbCancelFill = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
+            this.btRegistration = new System.Windows.Forms.Button();
+            this.lbReg = new System.Windows.Forms.Label();
+            this.regPanel = new System.Windows.Forms.Panel();
+            this.loginPanel = new System.Windows.Forms.Panel();
+            this.LogOutPanel = new System.Windows.Forms.Panel();
+            this.btLogOut = new System.Windows.Forms.Button();
+            this.lbLoggedName = new System.Windows.Forms.Label();
+            this.regPanel.SuspendLayout();
+            this.loginPanel.SuspendLayout();
+            this.LogOutPanel.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // lbAge
+            // 
+            this.lbAge.AutoSize = true;
+            this.lbAge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbAge.Location = new System.Drawing.Point(10, 89);
+            this.lbAge.Name = "lbAge";
+            this.lbAge.Size = new System.Drawing.Size(33, 16);
+            this.lbAge.TabIndex = 22;
+            this.lbAge.Text = "Age";
+            // 
+            // lbSurname
+            // 
+            this.lbSurname.AutoSize = true;
+            this.lbSurname.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbSurname.Location = new System.Drawing.Point(10, 63);
+            this.lbSurname.Name = "lbSurname";
+            this.lbSurname.Size = new System.Drawing.Size(62, 16);
+            this.lbSurname.TabIndex = 21;
+            this.lbSurname.Text = "Surname";
+            // 
+            // lbName
+            // 
+            this.lbName.AutoSize = true;
+            this.lbName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbName.Location = new System.Drawing.Point(10, 34);
+            this.lbName.Name = "lbName";
+            this.lbName.Size = new System.Drawing.Size(45, 16);
+            this.lbName.TabIndex = 20;
+            this.lbName.Text = "Name";
+            // 
+            // tbCancelFill
+            // 
+            this.tbCancelFill.Location = new System.Drawing.Point(164, 115);
+            this.tbCancelFill.Name = "tbCancelFill";
+            this.tbCancelFill.Size = new System.Drawing.Size(75, 23);
+            this.tbCancelFill.TabIndex = 19;
+            this.tbCancelFill.Text = "Cancel";
+            this.tbCancelFill.UseVisualStyleBackColor = true;
+            this.tbCancelFill.Click += new System.EventHandler(this.tbCancelFill_Click);
+            // 
+            // tbName
+            // 
+            this.tbName.Location = new System.Drawing.Point(83, 37);
+            this.tbName.Name = "tbName";
+            this.tbName.Size = new System.Drawing.Size(212, 20);
+            this.tbName.TabIndex = 15;
+            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
+            // 
+            // btRegister
+            // 
+            this.btRegister.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btRegister.FlatAppearance.BorderSize = 3;
+            this.btRegister.Location = new System.Drawing.Point(83, 115);
+            this.btRegister.Name = "btRegister";
+            this.btRegister.Size = new System.Drawing.Size(75, 23);
+            this.btRegister.TabIndex = 18;
+            this.btRegister.Text = "Register";
+            this.btRegister.UseVisualStyleBackColor = true;
+            this.btRegister.Click += new System.EventHandler(this.btRegister_Click);
+            // 
+            // tbSurname
+            // 
+            this.tbSurname.Location = new System.Drawing.Point(83, 63);
+            this.tbSurname.Name = "tbSurname";
+            this.tbSurname.Size = new System.Drawing.Size(212, 20);
+            this.tbSurname.TabIndex = 16;
+            this.tbSurname.TextChanged += new System.EventHandler(this.tbSurname_TextChanged);
+            // 
+            // tbAge
+            // 
+            this.tbAge.Location = new System.Drawing.Point(83, 89);
+            this.tbAge.Name = "tbAge";
+            this.tbAge.Size = new System.Drawing.Size(43, 20);
+            this.tbAge.TabIndex = 17;
+            this.tbAge.TextChanged += new System.EventHandler(this.tbAge_TextChanged);
             // 
             // btLogin
             // 
-            this.btLogin.Location = new System.Drawing.Point(667, 105);
+            this.btLogin.Location = new System.Drawing.Point(88, 102);
             this.btLogin.Name = "btLogin";
             this.btLogin.Size = new System.Drawing.Size(108, 23);
             this.btLogin.TabIndex = 0;
@@ -62,34 +144,18 @@
             this.btLogin.UseVisualStyleBackColor = true;
             this.btLogin.Click += new System.EventHandler(this.btLogin_Click);
             // 
-            // btRegistration
-            // 
-            this.btRegistration.Location = new System.Drawing.Point(667, 164);
-            this.btRegistration.Name = "btRegistration";
-            this.btRegistration.Size = new System.Drawing.Size(108, 23);
-            this.btRegistration.TabIndex = 1;
-            this.btRegistration.Text = "Registration";
-            this.btRegistration.UseVisualStyleBackColor = true;
-            this.btRegistration.Click += new System.EventHandler(this.btRegistration_Click);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Rockwell", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.LightSeaGreen;
-            this.label1.Location = new System.Drawing.Point(591, 13);
+            this.label1.Location = new System.Drawing.Point(12, 10);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(155, 24);
             this.label1.TabIndex = 2;
             this.label1.Text = "Please, Log in.\r\n";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.label1.Click += new System.EventHandler(this.label1_Click);
-            // 
-            // fileSystemWatcher1
-            // 
-            this.fileSystemWatcher1.EnableRaisingEvents = true;
-            this.fileSystemWatcher1.SynchronizingObject = this;
-            this.fileSystemWatcher1.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher1_Changed);
             // 
             // DisplayMessagesBox
             // 
@@ -123,7 +189,7 @@
             // 
             this.lbLogin.AutoSize = true;
             this.lbLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbLogin.Location = new System.Drawing.Point(595, 50);
+            this.lbLogin.Location = new System.Drawing.Point(16, 47);
             this.lbLogin.Name = "lbLogin";
             this.lbLogin.Size = new System.Drawing.Size(41, 16);
             this.lbLogin.TabIndex = 6;
@@ -134,7 +200,7 @@
             // 
             this.lbPassword.AutoSize = true;
             this.lbPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbPassword.Location = new System.Drawing.Point(595, 79);
+            this.lbPassword.Location = new System.Drawing.Point(16, 76);
             this.lbPassword.Name = "lbPassword";
             this.lbPassword.Size = new System.Drawing.Size(68, 16);
             this.lbPassword.TabIndex = 7;
@@ -143,18 +209,20 @@
             // 
             // tbLogin
             // 
-            this.tbLogin.Location = new System.Drawing.Point(667, 49);
+            this.tbLogin.Location = new System.Drawing.Point(88, 46);
             this.tbLogin.Name = "tbLogin";
             this.tbLogin.Size = new System.Drawing.Size(215, 20);
             this.tbLogin.TabIndex = 8;
+            this.tbLogin.Text = "Samir_ma_32";
             this.tbLogin.TextChanged += new System.EventHandler(this.tbLogin_TextChanged);
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(667, 79);
+            this.tbPassword.Location = new System.Drawing.Point(88, 76);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(215, 20);
             this.tbPassword.TabIndex = 9;
+            this.tbPassword.Text = "^kU05PVMTb";
             this.tbPassword.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label4
@@ -162,7 +230,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Rockwell", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.LightSeaGreen;
-            this.label4.Location = new System.Drawing.Point(591, 134);
+            this.label4.Location = new System.Drawing.Point(12, 131);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(270, 24);
             this.label4.TabIndex = 10;
@@ -170,131 +238,104 @@
             this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
-            // label5
+            // btRegistration
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.label5.Location = new System.Drawing.Point(260, 94);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(173, 20);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Please, Fill the form.";
-            this.label5.Visible = false;
-            this.label5.Click += new System.EventHandler(this.label5_Click);
+            this.btRegistration.Location = new System.Drawing.Point(88, 161);
+            this.btRegistration.Name = "btRegistration";
+            this.btRegistration.Size = new System.Drawing.Size(108, 23);
+            this.btRegistration.TabIndex = 1;
+            this.btRegistration.Text = "Registration";
+            this.btRegistration.UseVisualStyleBackColor = true;
+            this.btRegistration.Click += new System.EventHandler(this.btRegistration_Click);
             // 
-            // btRegister
+            // lbReg
             // 
-            this.btRegister.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btRegister.FlatAppearance.BorderSize = 3;
-            this.btRegister.Location = new System.Drawing.Point(264, 232);
-            this.btRegister.Name = "btRegister";
-            this.btRegister.Size = new System.Drawing.Size(75, 23);
-            this.btRegister.TabIndex = 18;
-            this.btRegister.Text = "Register";
-            this.btRegister.UseVisualStyleBackColor = true;
-            this.btRegister.Visible = false;
-            this.btRegister.Click += new System.EventHandler(this.btRegister_Click);
+            this.lbReg.AutoSize = true;
+            this.lbReg.Font = new System.Drawing.Font("Rockwell", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbReg.ForeColor = System.Drawing.Color.LightSeaGreen;
+            this.lbReg.Location = new System.Drawing.Point(79, 4);
+            this.lbReg.Name = "lbReg";
+            this.lbReg.Size = new System.Drawing.Size(132, 24);
+            this.lbReg.TabIndex = 21;
+            this.lbReg.Text = "Registration";
+            this.lbReg.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // tbAge
+            // regPanel
             // 
-            this.tbAge.Location = new System.Drawing.Point(264, 196);
-            this.tbAge.Name = "tbAge";
-            this.tbAge.Size = new System.Drawing.Size(43, 20);
-            this.tbAge.TabIndex = 17;
-            this.tbAge.Visible = false;
-            this.tbAge.TextChanged += new System.EventHandler(this.tbAge_TextChanged);
+            this.regPanel.Controls.Add(this.lbReg);
+            this.regPanel.Controls.Add(this.lbSurname);
+            this.regPanel.Controls.Add(this.lbAge);
+            this.regPanel.Controls.Add(this.tbAge);
+            this.regPanel.Controls.Add(this.tbSurname);
+            this.regPanel.Controls.Add(this.lbName);
+            this.regPanel.Controls.Add(this.btRegister);
+            this.regPanel.Controls.Add(this.tbCancelFill);
+            this.regPanel.Controls.Add(this.tbName);
+            this.regPanel.Location = new System.Drawing.Point(591, 12);
+            this.regPanel.Name = "regPanel";
+            this.regPanel.Size = new System.Drawing.Size(318, 147);
+            this.regPanel.TabIndex = 21;
+            this.regPanel.Visible = false;
             // 
-            // tbSurname
+            // loginPanel
             // 
-            this.tbSurname.Location = new System.Drawing.Point(264, 164);
-            this.tbSurname.Name = "tbSurname";
-            this.tbSurname.Size = new System.Drawing.Size(212, 20);
-            this.tbSurname.TabIndex = 16;
-            this.tbSurname.Visible = false;
-            this.tbSurname.TextChanged += new System.EventHandler(this.tbSurname_TextChanged);
+            this.loginPanel.Controls.Add(this.label1);
+            this.loginPanel.Controls.Add(this.btLogin);
+            this.loginPanel.Controls.Add(this.btRegistration);
+            this.loginPanel.Controls.Add(this.lbLogin);
+            this.loginPanel.Controls.Add(this.label4);
+            this.loginPanel.Controls.Add(this.lbPassword);
+            this.loginPanel.Controls.Add(this.tbPassword);
+            this.loginPanel.Controls.Add(this.tbLogin);
+            this.loginPanel.Location = new System.Drawing.Point(591, 12);
+            this.loginPanel.Name = "loginPanel";
+            this.loginPanel.Size = new System.Drawing.Size(316, 196);
+            this.loginPanel.TabIndex = 22;
             // 
-            // tbName
+            // LogOutPanel
             // 
-            this.tbName.Location = new System.Drawing.Point(264, 130);
-            this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(212, 20);
-            this.tbName.TabIndex = 15;
-            this.tbName.Visible = false;
-            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
+            this.LogOutPanel.Controls.Add(this.btLogOut);
+            this.LogOutPanel.Controls.Add(this.lbLoggedName);
+            this.LogOutPanel.Location = new System.Drawing.Point(591, 12);
+            this.LogOutPanel.Name = "LogOutPanel";
+            this.LogOutPanel.Size = new System.Drawing.Size(318, 62);
+            this.LogOutPanel.TabIndex = 23;
+            this.LogOutPanel.Visible = false;
             // 
-            // label6
+            // btLogOut
             // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label6.Location = new System.Drawing.Point(196, 200);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(33, 16);
-            this.label6.TabIndex = 14;
-            this.label6.Text = "Age";
-            this.label6.Visible = false;
-            this.label6.Click += new System.EventHandler(this.label6_Click);
+            this.btLogOut.Location = new System.Drawing.Point(6, 36);
+            this.btLogOut.Name = "btLogOut";
+            this.btLogOut.Size = new System.Drawing.Size(75, 23);
+            this.btLogOut.TabIndex = 4;
+            this.btLogOut.Text = "Log out";
+            this.btLogOut.UseVisualStyleBackColor = true;
+            this.btLogOut.Click += new System.EventHandler(this.btLogOut_Click);
             // 
-            // label7
+            // lbLoggedName
             // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label7.Location = new System.Drawing.Point(196, 164);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(62, 16);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "Surname";
-            this.label7.Visible = false;
-            this.label7.Click += new System.EventHandler(this.label7_Click);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label8.Location = new System.Drawing.Point(196, 134);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(45, 16);
-            this.label8.TabIndex = 12;
-            this.label8.Text = "Name";
-            this.label8.Visible = false;
-            this.label8.Click += new System.EventHandler(this.label8_Click);
-            // 
-            // tbCancelFill
-            // 
-            this.tbCancelFill.Location = new System.Drawing.Point(346, 232);
-            this.tbCancelFill.Name = "tbCancelFill";
-            this.tbCancelFill.Size = new System.Drawing.Size(75, 23);
-            this.tbCancelFill.TabIndex = 19;
-            this.tbCancelFill.Text = "Cancel";
-            this.tbCancelFill.UseVisualStyleBackColor = true;
-            this.tbCancelFill.Visible = false;
-            this.tbCancelFill.Click += new System.EventHandler(this.tbCancelFill_Click);
+            this.lbLoggedName.AutoSize = true;
+            this.lbLoggedName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbLoggedName.ForeColor = System.Drawing.Color.Green;
+            this.lbLoggedName.Location = new System.Drawing.Point(3, 9);
+            this.lbLoggedName.Name = "lbLoggedName";
+            this.lbLoggedName.Size = new System.Drawing.Size(114, 16);
+            this.lbLoggedName.TabIndex = 3;
+            this.lbLoggedName.Text = "Name Surname";
+            this.lbLoggedName.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.lbLoggedName.Click += new System.EventHandler(this.lbLoggedName_Click_1);
             // 
             // Form1
             // 
             this.AccessibleName = "";
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(894, 523);
-            this.Controls.Add(this.tbCancelFill);
-            this.Controls.Add(this.btRegister);
-            this.Controls.Add(this.tbAge);
-            this.Controls.Add(this.tbSurname);
-            this.Controls.Add(this.tbName);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.tbPassword);
-            this.Controls.Add(this.tbLogin);
-            this.Controls.Add(this.lbPassword);
-            this.Controls.Add(this.lbLogin);
+            this.ClientSize = new System.Drawing.Size(921, 523);
+            this.Controls.Add(this.LogOutPanel);
+            this.Controls.Add(this.loginPanel);
+            this.Controls.Add(this.regPanel);
             this.Controls.Add(this.ChatBox);
             this.Controls.Add(this.DisplayMessagesBox);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.btRegistration);
-            this.Controls.Add(this.btLogin);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -302,7 +343,12 @@
             this.Text = "Дешевая Версия mIRC";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
+            this.regPanel.ResumeLayout(false);
+            this.regPanel.PerformLayout();
+            this.loginPanel.ResumeLayout(false);
+            this.loginPanel.PerformLayout();
+            this.LogOutPanel.ResumeLayout(false);
+            this.LogOutPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -311,9 +357,7 @@
         #endregion
 
         private System.Windows.Forms.Button btLogin;
-        private System.Windows.Forms.Button btRegistration;
         private System.Windows.Forms.Label label1;
-        private System.IO.FileSystemWatcher fileSystemWatcher1;
         private System.Windows.Forms.TextBox DisplayMessagesBox;
         private System.Windows.Forms.TextBox ChatBox;
         private System.Windows.Forms.Label label4;
@@ -321,15 +365,21 @@
         private System.Windows.Forms.TextBox tbLogin;
         private System.Windows.Forms.Label lbPassword;
         private System.Windows.Forms.Label lbLogin;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button btRegister;
-        private System.Windows.Forms.TextBox tbAge;
-        private System.Windows.Forms.TextBox tbSurname;
-        private System.Windows.Forms.TextBox tbName;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btRegistration;
         private System.Windows.Forms.Button tbCancelFill;
+        private System.Windows.Forms.TextBox tbName;
+        private System.Windows.Forms.Button btRegister;
+        private System.Windows.Forms.TextBox tbSurname;
+        private System.Windows.Forms.TextBox tbAge;
+        private System.Windows.Forms.Label lbAge;
+        private System.Windows.Forms.Label lbSurname;
+        private System.Windows.Forms.Label lbName;
+        private System.Windows.Forms.Label lbReg;
+        private System.Windows.Forms.Panel regPanel;
+        private System.Windows.Forms.Panel loginPanel;
+        private System.Windows.Forms.Panel LogOutPanel;
+        private System.Windows.Forms.Button btLogOut;
+        private System.Windows.Forms.Label lbLoggedName;
     }
 }
 

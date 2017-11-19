@@ -15,16 +15,21 @@ namespace DZ1
 {
     public partial class Form1 : Form
     {
+        private int _usernumber;
         private List<User> _users;
-        private bool _isLogged;
 
         public Form1()
         {
+            _usernumber = -1;
             _users = new List<User>();
-            _isLogged = false;
             InitializeComponent();
             if (File.Exists("data.dat"))
             LoadFile();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
 
         private void ClearRegLine()
@@ -33,29 +38,20 @@ namespace DZ1
             tbSurname.Text = "";
             tbAge.Text = "";
         }
+
+        private void LogOutPanelVisible(bool state)
+        {
+            this.LogOutPanel.Visible = state;
+        }
+
         private void RegWindowVisible(bool state)
         {
-            this.label5.Visible = state;
-            this.label6.Visible = state;
-            this.label7.Visible = state;
-            this.label8.Visible = state;
-            this.tbName.Visible = state;
-            this.tbSurname.Visible = state;
-            this.tbAge.Visible = state;
-            this.tbCancelFill.Visible = state;
-            this.btRegister.Visible = state;
+            this.regPanel.Visible = state;
         }
 
         private void MainLinesVisible(bool state)
         {
-            this.label1.Visible = state;
-            this.lbLogin.Visible = state;
-            this.lbPassword.Visible = state;
-            this.label4.Visible = state;
-            this.tbLogin.Visible = state;
-            this.tbPassword.Visible = state;
-            this.btLogin.Visible = state;
-            this.btRegistration.Visible = state;
+            this.loginPanel.Visible = state;
         }
 
         private void NewUserRegistratiron()
@@ -79,19 +75,25 @@ namespace DZ1
             RegWindowVisible(true);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void UserLogged(int i)
         {
-
+            MainLinesVisible(false);
+            lbLoggedName.Text = "Welcome, " + _users[i].Name + "  " + _users[i].Surname + "!";
+            LogOutPanelVisible(true);
+            tbLogin.Text = "";
+            tbPassword.Text = "";
+            ChatBox.Enabled = true;
         }
-
-        private void fileSystemWatcher1_Changed(object sender, System.IO.FileSystemEventArgs e)
-        {
-
-        }
-
         private void btLogin_Click(object sender, EventArgs e)
         {
-           
+            for (int i = 0; i < _users.Count; i++)
+                if (_users[i].Username == tbLogin.Text && _users[i].Pass == tbPassword.Text)
+                {
+                    _usernumber = i;
+                    UserLogged(i);
+                    return;
+                }
+            MessageBox.Show("Incorrect Username or Password!");
         }
 
         private void ChatBox_TextChanged(object sender, EventArgs e)
@@ -108,32 +110,13 @@ namespace DZ1
         {
             if (e.KeyCode == Keys.Return)
             {
-                DisplayMessagesBox.Text += ChatBox.Text;
+                DisplayMessagesBox.Text += _users[_usernumber].Name + ":" + ChatBox.Text;
+                DisplayMessagesBox.Text += Environment.NewLine;
                 ChatBox.Text = "";
             }
         }
 
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void tbName_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
         {
 
         }
@@ -150,10 +133,7 @@ namespace DZ1
 
         private void btRegister_Click(object sender, EventArgs e)
         {
-            var linesFilled = true;
-
-            if (tbName.Text.Length == 0)
-                linesFilled = false;
+            bool linesFilled = (tbName.Text.Length > 0);
 
             if (tbSurname.Text.Length == 0)
                 linesFilled = false;
@@ -166,6 +146,7 @@ namespace DZ1
                 NewUserRegistratiron();
                 RegWindowVisible(false);
                 MainLinesVisible(true);
+                
                 MessageBox.Show("Your Login: " + _users.Last().Username + '\n' + "Yor Password: " + _users.Last().Pass);
                 ClearRegLine();
             }
@@ -224,17 +205,19 @@ namespace DZ1
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
            SaveFile();
-            //string[] temp = new string[5];
-            //File.WriteAllText("data.txt", "");
-            //foreach (var user in _users)
-            //{
-            //    temp[0] = user.Name;
-            //    temp[1] = user.Surname;
-            //    temp[2] = user.Age.ToString();
-            //    temp[3] = user.Username;
-            //    temp[4] = user.Pass;
-            //    File.AppendAllLines("data.txt", temp);
-            //}
+        }
+
+        private void btLogOut_Click(object sender, EventArgs e)
+        {
+            this._usernumber = -1;
+            LogOutPanelVisible(false);
+            MainLinesVisible(true);
+            ChatBox.Enabled = false;
+        }
+
+        private void lbLoggedName_Click_1(object sender, EventArgs e)
+        {
+
         }
     }
 }
