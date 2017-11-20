@@ -39,7 +39,6 @@
             this.tbAge = new System.Windows.Forms.TextBox();
             this.btLogin = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.DisplayMessagesBox = new System.Windows.Forms.TextBox();
             this.ChatBox = new System.Windows.Forms.TextBox();
             this.lbLogin = new System.Windows.Forms.Label();
             this.lbPassword = new System.Windows.Forms.Label();
@@ -53,6 +52,8 @@
             this.LogOutPanel = new System.Windows.Forms.Panel();
             this.btLogOut = new System.Windows.Forms.Button();
             this.lbLoggedName = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.regPanel.SuspendLayout();
             this.loginPanel.SuspendLayout();
             this.LogOutPanel.SuspendLayout();
@@ -104,7 +105,6 @@
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(212, 20);
             this.tbName.TabIndex = 15;
-            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
             // btRegister
             // 
@@ -124,7 +124,6 @@
             this.tbSurname.Name = "tbSurname";
             this.tbSurname.Size = new System.Drawing.Size(212, 20);
             this.tbSurname.TabIndex = 16;
-            this.tbSurname.TextChanged += new System.EventHandler(this.tbSurname_TextChanged);
             // 
             // tbAge
             // 
@@ -132,7 +131,6 @@
             this.tbAge.Name = "tbAge";
             this.tbAge.Size = new System.Drawing.Size(43, 20);
             this.tbAge.TabIndex = 17;
-            this.tbAge.TextChanged += new System.EventHandler(this.tbAge_TextChanged);
             // 
             // btLogin
             // 
@@ -155,22 +153,6 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Please, Log in.\r\n";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label1.Click += new System.EventHandler(this.label1_Click);
-            // 
-            // DisplayMessagesBox
-            // 
-            this.DisplayMessagesBox.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.DisplayMessagesBox.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.DisplayMessagesBox.Font = new System.Drawing.Font("Arial Unicode MS", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DisplayMessagesBox.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.DisplayMessagesBox.Location = new System.Drawing.Point(12, 12);
-            this.DisplayMessagesBox.Multiline = true;
-            this.DisplayMessagesBox.Name = "DisplayMessagesBox";
-            this.DisplayMessagesBox.ReadOnly = true;
-            this.DisplayMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.DisplayMessagesBox.Size = new System.Drawing.Size(573, 460);
-            this.DisplayMessagesBox.TabIndex = 4;
-            this.DisplayMessagesBox.TextChanged += new System.EventHandler(this.DisplayMessagesBox_TextChanged);
             // 
             // ChatBox
             // 
@@ -178,11 +160,9 @@
             this.ChatBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.ChatBox.Enabled = false;
             this.ChatBox.Location = new System.Drawing.Point(12, 491);
-            this.ChatBox.Multiline = true;
             this.ChatBox.Name = "ChatBox";
             this.ChatBox.Size = new System.Drawing.Size(573, 20);
             this.ChatBox.TabIndex = 5;
-            this.ChatBox.TextChanged += new System.EventHandler(this.ChatBox_TextChanged);
             this.ChatBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ChatBox_KeyDown);
             // 
             // lbLogin
@@ -194,7 +174,6 @@
             this.lbLogin.Size = new System.Drawing.Size(41, 16);
             this.lbLogin.TabIndex = 6;
             this.lbLogin.Text = "Login";
-            this.lbLogin.Click += new System.EventHandler(this.lbLogin_Click);
             // 
             // lbPassword
             // 
@@ -205,7 +184,6 @@
             this.lbPassword.Size = new System.Drawing.Size(68, 16);
             this.lbPassword.TabIndex = 7;
             this.lbPassword.Text = "Password";
-            this.lbPassword.Click += new System.EventHandler(this.lbPassword_Click);
             // 
             // tbLogin
             // 
@@ -213,17 +191,14 @@
             this.tbLogin.Name = "tbLogin";
             this.tbLogin.Size = new System.Drawing.Size(215, 20);
             this.tbLogin.TabIndex = 8;
-            this.tbLogin.Text = "Samir_ma_32";
-            this.tbLogin.TextChanged += new System.EventHandler(this.tbLogin_TextChanged);
             // 
             // tbPassword
             // 
             this.tbPassword.Location = new System.Drawing.Point(88, 76);
             this.tbPassword.Name = "tbPassword";
+            this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(215, 20);
             this.tbPassword.TabIndex = 9;
-            this.tbPassword.Text = "^kU05PVMTb";
-            this.tbPassword.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label4
             // 
@@ -236,7 +211,6 @@
             this.label4.TabIndex = 10;
             this.label4.Text = "Or register a new account.";
             this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // btRegistration
             // 
@@ -287,7 +261,7 @@
             this.loginPanel.Controls.Add(this.lbPassword);
             this.loginPanel.Controls.Add(this.tbPassword);
             this.loginPanel.Controls.Add(this.tbLogin);
-            this.loginPanel.Location = new System.Drawing.Point(591, 12);
+            this.loginPanel.Location = new System.Drawing.Point(590, 12);
             this.loginPanel.Name = "loginPanel";
             this.loginPanel.Size = new System.Drawing.Size(316, 196);
             this.loginPanel.TabIndex = 22;
@@ -304,7 +278,7 @@
             // 
             // btLogOut
             // 
-            this.btLogOut.Location = new System.Drawing.Point(6, 36);
+            this.btLogOut.Location = new System.Drawing.Point(6, 34);
             this.btLogOut.Name = "btLogOut";
             this.btLogOut.Size = new System.Drawing.Size(75, 23);
             this.btLogOut.TabIndex = 4;
@@ -323,7 +297,22 @@
             this.lbLoggedName.TabIndex = 3;
             this.lbLoggedName.Text = "Name Surname";
             this.lbLoggedName.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.lbLoggedName.Click += new System.EventHandler(this.lbLoggedName_Click_1);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.BackColor = System.Drawing.Color.SeaShell;
+            this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.richTextBox1.Location = new System.Drawing.Point(11, 12);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.richTextBox1.Size = new System.Drawing.Size(573, 452);
+            this.richTextBox1.TabIndex = 24;
+            this.richTextBox1.Text = "";
+            // 
+            // colorDialog1
+            // 
+            this.colorDialog1.FullOpen = true;
             // 
             // Form1
             // 
@@ -331,11 +320,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(921, 523);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.LogOutPanel);
             this.Controls.Add(this.loginPanel);
             this.Controls.Add(this.regPanel);
             this.Controls.Add(this.ChatBox);
-            this.Controls.Add(this.DisplayMessagesBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -358,7 +347,6 @@
 
         private System.Windows.Forms.Button btLogin;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox DisplayMessagesBox;
         private System.Windows.Forms.TextBox ChatBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbPassword;
@@ -380,6 +368,8 @@
         private System.Windows.Forms.Panel LogOutPanel;
         private System.Windows.Forms.Button btLogOut;
         private System.Windows.Forms.Label lbLoggedName;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.ColorDialog colorDialog1;
     }
 }
 

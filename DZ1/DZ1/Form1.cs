@@ -15,28 +15,50 @@ namespace DZ1
 {
     public partial class Form1 : Form
     {
+        private int _richBoxLength;
         private int _usernumber;
+        private List<Color> _userColor;
         private List<User> _users;
 
         public Form1()
         {
             _usernumber = -1;
             _users = new List<User>();
+            _userColor = new List<Color>();
             InitializeComponent();
             if (File.Exists("data.dat"))
-            LoadFile();
+                LoadFile();
+            if (File.Exists("Chat.dat"))
+            {
+                try
+                {
+                    richTextBox1.LoadFile("Chat.dat");
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("ChatBox: " + e.Message);
+                }
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            _userColor.Add(Color.Red);
+            _userColor.Add(Color.Green);
+            _userColor.Add(Color.Blue);
+            _userColor.Add(Color.Yellow);
+            _userColor.Add(Color.RosyBrown);
+            _userColor.Add(Color.Chocolate);
+            _userColor.Add(Color.DarkBlue);
+            _userColor.Add(Color.DarkGreen);
+            _userColor.Add(Color.DarkGray);
         }
 
         private void ClearRegLine()
         {
-            tbName.Text = "";
-            tbSurname.Text = "";
-            tbAge.Text = "";
+            tbName.Clear();
+            tbSurname.Clear();
+            tbAge.Clear();
         }
 
         private void LogOutPanelVisible(bool state)
@@ -64,10 +86,6 @@ namespace DZ1
             _users.Last().Age = temp;
             _users.Last().SetUsernameAndPassword();
         }
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void btRegistration_Click(object sender, EventArgs e)
         {
@@ -80,8 +98,8 @@ namespace DZ1
             MainLinesVisible(false);
             lbLoggedName.Text = "Welcome, " + _users[i].Name + "  " + _users[i].Surname + "!";
             LogOutPanelVisible(true);
-            tbLogin.Text = "";
-            tbPassword.Text = "";
+            tbLogin.Clear();
+            tbPassword.Clear();
             ChatBox.Enabled = true;
         }
         private void btLogin_Click(object sender, EventArgs e)
@@ -96,39 +114,43 @@ namespace DZ1
             MessageBox.Show("Incorrect Username or Password!");
         }
 
-        private void ChatBox_TextChanged(object sender, EventArgs e)
+
+        private void DisplayText()
         {
-            
+            _richBoxLength = richTextBox1.TextLength;
+            richTextBox1.AppendText(DateTime.Now.ToString() + "  ");
+            richTextBox1.Select(_richBoxLength, DateTime.Now.ToString().Length + 1);
+            richTextBox1.SelectionBackColor = Color.LightGreen;
+
+
+            _richBoxLength = richTextBox1.TextLength;
+
+            richTextBox1.AppendText(_users[_usernumber].Name + ":  " + ChatBox.Text);
+            richTextBox1.Select(_richBoxLength, _users[_usernumber].Name.Length);
+            richTextBox1.SelectionColor = _userColor[_usernumber % 9];
+
+
+
+            richTextBox1.AppendText(Environment.NewLine);
+            ChatBox.Clear();
         }
 
-        private void DisplayMessagesBox_TextChanged(object sender, EventArgs e)
+        private void ChatCommands()
         {
-
+            if (ChatBox.Text == "/clear")
+                richTextBox1.Clear();
+            ChatBox.Clear();
         }
 
         private void ChatBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Return)
             {
-                DisplayMessagesBox.Text += _users[_usernumber].Name + ":  " + ChatBox.Text;
-                //DisplayMessagesBox.Text += Environment.NewLine;
-                ChatBox.Text = "";
+                if (ChatBox.Text[0] == '/')
+                    ChatCommands();
+                else
+                    DisplayText();
             }
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbSurname_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbAge_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void btRegister_Click(object sender, EventArgs e)
@@ -155,31 +177,6 @@ namespace DZ1
 
         }
 
-        private void lbLogin_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lbPassword_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbLogin_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void tbCancelFill_Click(object sender, EventArgs e)
         {
             RegWindowVisible(false);
@@ -191,7 +188,16 @@ namespace DZ1
         {
             FileStream stream = new FileStream("data.dat", FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
             var formatter = new BinaryFormatter();
-            formatter.Serialize(stream, _users);
+            try
+            {
+                formatter.Serialize(stream, _users);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("UserBase Save Error: " + e.Message);
+                stream.Close();
+            }
+            
             stream.Close();
         }
 
@@ -199,12 +205,21 @@ namespace DZ1
         {
             FileStream stream = new FileStream("data.dat", FileMode.Open, FileAccess.Read);
             var formatter = new BinaryFormatter();
-            _users = (List<User>)formatter.Deserialize(stream);
+            try
+            {  
+                _users = (List<User>)formatter.Deserialize(stream);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("UserBase Load Error: " + e.Message);
+                stream.Close();
+            }
             stream.Close();
         }
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
            SaveFile();
+            richTextBox1.SaveFile("Chat.dat");
         }
 
         private void btLogOut_Click(object sender, EventArgs e)
@@ -213,11 +228,6 @@ namespace DZ1
             LogOutPanelVisible(false);
             MainLinesVisible(true);
             ChatBox.Enabled = false;
-        }
-
-        private void lbLoggedName_Click_1(object sender, EventArgs e)
-        {
-
         }
     }
 }
