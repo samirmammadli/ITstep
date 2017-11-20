@@ -117,6 +117,7 @@ namespace DZ1
 
         private void DisplayText()
         {
+            
             _richBoxLength = richTextBox1.TextLength;
             richTextBox1.AppendText(DateTime.Now.ToString() + "  ");
             richTextBox1.Select(_richBoxLength, DateTime.Now.ToString().Length + 1);
@@ -132,6 +133,8 @@ namespace DZ1
 
 
             richTextBox1.AppendText(Environment.NewLine);
+            richTextBox1.SelectionStart = richTextBox1.TextLength;
+            richTextBox1.ScrollToCaret();
             ChatBox.Clear();
         }
 
