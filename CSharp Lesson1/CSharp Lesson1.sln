@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp Lesson1", "CSharp Lesson1\CSharp Lesson1.csproj", "{3CBF4E68-F220-4C25-9354-89A0A27318B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Csharp MyTime", "CSharp Lesson1\Csharp MyTime.csproj", "{3CBF4E68-F220-4C25-9354-89A0A27318B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F8C66BB-6D0C-4351-AFEF-3241535306AA}
 	EndGlobalSection
 EndGlobal
