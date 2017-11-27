@@ -46,7 +46,7 @@ namespace WinForms_File_Encrypt
                 plOpenFile.Visible = false;
                 plMain.Visible = true;
                 b = file.Encrypt(fdOpen.FileName);
-                b = file.Decrypt()
+                b = file.Decrypt(fdOpen.FileName);
             }
         }
 
