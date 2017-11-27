@@ -15,6 +15,7 @@ namespace WinForms_File_Encrypt
     {
         private FileCrypt file;
         private byte[] b;
+        string _filePath;
         public FormMain()
         {
             InitializeComponent();
@@ -23,15 +24,20 @@ namespace WinForms_File_Encrypt
 
         private void btSelectEncrypt_Click(object sender, EventArgs e)
         {
-
-            MessageBox.Show(b.Length.ToString());
+            b = file.Encrypt(_filePath);
             FileStream f = new FileStream("nese.txt", FileMode.OpenOrCreate);
             f.Write(b,0,b.Length);
+            MessageBox.Show(b.Length.ToString());
             f.Close();
         }
 
         private void btSelectDecrypt_Click(object sender, EventArgs e)
         {
+            b = file.Decrypt("nese.txt");
+            MessageBox.Show(file.haha);       
+            FileStream f = new FileStream("nese.txt", FileMode.OpenOrCreate);
+            f.Write(b, 0, b.Length);
+            f.Close();
             MessageBox.Show("File Decrypted");
         }
 
@@ -39,14 +45,12 @@ namespace WinForms_File_Encrypt
         {
             if (fdOpen.ShowDialog() == DialogResult.OK)
             {
-                string fileOpen = fdOpen.FileName;
-                tbFileName.Text = fileOpen;
+                _filePath = fdOpen.FileName;
+                tbFileName.Text = _filePath;
                 tbFileName.Visible = true;
                 lbFileName.Visible = true;
                 plOpenFile.Visible = false;
                 plMain.Visible = true;
-                b = file.Encrypt(fdOpen.FileName);
-                b = file.Decrypt(fdOpen.FileName);
             }
         }
 
