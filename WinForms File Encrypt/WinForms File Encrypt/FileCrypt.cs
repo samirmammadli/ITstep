@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -120,12 +121,9 @@ namespace WinForms_File_Encrypt
 
         public void CryptFile(string filepath, string keyword)
         {
-           file = new FileStream(filepath, FileMode.Open);
             if (IsCrypted(filepath))
-            {
-                file.Close();
                 throw new ArgumentException("File is alrady Crypted!");
-            }
+           file = new FileStream(filepath, FileMode.Open);
             if (!file.CanWrite)
             {
                 file.Close();
@@ -144,7 +142,7 @@ namespace WinForms_File_Encrypt
         {
             if (!IsCrypted(filepath))
                 throw new ArgumentException("File is not Crypted!");
-            file = new FileStream(filepath, FileMode.Open);
+            file = new FileStream(filepath, FileMode.OpenOrCreate);
             if (!file.CanWrite)
             {
                 file.Close();
@@ -152,8 +150,9 @@ namespace WinForms_File_Encrypt
             }
             byte[] bytes = new byte[file.Length];
             file.Read(bytes, 0, bytes.Length);
+            file.SetLength(file.Length - _cryptorStamp.Length);
             file.Seek(0, SeekOrigin.Begin);
-            file.Write(DecryptBytes(bytes, keyword), 0, bytes.Length);
+            file.Write(DecryptBytes(bytes, keyword), 0, (int)file.Length);
             file.Close();
         }
     }
