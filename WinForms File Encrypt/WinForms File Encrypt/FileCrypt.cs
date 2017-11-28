@@ -10,61 +10,10 @@ namespace WinForms_File_Encrypt
 {
     class FileCrypt
     {
-        private string _key;
-        private string _cryptorStamp;
+        private const string _cryptorStamp = "Crypted by Samir";
         public string posmotrim;
-        FileStream file;
-        public FileCrypt()
-        {
-            _key = "Samir";
-            _cryptorStamp = "Crypted by Samir";
-        }
+        private FileStream file;
 
-        //public byte[] DecryptBytes(string filepath)
-        //{
-        //    file = new FileStream(filepath, FileMode.Open);
-        //    byte[] Bytes = new byte[file.Length];
-        //    file.Read(Bytes, 0, (int)file.Length);
-        //    int k = 0;
-        //    for (int i = 0; i < Bytes.Length; i++)
-        //    {
-        //        Bytes[i] -= (byte)Bytes.Length;
-        //        Bytes[i] += (byte)_key.Length;
-        //        Bytes[i] -= (byte)_key[k];
-        //        Bytes[i] = (byte)~Bytes[i];
-        //        Bytes[i] -= (byte)(_key[k] | Bytes.Length / _key.Length);
-        //        Bytes[i] += (byte)(_key[k] & Math.Abs(Bytes.Length - _key.Length));
-        //        if (k == _key.Length - 1)
-        //            k = 0;
-        //    }
-        //    file.Close();
-        //    if (_cryptorStamp != Encoding.ASCII.GetString(Bytes, (int)file.Length - _cryptorStamp.Length, _cryptorStamp.Length))
-        //        throw new ArgumentException("Incorrect Key or File is not crypted!", nameof(file));
-
-        //    return Bytes;
-        //}
-        //public byte[] EncryptBytes(string filepath)
-        //{
-        //    file = new FileStream(filepath, FileMode.Open);
-        //    byte[] Bytes = new byte[file.Length + _cryptorStamp.Length];
-        //    file.Read(Bytes, 0, (int)file.Length);
-        //    Buffer.BlockCopy(Encoding.ASCII.GetBytes(_cryptorStamp), 0, Bytes, (int)file.Length, _cryptorStamp.Length);
-        //    int k = 0;
-        //    for (int i = 0; i < Bytes.Length; i++)
-        //    {
-
-        //        Bytes[i] -= (byte)(_key[k] & Math.Abs(Bytes.Length - _key.Length));
-        //        Bytes[i] += (byte)(_key[k] | Bytes.Length / _key.Length);
-        //        Bytes[i] = (byte)~Bytes[i];
-        //        Bytes[i] += (byte)Bytes.Length;
-        //        Bytes[i] -= (byte)_key.Length;
-        //        Bytes[i] += (byte)_key[k];
-        //        if (k == _key.Length - 1)
-        //            k = 0;
-        //    }
-        //    file.Close();
-        //    return Bytes;
-        //}
         private byte[] EncryptBytes(byte[] bytes, string keyword)
         {
             var k = 0;
