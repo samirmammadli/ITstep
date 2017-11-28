@@ -17,7 +17,7 @@ namespace DZ1
     {
         private int _richBoxLength;
         private int _usernumber;
-        private List<Color> _userColor;
+        private readonly List<Color> _userColor;
         private List<User> _users;
 
         public Form1()
@@ -43,6 +43,8 @@ namespace DZ1
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            richTextBox1.SelectionStart = richTextBox1.TextLength;
+            richTextBox1.ScrollToCaret();
             _userColor.Add(Color.Red);
             _userColor.Add(Color.Green);
             _userColor.Add(Color.Blue);
