@@ -35,6 +35,8 @@ namespace WinForms_File_Encrypt
             //f.Write(b, 0, b.Length);
             //f.Close();
             //MessageBox.Show("File Decrypted");
+            file.DecryptFile(_filePath, "Samir");
+            MessageBox.Show(file.posmotrim);
         }
 
         private void btOpenFile_Click(object sender, EventArgs e)
