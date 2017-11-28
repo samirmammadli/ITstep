@@ -24,21 +24,17 @@ namespace WinForms_File_Encrypt
 
         private void btSelectEncrypt_Click(object sender, EventArgs e)
         {
-            b = file.Encrypt(_filePath);
-            FileStream f = new FileStream("nese.txt", FileMode.OpenOrCreate);
-            f.Write(b,0,b.Length);
-            MessageBox.Show(b.Length.ToString());
-            f.Close();
+            file.CryptFile(_filePath, "Samir");
         }
 
         private void btSelectDecrypt_Click(object sender, EventArgs e)
         {
-            b = file.Decrypt("nese.txt");
-            MessageBox.Show(file.haha);       
-            FileStream f = new FileStream("nese.txt", FileMode.OpenOrCreate);
-            f.Write(b, 0, b.Length);
-            f.Close();
-            MessageBox.Show("File Decrypted");
+            //b = file.Decrypt("nese.txt");
+            //MessageBox.Show(file.haha);       
+            //FileStream f = new FileStream("nese.txt", FileMode.OpenOrCreate);
+            //f.Write(b, 0, b.Length);
+            //f.Close();
+            //MessageBox.Show("File Decrypted");
         }
 
         private void btOpenFile_Click(object sender, EventArgs e)

@@ -103,7 +103,7 @@
             this.btSelectDecrypt.Name = "btSelectDecrypt";
             this.btSelectDecrypt.Size = new System.Drawing.Size(128, 37);
             this.btSelectDecrypt.TabIndex = 1;
-            this.btSelectDecrypt.Text = "Decrypt File";
+            this.btSelectDecrypt.Text = "DecryptBytes File";
             this.btSelectDecrypt.UseVisualStyleBackColor = true;
             this.btSelectDecrypt.Click += new System.EventHandler(this.btSelectDecrypt_Click);
             // 
@@ -123,7 +123,7 @@
             this.btSelectEncrypt.Name = "btSelectEncrypt";
             this.btSelectEncrypt.Size = new System.Drawing.Size(128, 37);
             this.btSelectEncrypt.TabIndex = 0;
-            this.btSelectEncrypt.Text = "Encrypt File";
+            this.btSelectEncrypt.Text = "EncryptBytes File";
             this.btSelectEncrypt.UseVisualStyleBackColor = true;
             this.btSelectEncrypt.Click += new System.EventHandler(this.btSelectEncrypt_Click);
             // 
