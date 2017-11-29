@@ -12,7 +12,6 @@ namespace WinForms_File_Encrypt
     {
         private const string _cryptorStamp = "Crypted by Samir";
         public string posmotrim;
-        private FileStream file;
 
         private byte[] EncryptBytes(byte[] bytes, string keyword)
         {
@@ -25,6 +24,7 @@ namespace WinForms_File_Encrypt
                 bytes[i] += (byte)bytes.Length;
                 bytes[i] -= (byte)keyword.Length;
                 bytes[i] += (byte)keyword[k];
+                k++;
                 if (k == keyword.Length - 1)
                     k = 0;
             }
@@ -42,25 +42,27 @@ namespace WinForms_File_Encrypt
                 bytes[i] = (byte)~bytes[i];
                 bytes[i] -= (byte)(keyword[k] | bytes.Length / keyword.Length);
                 bytes[i] += (byte)(keyword[k] & Math.Abs(bytes.Length - keyword.Length));
+                k++;
                 if (k == keyword.Length - 1)
                     k = 0;
             }
             return bytes;
         }
 
-        private bool IsCrypted(string filepath)
+        private bool CheckFile(string filepath, string keyword)
         {
             byte[] temp = new byte[_cryptorStamp.Length];
-            file = new FileStream(filepath, FileMode.Open);
+            FileStream file = new FileStream(filepath, FileMode.Open);
             if (file.Length < _cryptorStamp.Length)
             {
                 file.Close();
                 return false;
             }
+
             file.Seek((int)file.Length - _cryptorStamp.Length, SeekOrigin.Begin);
-            file.Read(temp,0 , _cryptorStamp.Length);
+            file.Read(temp, 0, _cryptorStamp.Length);
             file.Close();
-            temp = DecryptBytes(temp, _cryptorStamp);
+            temp = DecryptBytes(temp, keyword);
             posmotrim = Encoding.ASCII.GetString(temp, 0, temp.Length);
             if (_cryptorStamp == Encoding.ASCII.GetString(temp, 0, temp.Length))
                 return true;
@@ -70,9 +72,9 @@ namespace WinForms_File_Encrypt
 
         public void CryptFile(string filepath, string keyword)
         {
-            if (IsCrypted(filepath))
-                throw new ArgumentException("File is alrady Crypted!");
-           file = new FileStream(filepath, FileMode.Open);
+            //if (CheckFile(filepath, keyword))
+            //    throw new ArgumentException("File is alrady Crypted!");
+            FileStream file = new FileStream(filepath, FileMode.Open);
             if (!file.CanWrite)
             {
                 file.Close();
@@ -80,18 +82,20 @@ namespace WinForms_File_Encrypt
             }
            byte[] bytes = new byte[file.Length + _cryptorStamp.Length];
            file.Read(bytes, 0, (int)file.Length);
+           Buffer.BlockCopy(Encoding.ASCII.GetBytes(_cryptorStamp), 0, bytes, (int)file.Length, _cryptorStamp.Length);
            EncryptBytes(bytes, keyword);
-           Buffer.BlockCopy(EncryptBytes(Encoding.ASCII.GetBytes(_cryptorStamp), _cryptorStamp), 0, bytes, (int)file.Length, _cryptorStamp.Length);
            file.Seek(0, SeekOrigin.Begin);
            file.Write(bytes, 0, bytes.Length);
-           file.Close();
+           file.Close();  
         }
 
         public void DecryptFile(string filepath, string keyword)
         {
-            if (!IsCrypted(filepath))
-                throw new ArgumentException("File is not Crypted!");
-            file = new FileStream(filepath, FileMode.OpenOrCreate);
+            CheckFile(filepath, keyword);
+            //if (!CheckFile(filepath, keyword))
+            //    throw new ArgumentException("File is not Crytped or Key is incorrect!");
+
+            FileStream file = new FileStream(filepath, FileMode.OpenOrCreate);
             if (!file.CanWrite)
             {
                 file.Close();
@@ -99,7 +103,7 @@ namespace WinForms_File_Encrypt
             }
             byte[] bytes = new byte[file.Length];
             file.Read(bytes, 0, bytes.Length);
-            file.SetLength(file.Length - _cryptorStamp.Length);
+            //file.SetLength(file.Length - _cryptorStamp.Length);
             file.Seek(0, SeekOrigin.Begin);
             file.Write(DecryptBytes(bytes, keyword), 0, (int)file.Length);
             file.Close();

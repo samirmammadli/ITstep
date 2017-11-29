@@ -24,21 +24,31 @@ namespace WinForms_File_Encrypt
 
         private void btSelectEncrypt_Click(object sender, EventArgs e)
         {
-            file.CryptFile(_filePath, "Samir");
+            
+            try
+            {
+                file.CryptFile(_filePath, tbKey.Text);
+                MessageBox.Show("File Crypted!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
-
         private void btSelectDecrypt_Click(object sender, EventArgs e)
         {
-            //b = file.Decrypt("nese.txt");
-            //MessageBox.Show(file.haha);       
-            //FileStream f = new FileStream("nese.txt", FileMode.OpenOrCreate);
-            //f.Write(b, 0, b.Length);
-            //f.Close();
-            //MessageBox.Show("File Decrypted");
-            file.DecryptFile(_filePath, "Samir");
-            MessageBox.Show(file.posmotrim);
+            try
+            {
+                MessageBox.Show(file.posmotrim);
+               
+                file.DecryptFile(_filePath, tbKey.Text);
+                MessageBox.Show("File Decrypted!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }  
         }
-
         private void btOpenFile_Click(object sender, EventArgs e)
         {
             if (fdOpen.ShowDialog() == DialogResult.OK)
@@ -54,6 +64,7 @@ namespace WinForms_File_Encrypt
 
         private void btCancel_Click(object sender, EventArgs e)
         {
+            tbKey.Clear();
             plMain.Visible = false;
             plOpenFile.Visible = true;
         }

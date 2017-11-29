@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.plMain = new System.Windows.Forms.Panel();
             this.btCancel = new System.Windows.Forms.Button();
             this.lbKey = new System.Windows.Forms.Label();
@@ -38,7 +37,6 @@
             this.lbFileName = new System.Windows.Forms.Label();
             this.btSelectEncrypt = new System.Windows.Forms.Button();
             this.fdOpen = new System.Windows.Forms.OpenFileDialog();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.plOpenFile = new System.Windows.Forms.Panel();
             this.btExit = new System.Windows.Forms.Button();
             this.btOpenFile = new System.Windows.Forms.Button();
@@ -135,7 +133,7 @@
             // 
             this.plOpenFile.Controls.Add(this.btExit);
             this.plOpenFile.Controls.Add(this.btOpenFile);
-            this.plOpenFile.Location = new System.Drawing.Point(9, 12);
+            this.plOpenFile.Location = new System.Drawing.Point(7, 12);
             this.plOpenFile.Name = "plOpenFile";
             this.plOpenFile.Size = new System.Drawing.Size(404, 99);
             this.plOpenFile.TabIndex = 1;
@@ -187,7 +185,6 @@
         private System.Windows.Forms.OpenFileDialog fdOpen;
         private System.Windows.Forms.Label lbFileName;
         private System.Windows.Forms.TextBox tbFileName;
-        private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label lbKey;
         private System.Windows.Forms.TextBox tbKey;
         private System.Windows.Forms.Panel plOpenFile;
