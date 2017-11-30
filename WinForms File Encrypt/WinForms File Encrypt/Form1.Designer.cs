@@ -133,7 +133,7 @@
             // 
             this.plOpenFile.Controls.Add(this.btExit);
             this.plOpenFile.Controls.Add(this.btOpenFile);
-            this.plOpenFile.Location = new System.Drawing.Point(7, 12);
+            this.plOpenFile.Location = new System.Drawing.Point(9, 12);
             this.plOpenFile.Name = "plOpenFile";
             this.plOpenFile.Size = new System.Drawing.Size(404, 99);
             this.plOpenFile.TabIndex = 1;

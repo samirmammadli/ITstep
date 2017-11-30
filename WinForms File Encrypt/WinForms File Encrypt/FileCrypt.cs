@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 
 namespace WinForms_File_Encrypt
 {
     class FileCrypt
     {
-        private const string _cryptorStamp = "Crypted by Samir";
-        public string posmotrim;
+        private const string CryptorStamp = "Crypted by Samir";
 
-
-        private byte[] EncryptBytes(byte[] bytes, string keyword)
+        private static byte[] EncryptBytes(byte[] bytes, string keyword)
         {
             var k = 0;
-            for (int i = 0; i < bytes.Length; i++)
+            for (var i = 0; i < bytes.Length; i++)
             {
-                bytes[i] -= (byte)(keyword[k] & Math.Abs(bytes.Length - keyword.Length));
-                bytes[i] += (byte)(keyword[k] | bytes.Length / keyword.Length);
+                bytes[i] -= (byte)(keyword[k] & Math.Abs(~keyword.Length - keyword.Length));
+                bytes[i] += (byte)(keyword[k] | (keyword.Length | 84) / keyword.Length);
                 bytes[i] = (byte)~bytes[i];
-                bytes[i] += (byte)bytes.Length;
+                bytes[i] += (byte)(keyword.Length | 0x84);
                 bytes[i] -= (byte)keyword.Length;
                 bytes[i] += (byte)keyword[k];
                 k++;
@@ -35,14 +35,14 @@ namespace WinForms_File_Encrypt
         private static byte[] DecryptBytes(byte[] bytes, string keyword)
         {
             var k = 0;
-            for (int i = 0; i < bytes.Length; i++)
+            for (var i = 0; i < bytes.Length; i++)
             {
-                bytes[i] -= (byte)bytes.Length;
+                bytes[i] -= (byte)(keyword.Length | 0x84);
                 bytes[i] += (byte)keyword.Length;
                 bytes[i] -= (byte)keyword[k];
                 bytes[i] = (byte)~bytes[i];
-                bytes[i] -= (byte)(keyword[k] | bytes.Length / keyword.Length);
-                bytes[i] += (byte)(keyword[k] & Math.Abs(bytes.Length - keyword.Length));
+                bytes[i] -= (byte)(keyword[k] | (keyword.Length | 84) / keyword.Length);
+                bytes[i] += (byte)(keyword[k] & Math.Abs(~keyword.Length - keyword.Length));
                 k++;
                 if (k == keyword.Length - 1)
                     k = 0;
@@ -50,75 +50,66 @@ namespace WinForms_File_Encrypt
             return bytes;
         }
 
-        private bool CheckFile(string filepath, string keyword)
+        private static bool IsCrypted(string filepath)
         {
-
-            
-
-
-            FileStream file = new FileStream(filepath, FileMode.Open);
-            //file.Seek((int)(file.Length - 16), SeekOrigin.Begin);
-            byte[] temp = new byte[file.Length]; //new byte[Encoding.ASCII.GetBytes(_cryptorStamp).Length];
-            file.Read(temp, 0, (int)file.Length);
-           
-
-            posmotrim = Encoding.ASCII.GetString(DecryptBytes(temp, keyword), 0, (int)file.Length);
+            var file = new FileStream(filepath, FileMode.Open);
+            if (file.Length < CryptorStamp.Length * 2) {file.Close(); return false;}
+            var temp = new byte[CryptorStamp.Length];
+            file.Read(temp, 0, temp.Length);
             file.Close();
-            return false;
-            //if (file.Length < temp.Length)
-            //{
-            //    file.Close();
-            //    return false;
-            //}
-
-            //file.Seek((int)(file.Length - temp.Length), SeekOrigin.Begin);
-            //file.Read(temp, 0, temp.Length);
-            //file.Close();
-            //byte[] temp1 = DecryptBytes(temp, keyword);
-            //posmotrim = Encoding.ASCII.GetString(temp1, 0, temp1.Length);
-            //if (_cryptorStamp == Encoding.ASCII.GetString(temp, 0, temp.Length))
-            //    return true;
-
-            //return false;
+            return Encoding.ASCII.GetString(temp, 0, temp.Length) == CryptorStamp;
         }
 
-        public void CryptFile(string filepath, string keyword)
+        private static bool IsKeyCorrect(string filepath, string keyword)
         {
-            //if (CheckFile(filepath, keyword))
-            //    throw new ArgumentException("File is alrady Crypted!");
-            FileStream file = new FileStream(filepath, FileMode.Open);
-            if (!file.CanWrite)
-            {
-                file.Close();
-                throw new ArgumentException("Cannot write to file!");
-            }
-           byte[] bytes = new byte[file.Length + _cryptorStamp.Length];
-           file.Read(bytes, 0, (int)file.Length);
-           Buffer.BlockCopy(Encoding.ASCII.GetBytes(_cryptorStamp), 0, bytes, (int)file.Length, _cryptorStamp.Length);
-           EncryptBytes(bytes, keyword);
-           file.Seek(0, SeekOrigin.Begin);
-           file.Write(bytes, 0, bytes.Length);
-           file.Close();  
+            var file = new FileStream(filepath, FileMode.Open);
+            var temp = new byte[CryptorStamp.Length];
+            file.Seek(CryptorStamp.Length, SeekOrigin.Begin);
+            file.Read(temp, 0, CryptorStamp.Length);
+            file.Close();
+            return Encoding.ASCII.GetString(DecryptBytes(temp, keyword), 0, (int)temp.Length) == CryptorStamp;
         }
 
-        public void DecryptFile(string filepath, string keyword)
+        public static void EncryptFile(string filepath, string keyword)
         {
-            CheckFile(filepath, keyword);
-            //if (!CheckFile(filepath, keyword))
-            //    throw new ArgumentException("File is not Crytped or Key is incorrect!");
-
-            FileStream file = new FileStream(filepath, FileMode.OpenOrCreate);
-            if (!file.CanWrite)
-            {
-                file.Close();
-                throw new ArgumentException("Cannot write to file!");
-            }
-            byte[] bytes = new byte[file.Length];
-            file.Read(bytes, 0, bytes.Length);
-            //file.SetLength(file.Length - _cryptorStamp.Length);
+            if (!File.Exists(filepath)) throw new NullReferenceException();
+            if (keyword.Length < 5) throw new ArgumentException("The key length can not be less than 5");
+            if (IsCrypted(filepath)) throw new ArgumentException("File is Already Encrypted!");
+            var file = new FileStream(filepath, FileMode.OpenOrCreate);
+            var allBytes = new byte[file.Length + CryptorStamp.Length * 2];
+            var fileBuffer = new byte[file.Length + CryptorStamp.Length];
+            Buffer.BlockCopy(Encoding.ASCII.GetBytes(CryptorStamp), 0, allBytes, 0, CryptorStamp.Length);
+            Buffer.BlockCopy(Encoding.ASCII.GetBytes(CryptorStamp), 0, fileBuffer, 0, CryptorStamp.Length);
+            file.Read(fileBuffer, CryptorStamp.Length, (int)file.Length);
+            Buffer.BlockCopy(EncryptBytes(fileBuffer, keyword), 0, allBytes, CryptorStamp.Length, fileBuffer.Length);
             file.Seek(0, SeekOrigin.Begin);
-            file.Write(DecryptBytes(bytes, keyword), 0, (int)file.Length);
+            file.Write(allBytes, 0, allBytes.Length);
+            file.Close();
+
+        }
+
+        public static void DecryptFile(string filepath, string keyword)
+        {
+            if (!File.Exists(filepath)) throw new NullReferenceException();
+            if (keyword.Length < 5) throw new ArgumentException("The key length can not be less than 5");
+            if (!IsCrypted(filepath))  throw new ArgumentException("File is not Encrypted!");
+            if (!IsKeyCorrect(filepath, keyword)) throw new ArgumentException("Incorrect key !"); 
+            var file = new FileStream(filepath, FileMode.OpenOrCreate);
+
+
+            var bytes = new byte[file.Length - CryptorStamp.Length];
+            file.Seek(CryptorStamp.Length, SeekOrigin.Begin);
+            file.Read(bytes, 0, bytes.Length);
+            file.SetLength(bytes.Length - CryptorStamp.Length);
+            file.Seek(0, SeekOrigin.Begin);
+            file.Write(DecryptBytes(bytes, keyword), CryptorStamp.Length, (int)file.Length);
             file.Close();
         }
     }
 }
+
+
+
+
+
+

@@ -13,13 +13,11 @@ namespace WinForms_File_Encrypt
 {
     public partial class FormMain : Form
     {
-        private FileCrypt file;
         private byte[] b;
-        string _filePath;
+        private string _filePath;
         public FormMain()
         {
             InitializeComponent();
-            file = new FileCrypt();
         }
 
         private void btSelectEncrypt_Click(object sender, EventArgs e)
@@ -27,8 +25,8 @@ namespace WinForms_File_Encrypt
             
             try
             {
-                file.CryptFile(_filePath, tbKey.Text);
-                MessageBox.Show("File Crypted!");
+                FileCrypt.EncryptFile(_filePath, tbKey.Text);
+                MessageBox.Show("File Encrypted!");
             }
             catch (Exception ex)
             {
@@ -37,11 +35,10 @@ namespace WinForms_File_Encrypt
         }
         private void btSelectDecrypt_Click(object sender, EventArgs e)
         {
-                file.DecryptFile(_filePath, tbKey.Text);
             try
             {
                
-                MessageBox.Show(file.posmotrim);
+                FileCrypt.DecryptFile(_filePath, tbKey.Text);
                 MessageBox.Show("File Decrypted!");
             }
             catch (Exception ex)
