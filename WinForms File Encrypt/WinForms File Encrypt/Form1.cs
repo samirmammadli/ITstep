@@ -37,11 +37,11 @@ namespace WinForms_File_Encrypt
         }
         private void btSelectDecrypt_Click(object sender, EventArgs e)
         {
+                file.DecryptFile(_filePath, tbKey.Text);
             try
             {
-                MessageBox.Show(file.posmotrim);
                
-                file.DecryptFile(_filePath, tbKey.Text);
+                MessageBox.Show(file.posmotrim);
                 MessageBox.Show("File Decrypted!");
             }
             catch (Exception ex)

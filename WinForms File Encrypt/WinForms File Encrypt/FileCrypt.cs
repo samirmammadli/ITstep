@@ -13,6 +13,7 @@ namespace WinForms_File_Encrypt
         private const string _cryptorStamp = "Crypted by Samir";
         public string posmotrim;
 
+
         private byte[] EncryptBytes(byte[] bytes, string keyword)
         {
             var k = 0;
@@ -51,23 +52,34 @@ namespace WinForms_File_Encrypt
 
         private bool CheckFile(string filepath, string keyword)
         {
-            byte[] temp = new byte[_cryptorStamp.Length];
+
+            
+
+
             FileStream file = new FileStream(filepath, FileMode.Open);
-            if (file.Length < _cryptorStamp.Length)
-            {
-                file.Close();
-                return false;
-            }
+            //file.Seek((int)(file.Length - 16), SeekOrigin.Begin);
+            byte[] temp = new byte[file.Length]; //new byte[Encoding.ASCII.GetBytes(_cryptorStamp).Length];
+            file.Read(temp, 0, (int)file.Length);
+           
 
-            file.Seek((int)file.Length - _cryptorStamp.Length, SeekOrigin.Begin);
-            file.Read(temp, 0, _cryptorStamp.Length);
+            posmotrim = Encoding.ASCII.GetString(DecryptBytes(temp, keyword), 0, (int)file.Length);
             file.Close();
-            temp = DecryptBytes(temp, keyword);
-            posmotrim = Encoding.ASCII.GetString(temp, 0, temp.Length);
-            if (_cryptorStamp == Encoding.ASCII.GetString(temp, 0, temp.Length))
-                return true;
-
             return false;
+            //if (file.Length < temp.Length)
+            //{
+            //    file.Close();
+            //    return false;
+            //}
+
+            //file.Seek((int)(file.Length - temp.Length), SeekOrigin.Begin);
+            //file.Read(temp, 0, temp.Length);
+            //file.Close();
+            //byte[] temp1 = DecryptBytes(temp, keyword);
+            //posmotrim = Encoding.ASCII.GetString(temp1, 0, temp1.Length);
+            //if (_cryptorStamp == Encoding.ASCII.GetString(temp, 0, temp.Length))
+            //    return true;
+
+            //return false;
         }
 
         public void CryptFile(string filepath, string keyword)
