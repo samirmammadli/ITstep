@@ -28,7 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.plMain = new System.Windows.Forms.Panel();
+            this.plOpenFile = new System.Windows.Forms.Panel();
+            this.btExit = new System.Windows.Forms.Button();
+            this.btOpenFile = new System.Windows.Forms.Button();
             this.btCancel = new System.Windows.Forms.Button();
             this.lbKey = new System.Windows.Forms.Label();
             this.tbKey = new System.Windows.Forms.TextBox();
@@ -37,9 +41,6 @@
             this.lbFileName = new System.Windows.Forms.Label();
             this.btSelectEncrypt = new System.Windows.Forms.Button();
             this.fdOpen = new System.Windows.Forms.OpenFileDialog();
-            this.plOpenFile = new System.Windows.Forms.Panel();
-            this.btExit = new System.Windows.Forms.Button();
-            this.btOpenFile = new System.Windows.Forms.Button();
             this.plMain.SuspendLayout();
             this.plOpenFile.SuspendLayout();
             this.SuspendLayout();
@@ -58,6 +59,35 @@
             this.plMain.Size = new System.Drawing.Size(404, 103);
             this.plMain.TabIndex = 0;
             this.plMain.Visible = false;
+            // 
+            // plOpenFile
+            // 
+            this.plOpenFile.Controls.Add(this.btExit);
+            this.plOpenFile.Controls.Add(this.btOpenFile);
+            this.plOpenFile.Location = new System.Drawing.Point(12, 12);
+            this.plOpenFile.Name = "plOpenFile";
+            this.plOpenFile.Size = new System.Drawing.Size(404, 99);
+            this.plOpenFile.TabIndex = 1;
+            // 
+            // btExit
+            // 
+            this.btExit.Location = new System.Drawing.Point(262, 28);
+            this.btExit.Name = "btExit";
+            this.btExit.Size = new System.Drawing.Size(128, 37);
+            this.btExit.TabIndex = 1;
+            this.btExit.Text = "Exit";
+            this.btExit.UseVisualStyleBackColor = true;
+            this.btExit.Click += new System.EventHandler(this.btExit_Click);
+            // 
+            // btOpenFile
+            // 
+            this.btOpenFile.Location = new System.Drawing.Point(20, 28);
+            this.btOpenFile.Name = "btOpenFile";
+            this.btOpenFile.Size = new System.Drawing.Size(128, 37);
+            this.btOpenFile.TabIndex = 0;
+            this.btOpenFile.Text = "Open File";
+            this.btOpenFile.UseVisualStyleBackColor = true;
+            this.btOpenFile.Click += new System.EventHandler(this.btOpenFile_Click);
             // 
             // btCancel
             // 
@@ -101,7 +131,7 @@
             this.btSelectDecrypt.Name = "btSelectDecrypt";
             this.btSelectDecrypt.Size = new System.Drawing.Size(128, 37);
             this.btSelectDecrypt.TabIndex = 1;
-            this.btSelectDecrypt.Text = "DecryptBytes File";
+            this.btSelectDecrypt.Text = "Decrypt File";
             this.btSelectDecrypt.UseVisualStyleBackColor = true;
             this.btSelectDecrypt.Click += new System.EventHandler(this.btSelectDecrypt_Click);
             // 
@@ -121,42 +151,13 @@
             this.btSelectEncrypt.Name = "btSelectEncrypt";
             this.btSelectEncrypt.Size = new System.Drawing.Size(128, 37);
             this.btSelectEncrypt.TabIndex = 0;
-            this.btSelectEncrypt.Text = "EncryptBytes File";
+            this.btSelectEncrypt.Text = "Encrypt File";
             this.btSelectEncrypt.UseVisualStyleBackColor = true;
             this.btSelectEncrypt.Click += new System.EventHandler(this.btSelectEncrypt_Click);
             // 
             // fdOpen
             // 
             this.fdOpen.FileName = "fdOpen";
-            // 
-            // plOpenFile
-            // 
-            this.plOpenFile.Controls.Add(this.btExit);
-            this.plOpenFile.Controls.Add(this.btOpenFile);
-            this.plOpenFile.Location = new System.Drawing.Point(9, 12);
-            this.plOpenFile.Name = "plOpenFile";
-            this.plOpenFile.Size = new System.Drawing.Size(404, 99);
-            this.plOpenFile.TabIndex = 1;
-            // 
-            // btExit
-            // 
-            this.btExit.Location = new System.Drawing.Point(262, 28);
-            this.btExit.Name = "btExit";
-            this.btExit.Size = new System.Drawing.Size(128, 37);
-            this.btExit.TabIndex = 1;
-            this.btExit.Text = "Exit";
-            this.btExit.UseVisualStyleBackColor = true;
-            this.btExit.Click += new System.EventHandler(this.btExit_Click);
-            // 
-            // btOpenFile
-            // 
-            this.btOpenFile.Location = new System.Drawing.Point(20, 28);
-            this.btOpenFile.Name = "btOpenFile";
-            this.btOpenFile.Size = new System.Drawing.Size(128, 37);
-            this.btOpenFile.TabIndex = 0;
-            this.btOpenFile.Text = "Open File";
-            this.btOpenFile.UseVisualStyleBackColor = true;
-            this.btOpenFile.Click += new System.EventHandler(this.btOpenFile_Click);
             // 
             // FormMain
             // 
@@ -167,6 +168,7 @@
             this.Controls.Add(this.plOpenFile);
             this.Controls.Add(this.plMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.Text = "File Encryptor";

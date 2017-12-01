@@ -12,7 +12,7 @@ namespace WinForms_File_Encrypt
 {
     class FileCrypt
     {
-        private const string CryptorStamp = "Crypted by Samir";
+        private const string CryptorStamp = "Encrypted File n987NYTop;9hwBYT987gbt9";
 
         private static byte[] EncryptBytes(byte[] bytes, string keyword)
         {
@@ -85,7 +85,6 @@ namespace WinForms_File_Encrypt
             file.Seek(0, SeekOrigin.Begin);
             file.Write(allBytes, 0, allBytes.Length);
             file.Close();
-
         }
 
         public static void DecryptFile(string filepath, string keyword)

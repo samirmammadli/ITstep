@@ -17,7 +17,7 @@ namespace WinForms_File_Encrypt
         private string _filePath;
         public FormMain()
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         private void btSelectEncrypt_Click(object sender, EventArgs e)
@@ -68,7 +68,7 @@ namespace WinForms_File_Encrypt
 
         private void btExit_Click(object sender, EventArgs e)
         {
-            Environment.Exit(0);
+            Application.Exit();
         }
     }
 }
