@@ -15,7 +15,7 @@ void main()
 	p.setParams(700, 200, 100);
 
 	AssembledGame::get().addHero(p);
-	AssembledGame::get().addScorpion(40);
+	AssembledGame::get().addScorpion(52140);
 
 	AssembledGame::get().game();
 }
